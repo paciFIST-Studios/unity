@@ -6,8 +6,21 @@ public class Hacker : MonoBehaviour
 {
     int CurrentLevel = 0;
 
+    enum Screen
+    {
+        // this is the primary menu and game screen, serving as level select
+          MainMenu
+        // this is the "game is playing" state
+        , Password
+        // player has just won
+        , Win        
+    };
+
+    Screen CurrentScreen = Screen.MainMenu;
+
     void ShowMainMenu()
     {
+        CurrentScreen = Screen.MainMenu;
         Terminal.ClearScreen();
         Terminal.WriteLine("What would you like to hack into?");
         Terminal.WriteLine("\n");
@@ -20,20 +33,11 @@ public class Hacker : MonoBehaviour
 
     void StartGame()
     {
-        if(CurrentLevel < 0)
-        {
-            ShowMainMenu();
-            return;
-        }
-        else if (CurrentLevel == 0)
-        {
-            return;
-        }
-
+        CurrentScreen = Screen.Password;
         Terminal.WriteLine("Level " + CurrentLevel);
     }
 
-    void OnUserInput(string input)
+    void ParseMainMenuInput(string input)
     {
         if (input == "1")
         {
@@ -47,17 +51,49 @@ public class Hacker : MonoBehaviour
         {
             CurrentLevel = 3;
         }
-        else if (input == "menu")
-        {
-            CurrentLevel = -1;
-        }
         else
         {
             Terminal.WriteLine("Command not recognized");
-            CurrentLevel = 0;
+            return;
         }
 
         StartGame();
+    }
+
+    void ParsePasswordInput(string input)
+    {
+        if(input == "win")
+        {
+            Terminal.WriteLine("***");
+            Terminal.WriteLine("Password Acccepted");
+            CurrentScreen = Screen.Win;
+        }
+    }
+
+    void ParseWinInput(string input)
+    { }
+
+    void OnUserInput(string input)
+    {
+        if (input == "menu")
+        {
+            ShowMainMenu();
+            return;
+        }
+
+
+        if (CurrentScreen == Screen.MainMenu)
+        {
+            ParseMainMenuInput(input);
+        }
+        else if (CurrentScreen == Screen.Password)
+        {
+            ParsePasswordInput(input);
+        }
+        else if (CurrentScreen == Screen.Win)
+        {
+            ParseWinInput(input);
+        }
     }
 
     void Start ()
