@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class Hacker : MonoBehaviour
 {
+    int CurrentLevel = 0;
+
     void ShowMainMenu()
     {
         Terminal.ClearScreen();
@@ -16,29 +18,46 @@ public class Hacker : MonoBehaviour
         Terminal.WriteLine("Enter Selection:");
     }
 
+    void StartGame()
+    {
+        if(CurrentLevel < 0)
+        {
+            ShowMainMenu();
+            return;
+        }
+        else if (CurrentLevel == 0)
+        {
+            return;
+        }
+
+        Terminal.WriteLine("Level " + CurrentLevel);
+    }
+
     void OnUserInput(string input)
     {
         if (input == "1")
         {
-            Terminal.WriteLine("level 1");
+            CurrentLevel = 1;
         }
         else if (input == "2")
         {
-            Terminal.WriteLine("level 2");
+            CurrentLevel = 2;
         }
         else if (input == "3")
         {
-            Terminal.WriteLine("level 3");
+            CurrentLevel = 3;
         }
         else if (input == "menu")
         {
-            print("reload menu");
-            ShowMainMenu();
+            CurrentLevel = -1;
         }
         else
         {
             Terminal.WriteLine("Command not recognized");
-        }        
+            CurrentLevel = 0;
+        }
+
+        StartGame();
     }
 
     void Start ()
