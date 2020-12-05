@@ -18,6 +18,11 @@ public class Hacker : MonoBehaviour
 
     Screen CurrentScreen = Screen.MainMenu;
 
+    string Level1Password = "first";
+    string Level2Password = "second";
+    string Level3Password = "third";
+
+
     void ShowMainMenu()
     {
         CurrentScreen = Screen.MainMenu;
@@ -34,7 +39,11 @@ public class Hacker : MonoBehaviour
     void StartGame()
     {
         CurrentScreen = Screen.Password;
-        Terminal.WriteLine("Level " + CurrentLevel);
+        Terminal.ClearScreen();
+        Terminal.WriteLine("<Level " + CurrentLevel + ">");
+        Terminal.WriteLine("ACCESS DENIED");
+        Terminal.WriteLine("***************************************");
+        Terminal.WriteLine("Enter Password");
     }
 
     void ParseMainMenuInput(string input)
@@ -60,13 +69,34 @@ public class Hacker : MonoBehaviour
         StartGame();
     }
 
+    bool isCorrectPasswordForLevel(int level, string password)
+    {
+        if (level == 1)
+        {
+            return password == Level1Password;
+        }
+        else if (level == 2)
+        {
+            return password == Level2Password;
+        }
+        else if(level == 3)
+        {
+            return password == Level3Password;
+        }
+
+        return false;
+    }
+
     void ParsePasswordInput(string input)
     {
-        if(input == "win")
+        if (isCorrectPasswordForLevel(CurrentLevel, input))
         {
-            Terminal.WriteLine("***");
             Terminal.WriteLine("Password Acccepted");
             CurrentScreen = Screen.Win;
+        }
+        else
+        {
+            Terminal.WriteLine("\nInvalid.  Enter Password:");
         }
     }
 
