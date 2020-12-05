@@ -1,5 +1,5 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+
 using UnityEngine;
 
 public class Hacker : MonoBehaviour
@@ -18,32 +18,81 @@ public class Hacker : MonoBehaviour
 
     Screen CurrentScreen = Screen.MainMenu;
 
-    string Level1Password = "first";
-    string Level2Password = "second";
-    string Level3Password = "third";
+    string Server1Name = "library.local";
+    string Server2Name = "police.local";
+    string Server3Name = "nasa";
 
+    string[] Server1Passwords = { "cat", "dog", "ant", "ape", "asp", "bee", "doe", "sow"  };
+    string[] Server2Passwords = { "beauty", "battle", "bottle", "career", "client", "castle", "forget", "ground" };
+    string[] Server3Passwords = { "abilities", "admission", "candidate", "childhood", "documents", "education", "implement", "portfolio"  };
+
+    string CurrentServer = "";
+    string CurrentPassword = "";
 
     void ShowMainMenu()
     {
         CurrentScreen = Screen.MainMenu;
         Terminal.ClearScreen();
-        Terminal.WriteLine("What would you like to hack into?");
+        Terminal.WriteLine("Available Connections:");
+        Terminal.WriteLine("**************************************");
+        Terminal.WriteLine("[1] " + Server1Name);
+        Terminal.WriteLine("[2] " + Server2Name);
+        Terminal.WriteLine("[3] " + Server3Name);
         Terminal.WriteLine("\n");
-        Terminal.WriteLine("[1] local library");
-        Terminal.WriteLine("[2] police station");
-        Terminal.WriteLine("[3] nasa");
-        Terminal.WriteLine("\n");
-        Terminal.WriteLine("Enter Selection:");
+        Terminal.WriteLine(">> ");
+    }
+
+    void ShowPasswordAccepted()
+    {
+        CurrentScreen = Screen.Win;
+        Terminal.ClearScreen();
+        Terminal.WriteLine("Password Acccepted");
+        Terminal.WriteLine("**************************************");
+    }
+
+
+    void ShowLevelReward()
+    {
+        if(CurrentLevel == 1)
+        {
+            Terminal.WriteLine("Have a book");
+        }
+        else if (CurrentLevel == 2)
+        {
+            Terminal.WriteLine("Open the jail? Y/N");
+        }
+        else if (CurrentLevel == 3)
+        {
+            Terminal.WriteLine("Launch Rocket? Y/N");
+        }
+    }
+
+    string GetScrambledLine(string str)
+    {
+        return "OVERFLOW:" + ".,;:1@![]{}<>@#$%^&()alphabetsatan".Anagram() + "......psswrd={" + str.Anagram() + "}";
+    }
+
+    string GetHackResult(string str)
+    {
+        return "psswrd={" + str.Anagram() +"}";
     }
 
     void StartGame()
     {
         CurrentScreen = Screen.Password;
         Terminal.ClearScreen();
-        Terminal.WriteLine("<Level " + CurrentLevel + ">");
-        Terminal.WriteLine("ACCESS DENIED");
-        Terminal.WriteLine("***************************************");
-        Terminal.WriteLine("Enter Password");
+        Terminal.WriteLine("<Server=\"" + CurrentServer + "\">\n...");
+        Terminal.WriteLine("ERROR: 404 FORBIDDEN; ACCESS DENIED");
+        Terminal.WriteLine(GetScrambledLine(CurrentPassword));
+        Terminal.WriteLine("**************************************");
+        Terminal.WriteLine("{menu, hack}; Enter Password: ");
+        //Terminal.WriteLine("Enter Password:");
+    }
+
+    string PickRandomElement(string[] array)
+    {
+        int val = Random.Range(0, array.Length);
+        return array[val];
     }
 
     void ParseMainMenuInput(string input)
@@ -51,14 +100,20 @@ public class Hacker : MonoBehaviour
         if (input == "1")
         {
             CurrentLevel = 1;
+            CurrentServer = Server1Name;
+            CurrentPassword = PickRandomElement(Server1Passwords);
         }
         else if (input == "2")
         {
             CurrentLevel = 2;
+            CurrentServer = Server2Name;
+            CurrentPassword = PickRandomElement(Server2Passwords);
         }
         else if (input == "3")
         {
             CurrentLevel = 3;
+            CurrentServer = Server3Name;
+            CurrentPassword = PickRandomElement(Server3Passwords);
         }
         else
         {
@@ -69,30 +124,19 @@ public class Hacker : MonoBehaviour
         StartGame();
     }
 
-    bool isCorrectPasswordForLevel(int level, string password)
-    {
-        if (level == 1)
-        {
-            return password == Level1Password;
-        }
-        else if (level == 2)
-        {
-            return password == Level2Password;
-        }
-        else if(level == 3)
-        {
-            return password == Level3Password;
-        }
-
-        return false;
-    }
 
     void ParsePasswordInput(string input)
     {
-        if (isCorrectPasswordForLevel(CurrentLevel, input))
+        if(input == "hack")
         {
-            Terminal.WriteLine("Password Acccepted");
-            CurrentScreen = Screen.Win;
+            Terminal.WriteLine(GetHackResult(CurrentPassword));
+            return;
+        }
+
+        if (input == CurrentPassword)
+        {
+            ShowPasswordAccepted();
+            ShowLevelReward();
         }
         else
         {
@@ -101,7 +145,10 @@ public class Hacker : MonoBehaviour
     }
 
     void ParseWinInput(string input)
-    { }
+    {
+        Terminal.WriteLine("\n");
+        Terminal.WriteLine("type \"menu\" to restart");
+    }
 
     void OnUserInput(string input)
     {
