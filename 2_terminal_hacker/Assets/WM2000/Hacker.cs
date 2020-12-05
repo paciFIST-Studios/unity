@@ -1,33 +1,23 @@
-﻿using System.Collections.Generic;
-
-using UnityEngine;
+﻿using UnityEngine;
 
 public class Hacker : MonoBehaviour
 {
-    int CurrentLevel = 0;
-
-    enum Screen
-    {
-        // this is the primary menu and game screen, serving as level select
-          MainMenu
-        // this is the "game is playing" state
-        , Password
-        // player has just won
-        , Win        
-    };
-
-    Screen CurrentScreen = Screen.MainMenu;
-
+    // game data
     string Server1Name = "library.local";
-    string Server2Name = "police.local";
-    string Server3Name = "nasa";
+    string Server2Name = "emergency.local";
+    string Server3Name = "nasa.gov";
+    string[] Server1Passwords = { "book", "shelf", "read", "trust", "public", "stack"  };
+    string[] Server2Passwords = { "ambulance", "hospital", "medic", "rescue", "crisis", "hazard",};
+    string[] Server3Passwords = { "kepler", "telescope", "methane", "satellite", "galileo", "scientist",};
 
-    string[] Server1Passwords = { "cat", "dog", "ant", "ape", "asp", "bee", "doe", "sow"  };
-    string[] Server2Passwords = { "beauty", "battle", "bottle", "career", "client", "castle", "forget", "ground" };
-    string[] Server3Passwords = { "abilities", "admission", "candidate", "childhood", "documents", "education", "implement", "portfolio"  };
-
-    string CurrentServer = "";
+    // game state
+    enum Screen { MainMenu, Password, Win };
+    Screen CurrentScreen = Screen.MainMenu;
+    string CurrentServer   = "";
     string CurrentPassword = "";
+    int    HackCountdown   = 0;
+
+    // - Display fns -------------------------------------------------------------
 
     void ShowMainMenu()
     {
@@ -42,42 +32,7 @@ public class Hacker : MonoBehaviour
         Terminal.WriteLine(">> ");
     }
 
-    void ShowPasswordAccepted()
-    {
-        CurrentScreen = Screen.Win;
-        Terminal.ClearScreen();
-        Terminal.WriteLine("Password Acccepted");
-        Terminal.WriteLine("**************************************");
-    }
-
-
-    void ShowLevelReward()
-    {
-        if(CurrentLevel == 1)
-        {
-            Terminal.WriteLine("Have a book");
-        }
-        else if (CurrentLevel == 2)
-        {
-            Terminal.WriteLine("Open the jail? Y/N");
-        }
-        else if (CurrentLevel == 3)
-        {
-            Terminal.WriteLine("Launch Rocket? Y/N");
-        }
-    }
-
-    string GetScrambledLine(string str)
-    {
-        return "OVERFLOW:" + ".,;:1@![]{}<>@#$%^&()alphabetsatan".Anagram() + "......psswrd={" + str.Anagram() + "}";
-    }
-
-    string GetHackResult(string str)
-    {
-        return "psswrd={" + str.Anagram() +"}";
-    }
-
-    void StartGame()
+    void ShowConnectionAttempt()
     {
         CurrentScreen = Screen.Password;
         Terminal.ClearScreen();
@@ -86,8 +41,40 @@ public class Hacker : MonoBehaviour
         Terminal.WriteLine(GetScrambledLine(CurrentPassword));
         Terminal.WriteLine("**************************************");
         Terminal.WriteLine("{menu, hack}; Enter Password: ");
-        //Terminal.WriteLine("Enter Password:");
     }
+
+    void ShowPasswordAccepted()
+    {
+        CurrentScreen = Screen.Win;
+        Terminal.ClearScreen();
+        Terminal.WriteLine("Password Acccepted");
+        Terminal.WriteLine("**************************************");
+    }
+    
+    void ShowLevelReward()
+    {
+        if(CurrentServer == Server1Name)
+        {
+            Terminal.WriteLine("Reading Program Attendance:");
+            Terminal.WriteLine("1  Jun  ( 7)");
+            Terminal.WriteLine("3  Jul  (15)");
+            Terminal.WriteLine("1  Aug  (37)");
+        }
+        else if (CurrentServer == Server2Name)
+        {
+            Terminal.WriteLine("Vehicles in transit: 17");
+            Terminal.WriteLine("Incidents awaiting pickup: 4");
+            Terminal.WriteLine("Mass casualty: none");
+        }
+        else if (CurrentServer == Server3Name)
+        {
+            Terminal.WriteLine("Crewed   satellites: 5");
+            Terminal.WriteLine("Uncrewed satellites: 8762");
+            Terminal.WriteLine("Tracked  satellites: 101993");
+        }
+    }
+
+    // - Utility fns ------------------------------------------------------------
 
     string PickRandomElement(string[] array)
     {
@@ -95,23 +82,51 @@ public class Hacker : MonoBehaviour
         return array[val];
     }
 
+    string GetScrambledLine(string str)
+    {
+        return "OVERFLOW:" + ".,;:1@![]{}<>@#$%^&()alphabetsatan".Anagram() + "......psswrd={" + str.Anagram() + "}";
+    }
+
+    string GetHackResult(string str, bool unscrambled=false)
+    {
+        if(unscrambled)
+        {
+            return "psswrd={" + str + "}";
+        }
+
+        return "psswrd={" + str.Anagram() +"}";
+    }
+
+    void PerformHack()
+    {
+        --HackCountdown;
+
+        if (HackCountdown > 0)
+        {
+            Terminal.WriteLine(GetHackResult(CurrentPassword));
+        }
+        else
+        {
+            Terminal.WriteLine(GetHackResult(CurrentPassword, true));
+        }
+    }
+
+    // - Parse fns --------------------------------------------------------------
+
     void ParseMainMenuInput(string input)
     {
         if (input == "1")
         {
-            CurrentLevel = 1;
             CurrentServer = Server1Name;
             CurrentPassword = PickRandomElement(Server1Passwords);
         }
         else if (input == "2")
         {
-            CurrentLevel = 2;
             CurrentServer = Server2Name;
             CurrentPassword = PickRandomElement(Server2Passwords);
         }
         else if (input == "3")
         {
-            CurrentLevel = 3;
             CurrentServer = Server3Name;
             CurrentPassword = PickRandomElement(Server3Passwords);
         }
@@ -121,15 +136,16 @@ public class Hacker : MonoBehaviour
             return;
         }
 
-        StartGame();
+        // however long the word is, half that many guesses will just tell you the password
+        HackCountdown = (int)(CurrentPassword.Length * 0.5f);
+        ShowConnectionAttempt();
     }
-
-
+    
     void ParsePasswordInput(string input)
     {
         if(input == "hack")
         {
-            Terminal.WriteLine(GetHackResult(CurrentPassword));
+            PerformHack();
             return;
         }
 
@@ -149,6 +165,8 @@ public class Hacker : MonoBehaviour
         Terminal.WriteLine("\n");
         Terminal.WriteLine("type \"menu\" to restart");
     }
+
+    // --------------------------------------------------------------------------
 
     void OnUserInput(string input)
     {
