@@ -2,6 +2,8 @@
 
 public class Hacker : MonoBehaviour
 {
+    const int SCREEN_WIDTH = 38;
+
     // game data
     string Server1Name = "library.local";
     string Server2Name = "emergency.local";
@@ -11,13 +13,48 @@ public class Hacker : MonoBehaviour
     string[] Server3Passwords = { "kepler", "telescope", "methane", "satellite", "galileo", "scientist",};
 
     // game state
-    enum Screen { MainMenu, Password, Win };
+    enum Screen { Intro1, Intro2, Intro3, MainMenu, Password, Win };
     Screen CurrentScreen = Screen.MainMenu;
     string CurrentServer   = "";
     string CurrentPassword = "";
     int    HackCountdown   = 0;
 
     // - Display fns -------------------------------------------------------------
+
+    void ShowIntro1Screen()
+    {
+        CurrentScreen = Screen.Intro1;
+        Terminal.ClearScreen();
+        Terminal.WriteLine("\n\n\n");
+        Terminal.WriteLine(CenterString("HACKER"));
+        Terminal.WriteLine("\n\n");
+        Terminal.WriteLine("\n\n\n\n[enter]");
+    }
+
+    void ShowIntro2Screen()
+    {
+        CurrentScreen = Screen.Intro2;
+        Terminal.ClearScreen();
+        Terminal.WriteLine("This is a spelling-guessing game.");
+        Terminal.WriteLine("Unscramble the letters to make words.");
+        Terminal.WriteLine("");
+        Terminal.WriteLine("look for password hints: psswrd={ABC}");
+        Terminal.WriteLine("");
+        Terminal.WriteLine("Type \"hack\", to attack the system");
+        Terminal.WriteLine("Type \"menu\", to go back");
+        Terminal.WriteLine("\n\n\n\n[enter]");
+    }
+
+    void ShowIntro3Screen()
+    {
+        CurrentScreen = Screen.Intro3;
+        Terminal.ClearScreen();
+        Terminal.WriteLine("\n\n\n");
+        Terminal.WriteLine(CenterString("DONT"));
+        Terminal.WriteLine(CenterString("KILL"));
+        Terminal.WriteLine(CenterString("NE1"));
+        Terminal.WriteLine("\n\n\n\n[enter]");
+    }
 
     void ShowMainMenu()
     {
@@ -36,18 +73,19 @@ public class Hacker : MonoBehaviour
     {
         CurrentScreen = Screen.Password;
         Terminal.ClearScreen();
-        Terminal.WriteLine("<Server=\"" + CurrentServer + "\">\n...");
+        Terminal.WriteLine("<Server=\"" + CurrentServer + "\">");
         Terminal.WriteLine("ERROR: 404 FORBIDDEN; ACCESS DENIED");
         Terminal.WriteLine(GetScrambledLine(CurrentPassword));
         Terminal.WriteLine("**************************************");
-        Terminal.WriteLine("{menu, hack}; Enter Password: ");
+        Terminal.WriteLine("cmds={menu, hack}; \nEnter Password: ");
     }
 
     void ShowPasswordAccepted()
     {
         CurrentScreen = Screen.Win;
         Terminal.ClearScreen();
-        Terminal.WriteLine("Password Acccepted");
+        Terminal.WriteLine("Password Accepted");
+        Terminal.WriteLine("<Server=\"" + CurrentServer + "\">");
         Terminal.WriteLine("**************************************");
     }
     
@@ -59,18 +97,21 @@ public class Hacker : MonoBehaviour
             Terminal.WriteLine("1  Jun  ( 7)");
             Terminal.WriteLine("3  Jul  (15)");
             Terminal.WriteLine("1  Aug  (37)");
+            Terminal.WriteLine("\n\n\n[enter]");
         }
         else if (CurrentServer == Server2Name)
         {
             Terminal.WriteLine("Vehicles in transit: 17");
             Terminal.WriteLine("Incidents awaiting pickup: 4");
             Terminal.WriteLine("Mass casualty: none");
+            Terminal.WriteLine("\n\n\n\n[enter]");
         }
         else if (CurrentServer == Server3Name)
         {
             Terminal.WriteLine("Crewed   satellites: 5");
             Terminal.WriteLine("Uncrewed satellites: 8762");
             Terminal.WriteLine("Tracked  satellites: 101993");
+            Terminal.WriteLine("\n\n\n\n[enter]");
         }
     }
 
@@ -78,6 +119,7 @@ public class Hacker : MonoBehaviour
 
     string PickRandomElement(string[] array)
     {
+        Random.InitState((int)Time.time);
         int val = Random.Range(0, array.Length);
         return array[val];
     }
@@ -85,6 +127,24 @@ public class Hacker : MonoBehaviour
     string GetScrambledLine(string str)
     {
         return "OVERFLOW:" + ".,;:1@![]{}<>@#$%^&()alphabetsatan".Anagram() + "......psswrd={" + str.Anagram() + "}";
+    }
+
+    string CenterString(string str)
+    {
+        if (str.Length >= SCREEN_WIDTH)
+        {
+            return str;
+        }
+
+        int leading_space = (int)((SCREEN_WIDTH - str.Length) * 0.5);
+
+        string result = "";
+        for(int i = 0; i < leading_space; i++)
+        {
+            result += " ";
+        }
+
+        return result + str;
     }
 
     string GetHackResult(string str, bool unscrambled=false)
@@ -162,7 +222,7 @@ public class Hacker : MonoBehaviour
 
     void ParseWinInput(string input)
     {
-        Terminal.WriteLine("\n");
+        Terminal.ClearScreen();
         Terminal.WriteLine("type \"menu\" to restart");
     }
 
@@ -175,9 +235,27 @@ public class Hacker : MonoBehaviour
             ShowMainMenu();
             return;
         }
+        else if(input == "quit" || input == "exit" || input == "close")
+        {
+            Application.Quit();
+            Terminal.WriteLine("Close Tab (ctrl+w) to exit web build");
+            return;
+        }
 
 
-        if (CurrentScreen == Screen.MainMenu)
+        if (CurrentScreen == Screen.Intro1)
+        {
+            ShowIntro2Screen();
+        }
+        else if (CurrentScreen == Screen.Intro2)
+        {
+            ShowIntro3Screen();
+        }
+        else if (CurrentScreen == Screen.Intro3)
+        { 
+            ShowMainMenu();
+        }
+        else if (CurrentScreen == Screen.MainMenu)
         {
             ParseMainMenuInput(input);
         }
@@ -193,7 +271,7 @@ public class Hacker : MonoBehaviour
 
     void Start ()
     {
-        ShowMainMenu();
+        ShowIntro1Screen();
     }
 
 }
