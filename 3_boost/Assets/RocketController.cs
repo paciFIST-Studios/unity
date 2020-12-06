@@ -57,6 +57,19 @@ public class RocketController : MonoBehaviour
         HandleAudioChanges();
     }
 
+    private void OnCollisionEnter(Collision collision)
+    {
+        switch(collision.gameObject.tag)
+        {
+            case "Friendly":
+                break;
+
+            default:
+                print("boom");
+                break;
+        }
+    }
+
     private void SetCurrentRocketIndex(int idx)
     {
         Assert.IsTrue(idx < rocketSettings.Count);
