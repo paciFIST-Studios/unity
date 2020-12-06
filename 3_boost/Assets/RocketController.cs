@@ -60,7 +60,7 @@ public class RocketController : MonoBehaviour
     private void SetCurrentRocketIndex(int idx)
     {
         Assert.IsTrue(idx < rocketSettings.Count);
-        Assert.IsTrue(idx > 0);
+        Assert.IsTrue(idx >= 0);
 
         boostForce = rocketSettings[idx].boostForce;
         rotationForce = rocketSettings[idx].rotationForce;
@@ -92,7 +92,7 @@ public class RocketController : MonoBehaviour
         else if(Input.GetKeyDown(KeyCode.RightArrow))
         {
             currentRocketIdx++;
-            if (currentRocketIdx > rocketSettings.Count)
+            if (currentRocketIdx > rocketSettings.Count - 1)
             {
                 currentRocketIdx = rocketSettings.Count - 1;
             }
