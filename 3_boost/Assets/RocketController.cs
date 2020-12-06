@@ -6,12 +6,12 @@ public class RocketController : MonoBehaviour
 {
     private Rigidbody rb;
 
-    float force = 0.2f;
+    float boostForce = 500f;
+    float rotationForce = 50f;
 
     private void Start()
     {
-        rb = this.GetComponent<Rigidbody>();        
-
+        rb = this.GetComponent<Rigidbody>();
     }
 
     void Update ()
@@ -24,26 +24,26 @@ public class RocketController : MonoBehaviour
         if(Input.GetKey(KeyCode.Space))
         {
             // using rocket's coordinate system
-            rb.AddRelativeForce(Vector3.up * force, ForceMode.Impulse);
+            rb.AddRelativeForce(Vector3.up * boostForce * Time.deltaTime);
         }
 
         // left rotate has precedence 
         if (Input.GetKey(KeyCode.A))
         {
-            print("Rotate Left");
+            transform.Rotate(Vector3.forward *  rotationForce * Time.deltaTime);
         }
         else if (Input.GetKey(KeyCode.D))
         {
-            print("Rotate Right");
+            transform.Rotate(-Vector3.forward *  rotationForce * Time.deltaTime);
         }
 
         if(Input.GetKeyDown(KeyCode.UpArrow))
         {
-            force += 0.1f;
+            boostForce += 50f;
         }
         else if (Input.GetKeyDown(KeyCode.DownArrow))
         {
-            force -= 0.1f;
+            boostForce -= 50f;
         }
 
     }
