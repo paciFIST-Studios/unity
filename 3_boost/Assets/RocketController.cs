@@ -45,7 +45,6 @@ public class RocketController : MonoBehaviour
         {
             boostForce -= 50f;
         }
-
     }
 
 }
