@@ -74,3 +74,4 @@ crashlytics-build.properties
 2_terminal_hacker/build.zip
 2_terminal_hacker/ProjectSettings/EditorBuildSettings.asset
 2_terminal_hacker/ProjectSettings/GraphicsSettings.asset
+*.zip
