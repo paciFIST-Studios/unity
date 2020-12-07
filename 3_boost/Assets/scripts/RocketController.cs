@@ -91,17 +91,11 @@ public class RocketController : MonoBehaviour
             case "Start": break;
 
             case "End":
-                StopAudio();
-                playerState = PlayerState.LevelTransition;
-                PlayAudioClip(audioClips.success);
-                LoadNextSceneAfterSeconds(1f, 1);
+                HandleEndLevelEvent();
                 break;
 
             default:
-                StopAudio();
-                playerState = PlayerState.Dying;
-                PlayAudioClip(audioClips.explode);
-                LoadNextSceneAfterSeconds(3f, 0);
+                HandlePlayerDeathEvent();
                 break;
         }
     }
@@ -194,27 +188,7 @@ public class RocketController : MonoBehaviour
             SetCurrentRocketIndex(currentRocketIdx);
         }
     }
-
-    private void HandleAudioChanges()
-    {
-        if(playerState != PlayerState.Alive)
-        {
-            playAudio = false;
-        }
-
-        if (playAudio && !audioSource.isPlaying)
-        {
-            audioSource.Play();
-            audioSource.mute = false;
-        }
-
-        if (!playAudio && audioSource.isPlaying)
-        {
-            audioSource.mute = true;
-            audioSource.Stop();
-        }
-    }
-
+    
     private void HandleThrustInput()
     {
         if (Input.GetKey(KeyCode.Space))
@@ -246,5 +220,21 @@ public class RocketController : MonoBehaviour
         rigidBody.freezeRotation = false; // resume physics rotation control
     }
 
+
+    private void HandleEndLevelEvent()
+    {
+        StopAudio();
+        playerState = PlayerState.LevelTransition;
+        PlayAudioClip(audioClips.success);
+        LoadNextSceneAfterSeconds(1f, 1);
+    }
+
+    private void HandlePlayerDeathEvent()
+    {
+        StopAudio();
+        playerState = PlayerState.Dying;
+        PlayAudioClip(audioClips.explode);
+        LoadNextSceneAfterSeconds(3f, 0);
+    }
 
 }
