@@ -35,6 +35,19 @@ public class RocketController : MonoBehaviour
     List<RocketSettings> rocketSettings = new List<RocketSettings>();
     private int currentRocketIdx = 0;
 
+    [System.Serializable]
+    struct AudioForRocket
+    {
+        [SerializeField]
+        public AudioClip thrust;
+        [SerializeField]
+        public AudioClip success;
+        [SerializeField]
+        public AudioClip explode;
+    }
+
+    [SerializeField]
+    AudioForRocket audioClips;
 
     enum PlayerState { Alive, Dying, LevelTransition }
     private PlayerState playerState;
@@ -65,8 +78,6 @@ public class RocketController : MonoBehaviour
             HandleThrustInput();
             HandleRotationInput();
         }
-
-        HandleAudioChanges();
     }
 
     private void OnCollisionEnter(Collision collision)
@@ -80,12 +91,16 @@ public class RocketController : MonoBehaviour
             case "Start": break;
 
             case "End":
+                StopAudio();
                 playerState = PlayerState.LevelTransition;
+                PlayAudioClip(audioClips.success);
                 LoadNextSceneAfterSeconds(1f, 1);
                 break;
 
             default:
+                StopAudio();
                 playerState = PlayerState.Dying;
+                PlayAudioClip(audioClips.explode);
                 LoadNextSceneAfterSeconds(3f, 0);
                 break;
         }
@@ -103,11 +118,11 @@ public class RocketController : MonoBehaviour
         coneMeshRenderer.material = rocketSettings[idx].material;
     }
       
-    private void LoadNextSceneAfterSeconds(float seconds = 1.0f, int idx = -1)
+    private void LoadNextSceneAfterSeconds(float seconds = 1.0f, int nextSceneIdx = -1)
     {
-        if (idx >= 0)
+        if (nextSceneIdx > -1)
         {
-            nextSceneToLoad = idx;
+            nextSceneToLoad = nextSceneIdx;
         }
 
         Invoke("LoadNextScene", seconds);
@@ -116,6 +131,33 @@ public class RocketController : MonoBehaviour
     private void LoadNextScene()
     {
         SceneManager.LoadScene(nextSceneToLoad);
+    }
+
+    private void PlayAudioClip(AudioClip clip, bool loop = false, bool allowLayering = false)
+    {
+        if (audioSource.isPlaying && !allowLayering)
+        {
+            return;
+        }
+
+        audioSource.mute = false;
+
+        if(loop)
+        {
+            audioSource.clip = clip;
+            audioSource.loop = true;
+            audioSource.Play();
+        }
+        else
+        {
+            audioSource.PlayOneShot(clip);
+        }
+    }
+
+    private void StopAudio()
+    {
+        audioSource.mute = true;
+        audioSource.Stop();
     }
 
     // - Rocket Control -------------------------------------------------------------------
@@ -155,7 +197,7 @@ public class RocketController : MonoBehaviour
 
     private void HandleAudioChanges()
     {
-        if(playerState == PlayerState.Dying)
+        if(playerState != PlayerState.Alive)
         {
             playAudio = false;
         }
@@ -179,11 +221,11 @@ public class RocketController : MonoBehaviour
         {
             // using rocket's coordinate system
             rigidBody.AddRelativeForce(Vector3.up * boostForce * Time.deltaTime);
-            playAudio = true;
+            PlayAudioClip(audioClips.thrust);
         }
         else
         {
-            playAudio = false;
+            StopAudio();
         }
     }
 
