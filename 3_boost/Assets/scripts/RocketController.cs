@@ -91,9 +91,10 @@ public class RocketController : MonoBehaviour
 
         switch (collision.gameObject.tag)
         {
-            // ignore
-            case "Friendly": break;
-            case "Start": break;
+            case "Friendly":
+                break;
+            case "Start":
+                break;
 
             case "End":
                 PerformEndLevelSequence();
