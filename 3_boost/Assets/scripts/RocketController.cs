@@ -21,31 +21,22 @@ public class RocketController : MonoBehaviour
     [System.Serializable]
     struct RocketSettings
     {
-        [SerializeField]
-        public float mass;
-        [SerializeField]
-        public float boostForce;
-        [SerializeField]
-        public float rotationForce;
-        [SerializeField]
-        public Material material;
+        [SerializeField] public float mass;
+        [SerializeField] public float boostForce;
+        [SerializeField] public float rotationForce;
+        [SerializeField] public Material material;
     }
 
-    [SerializeField]
-    List<RocketSettings> rocketSettings = new List<RocketSettings>();
     private int currentRocketIdx = 0;
-    [SerializeField]
-    private Material brokenRocketMaterial;
+    [SerializeField] List<RocketSettings> rocketSettings = new List<RocketSettings>();
+    [SerializeField] private Material brokenRocketMaterial;
 
     [System.Serializable]
     struct AudioForRocket
     {
-        [SerializeField]
-        public AudioClip thrust;
-        [SerializeField]
-        public AudioClip success;
-        [SerializeField]
-        public AudioClip explode;
+        [SerializeField] public AudioClip thrust;
+        [SerializeField] public AudioClip success;
+        [SerializeField] public AudioClip explode;
     }
 
     [SerializeField]
@@ -54,16 +45,12 @@ public class RocketController : MonoBehaviour
     [System.Serializable]
     struct ParticleSystems
     {
-        [SerializeField]
-        public ParticleSystem[] engineParticles;
-        [SerializeField]
-        public ParticleSystem successParticles;
-        [SerializeField]
-        public ParticleSystem deathParticles;
+        [SerializeField] public ParticleSystem[] engineParticles;
+        [SerializeField] public ParticleSystem   successParticles;
+        [SerializeField] public ParticleSystem   deathParticles;
     }
 
-    [SerializeField]
-    ParticleSystems particleSystems;
+    [SerializeField] ParticleSystems particleSystems;
 
 
 
