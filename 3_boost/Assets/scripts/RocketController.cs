@@ -34,6 +34,8 @@ public class RocketController : MonoBehaviour
     [SerializeField]
     List<RocketSettings> rocketSettings = new List<RocketSettings>();
     private int currentRocketIdx = 0;
+    [SerializeField]
+    private Material brokenRocketMaterial;
 
     [System.Serializable]
     struct AudioForRocket
@@ -48,6 +50,22 @@ public class RocketController : MonoBehaviour
 
     [SerializeField]
     AudioForRocket audioClips;
+
+    [System.Serializable]
+    struct ParticleSystems
+    {
+        [SerializeField]
+        public ParticleSystem[] engineParticles;
+        [SerializeField]
+        public ParticleSystem successParticles;
+        [SerializeField]
+        public ParticleSystem deathParticles;
+    }
+
+    [SerializeField]
+    ParticleSystems particleSystems;
+
+
 
     enum PlayerState { Alive, Dying, LevelTransition }
     private PlayerState playerState;
@@ -91,11 +109,11 @@ public class RocketController : MonoBehaviour
             case "Start": break;
 
             case "End":
-                HandleEndLevelEvent();
+                PerformEndLevelSequence();
                 break;
 
             default:
-                HandlePlayerDeathEvent();
+                PerformPlayerDeathSequence();
                 break;
         }
     }
@@ -112,6 +130,14 @@ public class RocketController : MonoBehaviour
         coneMeshRenderer.material = rocketSettings[idx].material;
     }
       
+    private void SetRocketToDead()
+    {
+        foreach (var renderer in transform.GetComponentsInChildren<MeshRenderer>())
+        {
+            renderer.material = brokenRocketMaterial;
+        }
+    }
+
     private void LoadNextSceneAfterSeconds(float seconds = 1.0f, int nextSceneIdx = -1)
     {
         if (nextSceneIdx > -1)
@@ -152,6 +178,18 @@ public class RocketController : MonoBehaviour
     {
         audioSource.mute = true;
         audioSource.Stop();
+    }
+
+    private void PlayEngineParticles()
+    {
+        particleSystems.engineParticles[0].Play();
+        particleSystems.engineParticles[1].Play();
+    }
+
+    private void StopEngineParticles()
+    {
+        particleSystems.engineParticles[0].Stop();
+        particleSystems.engineParticles[1].Stop();
     }
 
     // - Rocket Control -------------------------------------------------------------------
@@ -196,10 +234,12 @@ public class RocketController : MonoBehaviour
             // using rocket's coordinate system
             rigidBody.AddRelativeForce(Vector3.up * boostForce * Time.deltaTime);
             PlayAudioClip(audioClips.thrust);
+            PlayEngineParticles();
         }
         else
         {
             StopAudio();
+            StopEngineParticles();
         }
     }
 
@@ -221,19 +261,24 @@ public class RocketController : MonoBehaviour
     }
 
 
-    private void HandleEndLevelEvent()
+    private void PerformEndLevelSequence()
     {
         StopAudio();
+        StopEngineParticles();
         playerState = PlayerState.LevelTransition;
         PlayAudioClip(audioClips.success);
+        particleSystems.successParticles.Play();
         LoadNextSceneAfterSeconds(1f, 1);
     }
 
-    private void HandlePlayerDeathEvent()
+    private void PerformPlayerDeathSequence()
     {
         StopAudio();
+        StopEngineParticles();
         playerState = PlayerState.Dying;
+        particleSystems.deathParticles.Play();
         PlayAudioClip(audioClips.explode);
+        SetRocketToDead();
         LoadNextSceneAfterSeconds(3f, 0);
     }
 
