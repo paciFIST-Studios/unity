@@ -16,7 +16,7 @@ public class RocketController : MonoBehaviour
     private     float       boostForce      = 500f;
     // rotation applies this force, per frame, when active (scaled against time.deltaTime)
     private     float       rotationForce   = 100f;
-
+    
 
     [System.Serializable]
     struct RocketSettings
@@ -33,8 +33,15 @@ public class RocketController : MonoBehaviour
 
     [SerializeField]
     List<RocketSettings> rocketSettings = new List<RocketSettings>();
-
     private int currentRocketIdx = 0;
+
+
+    enum PlayerState { Alive, Dying, LevelTransition }
+    private PlayerState playerState;
+
+    private int nextSceneToLoad = 0;
+
+    // - Unity Methods --------------------------------------------------------------------
 
     private void Start()
     {
@@ -46,38 +53,45 @@ public class RocketController : MonoBehaviour
         coneMeshRenderer = cone.GetComponent<MeshRenderer>();
 
         SetCurrentRocketIndex(0);
+        playerState = PlayerState.Alive;
     }
 
     void Update ()
     {
         ProcessDebugInput();
 
-        HandleThrustInput();
-        HandleRotationInput();
+        if(playerState == PlayerState.Alive)
+        {
+            HandleThrustInput();
+            HandleRotationInput();
+        }
+
         HandleAudioChanges();
     }
 
     private void OnCollisionEnter(Collision collision)
     {
-        switch(collision.gameObject.tag)
-        {
-            case "Friendly":
-                break;
+        if (playerState != PlayerState.Alive) { return; }
 
-            case "Start":
-                break;
+        switch (collision.gameObject.tag)
+        {
+            // ignore
+            case "Friendly": break;
+            case "Start": break;
 
             case "End":
-                print("Level Finish");
-                SceneManager.LoadScene(1);
+                playerState = PlayerState.LevelTransition;
+                LoadNextSceneAfterSeconds(1f, 1);
                 break;
 
             default:
-                print("Player Death");
-                SceneManager.LoadScene(0);
+                playerState = PlayerState.Dying;
+                LoadNextSceneAfterSeconds(3f, 0);
                 break;
         }
     }
+
+    // - Utility --------------------------------------------------------------------------
 
     private void SetCurrentRocketIndex(int idx)
     {
@@ -88,6 +102,23 @@ public class RocketController : MonoBehaviour
         rotationForce = rocketSettings[idx].rotationForce;
         coneMeshRenderer.material = rocketSettings[idx].material;
     }
+      
+    private void LoadNextSceneAfterSeconds(float seconds = 1.0f, int idx = -1)
+    {
+        if (idx >= 0)
+        {
+            nextSceneToLoad = idx;
+        }
+
+        Invoke("LoadNextScene", seconds);
+    }
+
+    private void LoadNextScene()
+    {
+        SceneManager.LoadScene(nextSceneToLoad);
+    }
+
+    // - Rocket Control -------------------------------------------------------------------
 
     private void ProcessDebugInput()
     {
@@ -124,6 +155,11 @@ public class RocketController : MonoBehaviour
 
     private void HandleAudioChanges()
     {
+        if(playerState == PlayerState.Dying)
+        {
+            playAudio = false;
+        }
+
         if (playAudio && !audioSource.isPlaying)
         {
             audioSource.Play();
