@@ -4,11 +4,8 @@ using UnityEngine;
 
 public class LightController : MonoBehaviour
 {
-    [SerializeField]
-    private Material empty;
-
-    [SerializeField]
-    private Material occupied;
+    [SerializeField] private Material empty;
+    [SerializeField] private Material occupied;
     
     private MeshRenderer meshRenderer;
 

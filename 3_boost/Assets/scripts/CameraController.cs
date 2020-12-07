@@ -4,11 +4,8 @@ using UnityEngine;
 
 public class CameraController : MonoBehaviour
 {
-    [SerializeField]
-    Transform followTarget;
-
-    [SerializeField]
-    Vector3 offset;
+    [SerializeField] Transform followTarget;
+    [SerializeField] Vector3 offset;
 
 	void Update ()
     {
