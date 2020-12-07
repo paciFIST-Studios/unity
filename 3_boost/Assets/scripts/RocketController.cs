@@ -1,7 +1,7 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Assertions;
+using UnityEngine.SceneManagement;
 
 public class RocketController : MonoBehaviour
 {
@@ -64,8 +64,17 @@ public class RocketController : MonoBehaviour
             case "Friendly":
                 break;
 
+            case "Start":
+                break;
+
+            case "End":
+                print("Level Finish");
+                SceneManager.LoadScene(1);
+                break;
+
             default:
-                print("boom");
+                print("Player Death");
+                SceneManager.LoadScene(0);
                 break;
         }
     }
