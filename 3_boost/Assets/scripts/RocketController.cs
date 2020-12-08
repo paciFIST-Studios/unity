@@ -196,6 +196,9 @@ public class RocketController : MonoBehaviour
 
     private void ProcessDebugInput()
     {
+        if(!Debug.isDebugBuild) { return; }
+
+
         if(Input.GetKeyDown(KeyCode.Alpha0))
         {
             nextSceneToLoad = 0;
