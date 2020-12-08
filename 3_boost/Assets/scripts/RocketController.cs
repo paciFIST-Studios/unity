@@ -9,6 +9,8 @@ public class RocketController : MonoBehaviour
     private     AudioSource  audioSource;
     private     MeshRenderer coneMeshRenderer;
 
+    private bool debugCollisionIsOn = true;
+
     // used to track start and stop of audio
     private     bool        playAudio       = false;
 
@@ -88,6 +90,8 @@ public class RocketController : MonoBehaviour
     private void OnCollisionEnter(Collision collision)
     {
         if (playerState != PlayerState.Alive) { return; }
+        if(!debugCollisionIsOn) { return; }
+
 
         switch (collision.gameObject.tag)
         {
@@ -103,6 +107,14 @@ public class RocketController : MonoBehaviour
             default:
                 PerformPlayerDeathSequence();
                 break;
+        }
+    }
+
+    private void OnGUI()
+    {
+        if(!debugCollisionIsOn)
+        {
+            GUI.Label(new Rect(0, 0, 200, 100), new GUIContent("debugCollisionOn=" + debugCollisionIsOn.ToString()));
         }
     }
 
@@ -184,6 +196,32 @@ public class RocketController : MonoBehaviour
 
     private void ProcessDebugInput()
     {
+        if(Input.GetKeyDown(KeyCode.Alpha0))
+        {
+            nextSceneToLoad = 0;
+            LoadNextScene();
+        }
+        else  if(Input.GetKeyDown(KeyCode.Alpha1))
+        {
+            nextSceneToLoad = 1;
+            LoadNextScene();
+        }
+        else if(Input.GetKeyDown(KeyCode.Alpha2))
+        {
+            nextSceneToLoad = 2;
+            LoadNextScene();
+        }
+        //else if(Input.GetKeyDown(KeyCode.Alpha3))
+        //{
+        //    nextSceneToLoad = 3;
+        //    LoadNextScene();
+        //}
+
+        if (Input.GetKeyDown(KeyCode.C))
+        {
+            debugCollisionIsOn = !debugCollisionIsOn;
+        }
+
         // update boost forces
         if (Input.GetKeyDown(KeyCode.UpArrow))
         {
@@ -214,7 +252,8 @@ public class RocketController : MonoBehaviour
             SetCurrentRocketIndex(currentRocketIdx);
         }
     }
-    
+   
+
     private void HandleThrustInput()
     {
         if (Input.GetKey(KeyCode.Space))
