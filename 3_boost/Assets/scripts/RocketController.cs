@@ -59,7 +59,7 @@ public class RocketController : MonoBehaviour
     enum PlayerState { Alive, Dying, LevelTransition }
     private PlayerState playerState;
 
-    private int nextSceneToLoad = 0;
+    private int currentSceneIdx = 0;
 
     // - Unity Methods --------------------------------------------------------------------
 
@@ -74,6 +74,10 @@ public class RocketController : MonoBehaviour
 
         SetCurrentRocketIndex(0);
         playerState = PlayerState.Alive;
+
+        // the load-next-scene fn automatically increments the sceneIdx, so
+        // preparing for that, means to point at the current scene
+        currentSceneIdx = SceneManager.GetActiveScene().buildIndex;
     }
 
     void Update ()
@@ -138,11 +142,15 @@ public class RocketController : MonoBehaviour
         }
     }
 
-    private void LoadNextSceneAfterSeconds(float seconds = 1.0f, int nextSceneIdx = -1)
+    private void LoadSceneAfterSeconds(int sceneIdx, float seconds = 1.0f)
     {
-        if (nextSceneIdx > -1)
+        if (sceneIdx == SceneManager.sceneCountInBuildSettings)
         {
-            nextSceneToLoad = nextSceneIdx;
+            currentSceneIdx = 0;
+        }
+        else
+        {
+            currentSceneIdx = sceneIdx;
         }
 
         Invoke("LoadNextScene", seconds);
@@ -150,7 +158,8 @@ public class RocketController : MonoBehaviour
 
     private void LoadNextScene()
     {
-        SceneManager.LoadScene(nextSceneToLoad);
+        print("Loading Scene idx=" + currentSceneIdx);
+        SceneManager.LoadScene(currentSceneIdx);
     }
 
     private void PlayAudioClip(AudioClip clip, bool loop = false, bool allowLayering = false)
@@ -199,26 +208,18 @@ public class RocketController : MonoBehaviour
         if(!Debug.isDebugBuild) { return; }
 
 
-        if(Input.GetKeyDown(KeyCode.Alpha0))
+        if(Input.GetKeyDown(KeyCode.Alpha1))
         {
-            nextSceneToLoad = 0;
-            LoadNextScene();
+            LoadSceneAfterSeconds(0);
         }
-        else  if(Input.GetKeyDown(KeyCode.Alpha1))
+        else  if(Input.GetKeyDown(KeyCode.Alpha2))
         {
-            nextSceneToLoad = 1;
-            LoadNextScene();
+            LoadSceneAfterSeconds(1);
         }
-        else if(Input.GetKeyDown(KeyCode.Alpha2))
+        else if(Input.GetKeyDown(KeyCode.Alpha3))
         {
-            nextSceneToLoad = 2;
-            LoadNextScene();
+            LoadSceneAfterSeconds(2);
         }
-        //else if(Input.GetKeyDown(KeyCode.Alpha3))
-        //{
-        //    nextSceneToLoad = 3;
-        //    LoadNextScene();
-        //}
 
         if (Input.GetKeyDown(KeyCode.C))
         {
@@ -298,7 +299,7 @@ public class RocketController : MonoBehaviour
         playerState = PlayerState.LevelTransition;
         PlayAudioClip(audioClips.success);
         particleSystems.successParticles.Play();
-        LoadNextSceneAfterSeconds(1f, 1);
+        LoadSceneAfterSeconds(++currentSceneIdx, 1f);
     }
 
     private void PerformPlayerDeathSequence()
@@ -309,7 +310,7 @@ public class RocketController : MonoBehaviour
         particleSystems.deathParticles.Play();
         PlayAudioClip(audioClips.explode);
         SetRocketToDead();
-        LoadNextSceneAfterSeconds(3f, 0);
+        LoadSceneAfterSeconds(currentSceneIdx, 3f);
     }
 
 }
