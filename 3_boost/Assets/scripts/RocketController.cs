@@ -93,10 +93,18 @@ public class RocketController : MonoBehaviour
 
     private void OnCollisionEnter(Collision collision)
     {
-        if (playerState != PlayerState.Alive) { return; }
-        if(!debugCollisionIsOn) { return; }
+        if (playerState != PlayerState.Alive)
+        {
+            if (collision.gameObject.tag == "Destruct")
+            {
+                PerformPlayerExplosion();
+                collision.gameObject.GetComponentInParent<DestructWithRemains>().Do();            
+            }
+            return;
+        }
 
-        print("Collision");
+
+        if(!debugCollisionIsOn) { return; }
 
 
         switch (collision.gameObject.tag)
@@ -112,7 +120,8 @@ public class RocketController : MonoBehaviour
 
             case "Destruct":
                 print("Destructible Object Hit!");
-                collision.gameObject.GetComponent<CallDestructOnRootParent>().Destruct();
+
+                collision.gameObject.GetComponentInParent<DestructWithRemains>().Do();
                 PerformPlayerDeathSequence();
                 break;
 
@@ -312,10 +321,15 @@ public class RocketController : MonoBehaviour
         StopAudio();
         StopEngineParticles();
         playerState = PlayerState.Dying;
+        PerformPlayerExplosion();
+        LoadSceneAfterSeconds(currentSceneIdx, 3f);
+    }
+
+    private void PerformPlayerExplosion()
+    {
         particleSystems.deathParticles.Play();
         PlayAudioClip(audioClips.explode);
         SetRocketToDead();
-        LoadSceneAfterSeconds(currentSceneIdx, 3f);
     }
 
 }

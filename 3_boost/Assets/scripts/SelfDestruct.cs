@@ -10,10 +10,10 @@ public class SelfDestruct : MonoBehaviour
     public void selfDestruct()
     {
         print("Destroying Object!");
-        //foreach(var child in childMeshRenderers)
-        //{
-        //    child.material = destructedMaterial;
-        //}
+        foreach(var child in childMeshRenderers)
+        {
+            child.material = destructedMaterial;
+        }
 
         //transform.DetachChildren();
     }	
