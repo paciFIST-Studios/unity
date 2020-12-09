@@ -96,6 +96,8 @@ public class RocketController : MonoBehaviour
         if (playerState != PlayerState.Alive) { return; }
         if(!debugCollisionIsOn) { return; }
 
+        print("Collision");
+
 
         switch (collision.gameObject.tag)
         {
@@ -106,6 +108,12 @@ public class RocketController : MonoBehaviour
 
             case "End":
                 PerformEndLevelSequence();
+                break;
+
+            case "Destruct":
+                print("Destructible Object Hit!");
+                collision.gameObject.GetComponent<CallDestructOnRootParent>().Destruct();
+                PerformPlayerDeathSequence();
                 break;
 
             default:
@@ -260,7 +268,7 @@ public class RocketController : MonoBehaviour
 
     private void HandleThrustInput()
     {
-        if (Input.GetKey(KeyCode.Space))
+        if (Input.GetButton("Boost"))
         {
             // using rocket's coordinate system
             rigidBody.AddRelativeForce(Vector3.up * boostForce * Time.deltaTime);
@@ -276,19 +284,16 @@ public class RocketController : MonoBehaviour
 
     private void HandleRotationInput()
     {
-        rigidBody.freezeRotation = true; // start manual rotation control
+        rigidBody.angularVelocity = Vector3.zero;
 
-        // left rotate has precedence 
-        if (Input.GetKey(KeyCode.A))
+        if (Input.GetButton("RotateLeft"))
         {
             transform.Rotate(Vector3.forward * rotationForce * Time.deltaTime);
         }
-        else if (Input.GetKey(KeyCode.D))
+        else if (Input.GetButton("RotateRight"))
         {
             transform.Rotate(-Vector3.forward * rotationForce * Time.deltaTime);
         }
-
-        rigidBody.freezeRotation = false; // resume physics rotation control
     }
 
 
