@@ -103,9 +103,7 @@ public class RocketController : MonoBehaviour
             return;
         }
 
-
         if(!debugCollisionIsOn) { return; }
-
 
         switch (collision.gameObject.tag)
         {
@@ -119,8 +117,6 @@ public class RocketController : MonoBehaviour
                 break;
 
             case "Destruct":
-                print("Destructible Object Hit!");
-
                 collision.gameObject.GetComponentInParent<DestructWithRemains>().Do();
                 PerformPlayerDeathSequence();
                 break;
@@ -308,8 +304,7 @@ public class RocketController : MonoBehaviour
             transform.Rotate(-Vector3.forward * rotationForce * Time.deltaTime);
         }
     }
-
-
+    
     private void PerformEndLevelSequence()
     {
         StopAudio();
