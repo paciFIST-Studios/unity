@@ -241,6 +241,10 @@ public class RocketController : MonoBehaviour
         {
             LoadSceneAfterSeconds(4);
         }
+        else if(Input.GetKeyDown(KeyCode.Alpha6))
+        {
+            LoadSceneAfterSeconds(5);
+        }
 
         if (Input.GetKeyDown(KeyCode.C))
         {
