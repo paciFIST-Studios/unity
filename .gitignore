@@ -87,3 +87,5 @@ crashlytics-build.properties
 3_boost/Assets/ui/*
 _combat_rpg/combat rpg/Library/*
 _combat_rpg/combat rpg/Assets/Asset Packs/*
+_combat_rpg/combat rpg/obj/Debug/TemporaryGeneratedFile*
+_combat_rpg/combat rpg/Temp/*
