@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Assertions;
+using UnityEngine.InputSystem;
 using UnityEngine.SceneManagement;
 
 public class RocketController : MonoBehaviour
@@ -18,7 +19,11 @@ public class RocketController : MonoBehaviour
     private     float       boostForce      = 500f;
     // rotation applies this force, per frame, when active (scaled against time.deltaTime)
     private     float       rotationForce   = 100f;
-    
+
+    private bool isBoostingThisTick = false;
+
+    private float rotationToApplyThisTick = 0f;
+
 
     [System.Serializable]
     struct RocketSettings
@@ -82,12 +87,28 @@ public class RocketController : MonoBehaviour
 
     void Update ()
     {
-        ProcessDebugInput();
+        if (!isBoostingThisTick && playerState == PlayerState.Alive)
+        {
+            StopAudio();
+            StopEngineParticles();
+        }
 
+
+        //ProcessDebugInput();
+        //
+        //if(playerState == PlayerState.Alive)
+        //{
+        //   // HandleThrustInput();
+        //   // HandleRotationInput();
+        //}
+    }
+
+    private void FixedUpdate()
+    {
         if(playerState == PlayerState.Alive)
         {
-            HandleThrustInput();
-            HandleRotationInput();
+            PerformBoost();
+            PerformRotation();
         }
     }
 
@@ -97,8 +118,12 @@ public class RocketController : MonoBehaviour
         {
             if (collision.gameObject.tag == "Destruct")
             {
-                PerformPlayerExplosion();
-                collision.gameObject.GetComponentInParent<DestructWithRemains>().Do();            
+                PerformPlayerExplosion(false, true);
+                var destruct = collision.gameObject.GetComponentInParent<DestructWithRemains>();
+                if(destruct)
+                {
+                    destruct.Do();
+                }
             }
             return;
         }
@@ -216,112 +241,151 @@ public class RocketController : MonoBehaviour
 
     // - Rocket Control -------------------------------------------------------------------
 
-    private void ProcessDebugInput()
-    {
-        if(!Debug.isDebugBuild) { return; }
-
-
-        if(Input.GetKeyDown(KeyCode.Alpha1))
-        {
-            LoadSceneAfterSeconds(1);
-        }
-        else  if(Input.GetKeyDown(KeyCode.Alpha2))
-        {
-            LoadSceneAfterSeconds(2);
-        }
-        else if(Input.GetKeyDown(KeyCode.Alpha3))
-        {
-            LoadSceneAfterSeconds(3);
-        }
-        else if(Input.GetKeyDown(KeyCode.Alpha4))
-        {
-            LoadSceneAfterSeconds(4);
-        }
-        else if(Input.GetKeyDown(KeyCode.Alpha5))
-        {
-            LoadSceneAfterSeconds(5);
-        }
-        else if(Input.GetKeyDown(KeyCode.Alpha6))
-        {
-            LoadSceneAfterSeconds(6);
-        }
-
-        // menu
-        else if(Input.GetKeyDown(KeyCode.Alpha0))
-        {
-            LoadSceneAfterSeconds(0);
-        }
-
-
-
-
-        if (Input.GetKeyDown(KeyCode.C))
-        {
-            debugCollisionIsOn = !debugCollisionIsOn;
-        }
-
-        // update boost forces
-        if (Input.GetKeyDown(KeyCode.UpArrow))
-        {
-            boostForce += 50f;
-        }
-        else if (Input.GetKeyDown(KeyCode.DownArrow))
-        {
-            boostForce -= 50f;
-        }
-
-        // switch between different rocket configurations
-        if(Input.GetKeyDown(KeyCode.LeftArrow))
-        {
-            currentRocketIdx--;
-            if (currentRocketIdx < 0)
-            {
-                currentRocketIdx = 0;
-            }
-            SetCurrentRocketIndex(currentRocketIdx);
-        }
-        else if(Input.GetKeyDown(KeyCode.RightArrow))
-        {
-            currentRocketIdx++;
-            if (currentRocketIdx > rocketSettings.Count - 1)
-            {
-                currentRocketIdx = rocketSettings.Count - 1;
-            }
-            SetCurrentRocketIndex(currentRocketIdx);
-        }
-    }
+    //private void ProcessDebugInput()
+    //{
+    //    if(!Debug.isDebugBuild) { return; }
+    //
+    //
+    //    if(Input.GetKeyDown(KeyCode.Alpha1))
+    //    {
+    //        LoadSceneAfterSeconds(1);
+    //    }
+    //    else  if(Input.GetKeyDown(KeyCode.Alpha2))
+    //    {
+    //        LoadSceneAfterSeconds(2);
+    //    }
+    //    else if(Input.GetKeyDown(KeyCode.Alpha3))
+    //    {
+    //        LoadSceneAfterSeconds(3);
+    //    }
+    //    else if(Input.GetKeyDown(KeyCode.Alpha4))
+    //    {
+    //        LoadSceneAfterSeconds(4);
+    //    }
+    //    else if(Input.GetKeyDown(KeyCode.Alpha5))
+    //    {
+    //        LoadSceneAfterSeconds(5);
+    //    }
+    //    else if(Input.GetKeyDown(KeyCode.Alpha6))
+    //    {
+    //        LoadSceneAfterSeconds(6);
+    //    }
+    //
+    //    // menu
+    //    else if(Input.GetKeyDown(KeyCode.Alpha0))
+    //    {
+    //        LoadSceneAfterSeconds(0);
+    //    }
+    //
+    //
+    //
+    //
+    //    if (Input.GetKeyDown(KeyCode.C))
+    //    {
+    //        debugCollisionIsOn = !debugCollisionIsOn;
+    //    }
+    //
+    //    // update boost forces
+    //    if (Input.GetKeyDown(KeyCode.UpArrow))
+    //    {
+    //        boostForce += 50f;
+    //    }
+    //    else if (Input.GetKeyDown(KeyCode.DownArrow))
+    //    {
+    //        boostForce -= 50f;
+    //    }
+    //
+    //    // switch between different rocket configurations
+    //    if(Input.GetKeyDown(KeyCode.LeftArrow))
+    //    {
+    //        currentRocketIdx--;
+    //        if (currentRocketIdx < 0)
+    //        {
+    //            currentRocketIdx = 0;
+    //        }
+    //        SetCurrentRocketIndex(currentRocketIdx);
+    //    }
+    //    else if(Input.GetKeyDown(KeyCode.RightArrow))
+    //    {
+    //        currentRocketIdx++;
+    //        if (currentRocketIdx > rocketSettings.Count - 1)
+    //        {
+    //            currentRocketIdx = rocketSettings.Count - 1;
+    //        }
+    //        SetCurrentRocketIndex(currentRocketIdx);
+    //    }
+    //}
    
 
-    private void HandleThrustInput()
+    //private void HandleThrustInput()
+    //{
+    //    if (Input.GetButton("Boost"))
+    //    {
+    //        // using rocket's coordinate system
+    //        rigidBody.AddRelativeForce(Vector3.up * boostForce * Time.deltaTime);
+    //        PlayAudioClip(audioClips.thrust);
+    //        PlayEngineParticles();
+    //    }
+    //    else
+    //    {
+    //        StopAudio();
+    //        StopEngineParticles();
+    //    }
+    //}
+
+    //private void HandleRotationInput()
+    //{
+    //    rigidBody.angularVelocity = Vector3.zero;
+    //
+    //    if (Input.GetButton("RotateLeft"))
+    //    {
+    //        transform.Rotate(Vector3.forward * rotationForce * Time.deltaTime);
+    //    }
+    //    else if (Input.GetButton("RotateRight"))
+    //    {
+    //        transform.Rotate(-Vector3.forward * rotationForce * Time.deltaTime);
+    //    }
+    //}
+    
+    public void OnRotateLR(InputAction.CallbackContext context)
     {
-        if (Input.GetButton("Boost"))
+        if(context.performed)
         {
-            // using rocket's coordinate system
-            rigidBody.AddRelativeForce(Vector3.up * boostForce * Time.deltaTime);
-            PlayAudioClip(audioClips.thrust);
-            PlayEngineParticles();
+            rotationToApplyThisTick = context.ReadValue<float>();
         }
-        else
+        else if(context.canceled)
         {
-            StopAudio();
-            StopEngineParticles();
+            rotationToApplyThisTick = 0.0f;
         }
     }
 
-    private void HandleRotationInput()
+    public void OnBoost(InputAction.CallbackContext context)
+    {
+        if(context.performed)
+        {
+            isBoostingThisTick = true;
+        }
+        else if (context.canceled)
+        {
+            isBoostingThisTick = false;
+        }
+    }
+
+    private void PerformBoost()
+    {
+        if (!isBoostingThisTick) { return; }
+
+        rigidBody.AddRelativeForce(Vector3.up * boostForce * Time.deltaTime);
+        PlayAudioClip(audioClips.thrust);
+        PlayEngineParticles();
+    }
+
+    private void PerformRotation()
     {
         rigidBody.angularVelocity = Vector3.zero;
-
-        if (Input.GetButton("RotateLeft"))
-        {
-            transform.Rotate(Vector3.forward * rotationForce * Time.deltaTime);
-        }
-        else if (Input.GetButton("RotateRight"))
-        {
-            transform.Rotate(-Vector3.forward * rotationForce * Time.deltaTime);
-        }
+        transform.Rotate(-Vector3.forward * rotationForce * Time.deltaTime * rotationToApplyThisTick);
     }
-    
+
     private void PerformEndLevelSequence()
     {
         StopAudio();
@@ -341,10 +405,10 @@ public class RocketController : MonoBehaviour
         LoadSceneAfterSeconds(currentSceneIdx, 3f);
     }
 
-    private void PerformPlayerExplosion()
+    private void PerformPlayerExplosion(bool loop = false, bool allowLayering = false)
     {
         particleSystems.deathParticles.Play();
-        PlayAudioClip(audioClips.explode);
+        PlayAudioClip(audioClips.explode, loop, allowLayering);
         SetRocketToDead();
     }
 
