@@ -223,28 +223,37 @@ public class RocketController : MonoBehaviour
 
         if(Input.GetKeyDown(KeyCode.Alpha1))
         {
-            LoadSceneAfterSeconds(0);
+            LoadSceneAfterSeconds(1);
         }
         else  if(Input.GetKeyDown(KeyCode.Alpha2))
         {
-            LoadSceneAfterSeconds(1);
+            LoadSceneAfterSeconds(2);
         }
         else if(Input.GetKeyDown(KeyCode.Alpha3))
         {
-            LoadSceneAfterSeconds(2);
+            LoadSceneAfterSeconds(3);
         }
         else if(Input.GetKeyDown(KeyCode.Alpha4))
         {
-            LoadSceneAfterSeconds(3);
+            LoadSceneAfterSeconds(4);
         }
         else if(Input.GetKeyDown(KeyCode.Alpha5))
         {
-            LoadSceneAfterSeconds(4);
+            LoadSceneAfterSeconds(5);
         }
         else if(Input.GetKeyDown(KeyCode.Alpha6))
         {
-            LoadSceneAfterSeconds(5);
+            LoadSceneAfterSeconds(6);
         }
+
+        // menu
+        else if(Input.GetKeyDown(KeyCode.Alpha0))
+        {
+            LoadSceneAfterSeconds(0);
+        }
+
+
+
 
         if (Input.GetKeyDown(KeyCode.C))
         {
