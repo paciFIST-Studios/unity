@@ -154,6 +154,9 @@ public class RocketController : MonoBehaviour
 
     private void OnGUI()
     {
+        GUI.Label(new Rect(0, 0, 200, 60), "build=20201211.alpha");
+
+
         if(!debugCollisionIsOn)
         {
             GUI.Label(new Rect(0, 0, 200, 100), new GUIContent("debugCollisionOn=" + debugCollisionIsOn.ToString()));
