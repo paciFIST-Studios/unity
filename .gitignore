@@ -71,23 +71,32 @@ crashlytics-build.properties
 /*/[Aa]ssets/[Ss]treamingAssets/aa/*
 /*/Assets/3_TH_CU2+Download+Files.zip
 /*/Assets/WM2000 Package.unitypackage
+
+# unit 2
 2_terminal_hacker/build.zip
 2_terminal_hacker/ProjectSettings/EditorBuildSettings.asset
 2_terminal_hacker/ProjectSettings/GraphicsSettings.asset
+
+*.gif
+*.mp4
 *.zip
+*.7z
+
+# unit 3
 3_boost/Assets/imported/sweet of chiptune music.meta
 3_boost/Assets/imported/CasualGameSounds.meta
-*.mp4
-*.gif
 3_boost/21_PB_CU2+Download+Files/21_PB_CU2 Download Files/.DS_Store
 3_boost/Assets/audio/Rocket_thruster_SFX.ogg
 3_boost/Assets/audio/Rocket_thruster_SFX.ogg.meta
 3_boost/tashisPlace1.m4v
 3_boost/tashisPlace2.m4v
 3_boost/Assets/ui/*
+
+# combat rpg class
 _combat_rpg/combat rpg/Library/*
 _combat_rpg/combat rpg/Assets/Asset Packs/*
 _combat_rpg/combat rpg/obj/Debug/TemporaryGeneratedFile*
 _combat_rpg/combat rpg/Temp/*
-4_rails_shooter.7z
+
+# unit 4
 4_rails_shooter/Assets/Store/*
