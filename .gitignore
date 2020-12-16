@@ -104,3 +104,5 @@ _combat_rpg/combat rpg/Temp/*
 
 # networking course
 _networking/Networking2020Windows/library/*
+_networking/Networking2020Windows/build/*
+_networking/Networking2020Windows/obj/*
