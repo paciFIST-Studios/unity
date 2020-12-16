@@ -100,6 +100,9 @@ _combat_rpg/combat rpg/Temp/*
 
 # unit 4
 4_rails_shooter/Assets/Store/*
+# not sure if we want to try and make this a multiplayer title
+4_rails_shooter/Assets/Scripts/SetupLocalPlayer.cs
+4_rails_shooter/Assets/Scripts/SetupLocalPlayer.cs.meta
 
 
 # networking course
