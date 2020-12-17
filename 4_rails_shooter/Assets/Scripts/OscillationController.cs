@@ -11,10 +11,17 @@ public class OscillationController : MonoBehaviour
     [SerializeField] private Vector3 offsetVector;
     [SerializeField] [Range(0, 1)] private float movementFactor;
     [SerializeField] private float oscillationPeriod = 1f;
+    [SerializeField] private bool showOffsetEndpoint;
+    [SerializeField] private GameObject offsetEndpointMarkerPrefab;
+    private GameObject offsetEndpointMarker;
 
     private void Start()
     {
         startPosition = transform.position;
+
+        offsetEndpointMarker = Instantiate(offsetEndpointMarkerPrefab);
+        offsetEndpointMarker.GetComponent<MeshRenderer>().enabled = false;
+
 
         if(float.IsNaN(oscillationPeriod))
         {
@@ -28,6 +35,12 @@ public class OscillationController : MonoBehaviour
 
     private void Update()
     {
+        if(offsetEndpointMarker)
+        {
+            offsetEndpointMarker.GetComponent<MeshRenderer>().enabled = showOffsetEndpoint;
+            offsetEndpointMarker.transform.position = startPosition + offsetVector;
+        }
+
         float cycles = Time.time * hertz;
 
         const float tau = Mathf.PI * 2;
