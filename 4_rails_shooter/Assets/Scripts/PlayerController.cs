@@ -11,6 +11,9 @@ public class PlayerController : MonoBehaviour
     [SerializeField] float rotationSpeed = 1f;
     [SerializeField] float debugSprintMultiplier = 20f;
 
+    [SerializeField] private float controllerRotationSpeed = 200f;
+    [SerializeField] private float mouseRotationSpeed = 5f;
+
 
     bool isMoving = false;
     Vector2 moveVectorForThisTick = Vector2.zero;
@@ -49,6 +52,8 @@ public class PlayerController : MonoBehaviour
             return;
         }
 
+        print("OnMove() : " + ctx.action.name);
+
         moveVectorForThisTick = ctx.ReadValue<Vector2>();
     }
 
@@ -67,24 +72,44 @@ public class PlayerController : MonoBehaviour
 
         var lookVector = ctx.ReadValue<Vector2>();
         rotationThisTick = lookVector.x;
+
+
+        if(ctx.action.GetBindingDisplayString() == "Delta")
+        {
+            rotationSpeed = mouseRotationSpeed;
+        }
+        else
+        {
+            rotationSpeed = controllerRotationSpeed;
+        }
+
     }
 
 
     private void MoveCharacter(Vector2 vec)
     {
-        Vector3 moveVector = transform.forward * vec.x - transform.right * vec.y;
+        Vector3 moveVector = transform.right * vec.x;
 
-        if(Keyboard.current.leftShiftKey.isPressed)
+        // moveVector += transform.up * vec.y       // y as up-down
+        // moveVector += transform.forward * vec.y  // y as depth
+        
+
+        if (Keyboard.current.leftShiftKey.isPressed)
         {
             moveVector *= debugSprintMultiplier;
         }
 
-        characterController.Move(Time.deltaTime * moveVector * lateralMoveSpeed);
+
+        var currentPos = transform.position;
+        currentPos += Time.deltaTime * moveVector * lateralMoveSpeed;
+        transform.position = currentPos;
+
+        //characterController.Move(Time.deltaTime * moveVector * lateralMoveSpeed);
     }
 
 
     private void RotateCharacter(float degrees)
     {
-        transform.Rotate(Vector3.up * degrees * Mathf.Deg2Rad * rotationSpeed);
+        transform.Rotate(Vector3.up * degrees * rotationSpeed * Time.deltaTime);
     }
 }
