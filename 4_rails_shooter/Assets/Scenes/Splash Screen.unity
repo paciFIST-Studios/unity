@@ -583,6 +583,9 @@ MonoBehaviour:
   offsetVector: {x: 0, y: -45, z: 0}
   movementFactor: 0
   oscillationPeriod: 22
+  showOffsetEndpoint: 0
+  offsetEndpointMarkerPrefab: {fileID: 8571191098167999332, guid: 996b953c9f22bb449a93e5dc6f6b1d87,
+    type: 3}
 --- !u!1001 &1882213343
 PrefabInstance:
   m_ObjectHideFlags: 0
