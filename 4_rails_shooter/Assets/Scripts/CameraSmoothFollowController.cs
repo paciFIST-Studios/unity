@@ -31,6 +31,8 @@ public class CameraSmoothFollowController : MonoBehaviour
     // rotation speed is how fast the camera turns
     [SerializeField] private float cameraRotationSpeed = 10f;
 
+    // the camera preset values we should base our position off of
+    [SerializeField] private int useCameraPresetIdx = 0;
     // named, preset positions the camera may be placed at, around the follow target
     [SerializeField] private List<CameraSmoothFollowPosition> presetPositions;
 
@@ -50,9 +52,11 @@ public class CameraSmoothFollowController : MonoBehaviour
     // is collected, and after all of the movement has been applied by physics
     private void LateUpdate()
     {
-
         if (followTarget)
         {
+            cameraOffsetPosition       = presetPositions[useCameraPresetIdx].cameraOffsetPosition;
+            followTargetOffsetPosition = presetPositions[useCameraPresetIdx].followTargetOffsetPosition;
+
             // branchless code, which takes care of the follow marker.  It's childed to the camera
             {
                 followTargetMarker.GetComponent<MeshRenderer>().enabled = markFollowTargetPosition;
