@@ -63,6 +63,14 @@ public class CameraSmoothFollowController : MonoBehaviour
                 followTargetMarker.transform.position = followTarget.position + followTargetOffsetPosition;
             }
 
+            // this step needs to be performed, but I'm just not sure how to do it yet.  Don't worry, it will come. <3
+            //{
+            //    // pre-rotate vectors so they fit with the current local space of the target
+            //    var targetRotation = Quaternion.AngleAxis(transform.rotation.eulerAngles.y, followTargetOffsetPosition);
+            //    var cameraRotation = Quaternion.AngleAxis(transform.rotation.eulerAngles.y, cameraOffsetPosition);
+            //}
+
+
             Vector3 lookPosition = followTarget.position + followTargetOffsetPosition;
             Vector3 relativePos = lookPosition - transform.position;
             Quaternion rotation = Quaternion.LookRotation(relativePos);
@@ -84,7 +92,7 @@ public class CameraSmoothFollowController : MonoBehaviour
                 + cameraOffsetPosition.z * followTarget.transform.right
                 ;
 
-            this.transform.position = Vector3.Lerp(
+            transform.position = Vector3.Lerp(
                   transform.position
                 , cameraDesiredPosition
                 , Time.deltaTime * cameraTranslationSpeed * lerpSmoothing
