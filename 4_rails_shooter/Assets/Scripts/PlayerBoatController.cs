@@ -5,7 +5,7 @@ using UnityEngine.InputSystem;
 
 
 [System.Serializable]
-public struct ClampVec2
+public struct ClampRange
 {
     [SerializeField] public float min;
     [SerializeField] public float max;
@@ -13,25 +13,23 @@ public struct ClampVec2
 
 public class PlayerBoatController : MonoBehaviour
 {
-    [Header("Player Stats")]
+    [Header("Movement Speeds")]
     [Tooltip("Movement speed of the player, per axis, to be applied in local space")]
     [SerializeField] Vector3 movementSpeedVector;
-    [Tooltip("Rotation speed of the player, per axis, to be applied in local space")]
-    [SerializeField] Vector3 rotationSpeedVector;
-    [SerializeField] float debugSprintMultiplier = 20f;
 
-    //[SerializeField] private float currentRotationSpeed = 1f;
-    //[SerializeField] private float controllerRotationSpeed = 200f;
-    //[SerializeField] private float mouseRotationSpeed = 5f;
     [Tooltip("DO NOT USE.  This is the current value used for rotation.  To change rotation, change either controller rotation, or mouse rotation")]
     [SerializeField] private Vector3 currentRotationSpeed    = Vector3.one;
     [SerializeField] private Vector3 controllerRotationSpeed = new Vector3(30f, 200f, 30f);
     [SerializeField] private Vector3 mouseRotationSpeed      = new Vector3(0.3f, 5f, 0.3f);
 
-    [SerializeField] private float xAxisClampMag;
-    [SerializeField] private ClampVec2 yAxisClampHeight;
-    [SerializeField] private float fixedPlayerDepth = 20f;
-
+    [Header("Clamp Ranges")]
+    [SerializeField] private ClampRange horizontalClampRange;
+    [SerializeField] private ClampRange verticalClampRange;
+    [SerializeField] private ClampRange depthClampRange;
+    [SerializeField] private ClampRange pitchClampRange;
+    [SerializeField] private ClampRange yawClampRange;
+    [SerializeField] private ClampRange rollClampRange;
+    
     bool isMoving = false;
     Vector2 moveVectorForThisTick = Vector2.zero;
 
@@ -43,7 +41,7 @@ public class PlayerBoatController : MonoBehaviour
     private void Start()
     {
         var pos = transform.localPosition;
-        pos.z = fixedPlayerDepth;
+        pos.z = depthClampRange.min;
         transform.localPosition = pos;
     }
 
@@ -74,9 +72,6 @@ public class PlayerBoatController : MonoBehaviour
             isMoving = false;
             return;
         }
-        // else if started
-
-        print("OnMove() : " + ctx.action.name);
 
         moveVectorForThisTick = ctx.ReadValue<Vector2>();
     }
@@ -94,35 +89,26 @@ public class PlayerBoatController : MonoBehaviour
             return;
         }
 
-        var lookVector = ctx.ReadValue<Vector2>();
-        lookVectorForThisTick = lookVector;
+        lookVectorForThisTick = ctx.ReadValue<Vector2>();
 
         // check to see if input was from mouse delta
-        if (ctx.action.GetBindingDisplayString() == "Delta")
-        {
-            currentRotationSpeed = mouseRotationSpeed;
-        }
-        else
-        {
-            currentRotationSpeed = controllerRotationSpeed;
-        }
+        var style = ctx.action.GetBindingDisplayString();
+        matchRotationSpeedToInputStyle(style);
     }
 
     // Class Functions ------------------------------------------------------------------
 
     private void MoveCharacter(Vector2 input)
     {
-        if (Keyboard.current.leftShiftKey.isPressed)
-        {
-            input *= debugSprintMultiplier;
-        }
+        Vector3 vec;
 
-        var vec = buildRawMovementVector(input);
+        vec = buildRawMovementVector(input);
         vec = applyMovementCalculations(vec);
+
         transform.localPosition = clampMovementVector(vec);
     }
 
-    // takes the Vec2 input, and creates a Vec3 representation of it
+    // takes the Vec2 input, and creates a Vec3 representation
     Vector3 buildRawMovementVector(Vector2 input)
     {
         var displacementVector = Vector3.zero;
@@ -133,10 +119,9 @@ public class PlayerBoatController : MonoBehaviour
         return displacementVector;
     }
 
-    // takes the Vec3 input, and applies all movement calculations
     Vector3 applyMovementCalculations(Vector3 displacement)
     {
-        Vector3 movementVector = transform.localPosition;
+        var movementVector = transform.localPosition;
 
         // change current position, according to each component
         // each component, is increased by the displacement vector component
@@ -149,12 +134,11 @@ public class PlayerBoatController : MonoBehaviour
         return movementVector;
     }
 
-    // clamps movement vector to acceptable ranges
     Vector3 clampMovementVector(Vector3 movement)
     {    
-        movement.x = Mathf.Clamp(movement.x, -xAxisClampMag, xAxisClampMag);
-        movement.y = Mathf.Clamp(movement.y, yAxisClampHeight.min, yAxisClampHeight.max);
-        movement.z = fixedPlayerDepth;
+        movement.x = Mathf.Clamp(movement.x, horizontalClampRange.min, horizontalClampRange.max );
+        movement.y = Mathf.Clamp(movement.y, verticalClampRange.min  , verticalClampRange.max   );
+        movement.z = Mathf.Clamp(movement.z, depthClampRange.min     , depthClampRange.max      );
 
         return movement;
     }
@@ -162,23 +146,22 @@ public class PlayerBoatController : MonoBehaviour
 
     private void RotateCharacter(Vector2 input)
     {
-        var vec = buildRawRotationEuler(input);
+        Vector3 vec;
+
+        vec = buildRawRotationEuler(input);
         vec = applyRotationCalculations(vec);
         vec = clampRotationEuler(vec);
-        transform.localRotation = Quaternion.Euler(vec.x, vec.y, vec.z);
 
-        //var ro = transform.localRotation.eulerAngles;
-        //ro.y += degrees * currentRotationSpeed * Time.deltaTime;
-        //transform.localRotation = Quaternion.Euler(ro.x, ro.y, ro.z);
+        transform.localRotation = Quaternion.Euler(vec.x, vec.y, vec.z);
     }
 
-
+    // takes vec2 as input, and creates a vec3 representation
     Vector3 buildRawRotationEuler(Vector2 input)
     {
         var rotation = Vector3.zero;
 
         rotation += input.x * Vector3.up;
-        //rotation += input.y * Vector3.right;
+      //rotation += input.y * Vector3.right;
 
         return rotation;
     }
@@ -196,9 +179,28 @@ public class PlayerBoatController : MonoBehaviour
 
     Vector3 clampRotationEuler(Vector3 vec)
     {
+        vec.x = Mathf.Clamp(vec.x, pitchClampRange.min, pitchClampRange.max );
+        vec.y = Mathf.Clamp(vec.y, yawClampRange.min,   yawClampRange.max   );
+        vec.z = Mathf.Clamp(vec.z, rollClampRange.min,  rollClampRange.max  );
+
         return vec;
     }
 
 
+
+    // Utilities ---------------------------------------------------------------------------
+
+    private void matchRotationSpeedToInputStyle(string style)
+    {
+        // check to see if input was from mouse delta
+        if (style == "Delta")
+        {
+            currentRotationSpeed = mouseRotationSpeed;
+        }
+        else
+        {
+            currentRotationSpeed = controllerRotationSpeed;
+        }
+    }
 
 }

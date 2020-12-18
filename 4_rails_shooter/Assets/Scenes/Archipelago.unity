@@ -450,15 +450,27 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   movementSpeedVector: {x: 20, y: 1, z: 20}
-  debugSprintMultiplier: 2
-  currentRotationSpeed: 1
-  controllerRotationSpeed: 200
-  mouseRotationSpeed: 5
-  xAxisClampMag: 20
-  yAxisClampHeight:
+  currentRotationSpeed: {x: 1, y: 1, z: 1}
+  controllerRotationSpeed: {x: 30, y: 200, z: 30}
+  mouseRotationSpeed: {x: 0.3, y: 5, z: 0.3}
+  horizontalClampRange:
+    min: -16
+    max: 16
+  verticalClampRange:
     min: -3
     max: -1.5
-  fixedPlayerDepth: 25
+  depthClampRange:
+    min: 20
+    max: 20
+  pitchClampRange:
+    min: -30
+    max: 30
+  yawClampRange:
+    min: -360
+    max: 360
+  rollClampRange:
+    min: -15
+    max: 15
 --- !u!1001 &71267922
 PrefabInstance:
   m_ObjectHideFlags: 0
