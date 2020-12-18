@@ -17,8 +17,7 @@ public class PlayerBoatController : MonoBehaviour
     [Tooltip("Movement speed of the player, per axis, to be applied in local space")]
     [SerializeField] Vector3 movementSpeedVector;
 
-    [Tooltip("DO NOT USE.  This is the current value used for rotation.  To change rotation, change either controller rotation, or mouse rotation")]
-    [SerializeField] private Vector3 currentRotationSpeed    = Vector3.one;
+    private Vector3 currentRotationSpeed = Vector3.one;
     [SerializeField] private Vector3 controllerRotationSpeed = new Vector3(30f, 200f, 30f);
     [SerializeField] private Vector3 mouseRotationSpeed      = new Vector3(0.3f, 5f, 0.3f);
 
@@ -192,7 +191,7 @@ public class PlayerBoatController : MonoBehaviour
 
     private void matchRotationSpeedToInputStyle(string style)
     {
-        // check to see if input was from mouse delta
+        // check to see if input was from mouse delta, vs game pad input
         if (style == "Delta")
         {
             currentRotationSpeed = mouseRotationSpeed;
