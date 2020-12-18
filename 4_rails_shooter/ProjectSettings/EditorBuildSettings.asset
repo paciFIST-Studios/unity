@@ -11,4 +11,6 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/Archipelago.unity
     guid: 5bdc61ab3ad74da488a83be412868239
-  m_configObjects: {}
+  m_configObjects:
+    com.unity.input.settings: {fileID: 11400000, guid: a21f3af2c068680418af2d4027fcee1e,
+      type: 2}

@@ -450,7 +450,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   movementSpeedVector: {x: 20, y: 1, z: 20}
-  currentRotationSpeed: {x: 1, y: 1, z: 1}
   controllerRotationSpeed: {x: 30, y: 200, z: 30}
   mouseRotationSpeed: {x: 0.3, y: 5, z: 0.3}
   horizontalClampRange:
@@ -463,14 +462,18 @@ MonoBehaviour:
     min: 20
     max: 20
   pitchClampRange:
-    min: -30
-    max: 30
+    min: -5
+    max: 5
   yawClampRange:
     min: -360
     max: 360
   rollClampRange:
-    min: -15
-    max: 15
+    min: -30
+    max: 30
+  physAnimCache:
+    pitchFalloff: 0.8
+    yawFalloff: 0.8
+    rollFalloff: 0.8
 --- !u!1001 &71267922
 PrefabInstance:
   m_ObjectHideFlags: 0

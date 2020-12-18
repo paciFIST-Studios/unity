@@ -11,6 +11,18 @@ public struct ClampRange
     [SerializeField] public float max;
 }
 
+[System.Serializable]
+public struct PhysicsAnimationCache
+{
+    [System.NonSerialized] public float pitch;
+    [System.NonSerialized] public float yaw;
+    [System.NonSerialized] public float roll;
+
+    [SerializeField] public float pitchFalloff;
+    [SerializeField] public float yawFalloff;
+    [SerializeField] public float rollFalloff;
+}
+
 public class OnRailsPlayerBoatController : MonoBehaviour
 {
     [Header("Movement Speeds")]
@@ -36,6 +48,10 @@ public class OnRailsPlayerBoatController : MonoBehaviour
     bool isRotating = false;
     Vector2 lookVectorForThisTick = Vector2.zero;
 
+    [Header("Physical Animation")]
+    [SerializeField] private PhysicsAnimationCache physAnimCache;
+
+
     // Unity Functions ------------------------------------------------------------------
 
     private void Start()
@@ -56,6 +72,8 @@ public class OnRailsPlayerBoatController : MonoBehaviour
         {
             RotateCharacter(lookVectorForThisTick);
         }
+
+        //applyFinalPhysicsAnimation();
     }
 
     // Input Callbacks ------------------------------------------------------------------
@@ -63,15 +81,18 @@ public class OnRailsPlayerBoatController : MonoBehaviour
 
     public void OnMove(InputAction.CallbackContext ctx)
     {
-        if (ctx.started)
-        {
-            isMoving = true;
-        }
-        else if (ctx.canceled)
+        //if (ctx.started || ctx.performed)
+        //{
+        //    isMoving = true;
+        //}
+        //else if (ctx.canceled)
+        if (ctx.canceled)
         {
             isMoving = false;
             return;
         }
+
+        isMoving = true;
 
         moveVectorForThisTick = ctx.ReadValue<Vector2>();
     }
@@ -79,15 +100,17 @@ public class OnRailsPlayerBoatController : MonoBehaviour
 
     public void OnLook(InputAction.CallbackContext ctx)
     {
-        if (ctx.started)
-        {
-            isRotating = true;
-        }
-        else if (ctx.canceled)
+        //if (ctx.started || ctx.performed)
+        //{
+        //    isRotating = true;
+        //}
+        //else if (ctx.canceled)
+        if (ctx.canceled)
         {
             isRotating = false;
             return;
         }
+        isRotating = true;
 
         lookVectorForThisTick = ctx.ReadValue<Vector2>();
 
@@ -103,9 +126,13 @@ public class OnRailsPlayerBoatController : MonoBehaviour
         Vector3 vec;
 
         vec = buildRawMovementVector(input);
+        {
+            cacheMovementForRotation(vec); // for physical animation
+        }
         vec = applyMovementCalculations(vec);
+        vec = clampMovementVector(vec);
 
-        transform.localPosition = clampMovementVector(vec);
+        transform.localPosition = vec;
     }
 
     // takes the Vec2 input, and creates a Vec3 representation
@@ -143,8 +170,7 @@ public class OnRailsPlayerBoatController : MonoBehaviour
 
         return movement;
     }
-
-
+    
     private void RotateCharacter(Vector2 input)
     {
         Vector3 vec;
@@ -180,13 +206,38 @@ public class OnRailsPlayerBoatController : MonoBehaviour
 
     Vector3 clampRotationEuler(Vector3 rotation)
     {
-        rotation.x = Mathf.Clamp(rotation.x, pitchClampRange.min, pitchClampRange.max );
-        rotation.y = Mathf.Clamp(rotation.y, yawClampRange.min,   yawClampRange.max   );
-        rotation.z = Mathf.Clamp(rotation.z, rollClampRange.min,  rollClampRange.max  );
+        //rotation.x = Mathf.Clamp(rotation.x, pitchClampRange.min, pitchClampRange.max );
+        ////rotation.y = Mathf.Clamp(rotation.y, yawClampRange.min,   yawClampRange.max   );
+        //rotation.z = Mathf.Clamp(rotation.z, rollClampRange.min,  rollClampRange.max  );
 
         return rotation;
     }
 
+
+    void applyFinalPhysicsAnimation()
+    {
+        var rotation = transform.eulerAngles;
+        rotation.x += physAnimCache.pitch;
+        rotation.y += physAnimCache.yaw;
+        rotation.z += physAnimCache.roll;
+
+        rotation = clampRotationEuler(rotation);
+
+        transform.rotation = Quaternion.Euler(rotation.x, rotation.y, rotation.z);
+
+        perfomPhysicsAnimationUpkeep();
+    }
+
+    private void perfomPhysicsAnimationUpkeep()
+    {
+        physAnimCache.pitch = calculateValueFalloff(physAnimCache.pitch);
+        physAnimCache.yaw   = calculateValueFalloff(physAnimCache.yaw  );
+        physAnimCache.roll  = calculateValueFalloff(physAnimCache.roll );
+
+
+        moveVectorForThisTick = Vector3.zero;
+        lookVectorForThisTick = Vector3.zero;
+    }
 
 
     // Utilities ---------------------------------------------------------------------------
@@ -203,5 +254,29 @@ public class OnRailsPlayerBoatController : MonoBehaviour
             currentRotationSpeed = controllerRotationSpeed;
         }
     }
+
+    private void cacheMovementForRotation(Vector3 vec)
+    {
+        // NOTE: The incoming vectors represent the translations applied to the ship
+        // so pitch, (rotation about x-axis) is association with translation along y-axis
+        // roll, (rotation about z-axis) is associated with translation along x-axis
+        // and hypothetically, nothing comes in for yaw
+        physAnimCache.pitch +=  vec.y;
+        physAnimCache.yaw   +=  vec.z;
+        physAnimCache.roll  += -vec.x;
+    }
+
+    private float calculateValueFalloff(float value, float fallRate = 0.5f, float fallTo = 0.0f, float threshhold = 0.001f)
+    {
+        var result = value * fallRate;
+        if (Mathf.Abs(result) < Mathf.Abs(fallTo + threshhold))
+        {
+            result = fallTo;
+        }
+
+        return result;
+    }
+
+
 
 }
