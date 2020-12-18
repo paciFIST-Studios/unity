@@ -450,8 +450,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   movementSpeedVector: {x: 20, y: 1, z: 20}
-  rotationSpeed: 5
-  debugSprintMultiplier: 20
+  debugSprintMultiplier: 2
+  currentRotationSpeed: 1
   controllerRotationSpeed: 200
   mouseRotationSpeed: 5
   xAxisClampMag: 20

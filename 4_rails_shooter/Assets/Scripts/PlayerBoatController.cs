@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
+
 [System.Serializable]
 public struct ClampVec2
 {
@@ -13,14 +14,19 @@ public struct ClampVec2
 public class PlayerBoatController : MonoBehaviour
 {
     [Header("Player Stats")]
-    [Tooltip("Movement speed of the player, to be applied in local space")]
+    [Tooltip("Movement speed of the player, per axis, to be applied in local space")]
     [SerializeField] Vector3 movementSpeedVector;
+    [Tooltip("Rotation speed of the player, per axis, to be applied in local space")]
+    [SerializeField] Vector3 rotationSpeedVector;
     [SerializeField] float debugSprintMultiplier = 20f;
 
+    //[SerializeField] private float currentRotationSpeed = 1f;
+    //[SerializeField] private float controllerRotationSpeed = 200f;
+    //[SerializeField] private float mouseRotationSpeed = 5f;
     [Tooltip("DO NOT USE.  This is the current value used for rotation.  To change rotation, change either controller rotation, or mouse rotation")]
-    [SerializeField] private float currentRotationSpeed = 1f;
-    [SerializeField] private float controllerRotationSpeed = 200f;
-    [SerializeField] private float mouseRotationSpeed = 5f;
+    [SerializeField] private Vector3 currentRotationSpeed    = Vector3.one;
+    [SerializeField] private Vector3 controllerRotationSpeed = new Vector3(30f, 200f, 30f);
+    [SerializeField] private Vector3 mouseRotationSpeed      = new Vector3(0.3f, 5f, 0.3f);
 
     [SerializeField] private float xAxisClampMag;
     [SerializeField] private ClampVec2 yAxisClampHeight;
@@ -30,7 +36,9 @@ public class PlayerBoatController : MonoBehaviour
     Vector2 moveVectorForThisTick = Vector2.zero;
 
     bool isRotating = false;
-    float rotationThisTick = 0f;
+    Vector2 lookVectorForThisTick = Vector2.zero;
+
+    // Unity Functions ------------------------------------------------------------------
 
     private void Start()
     {
@@ -48,9 +56,12 @@ public class PlayerBoatController : MonoBehaviour
 
         if (isRotating)
         {
-            RotateCharacter(rotationThisTick);
+            RotateCharacter(lookVectorForThisTick);
         }
     }
+
+    // Input Callbacks ------------------------------------------------------------------
+
 
     public void OnMove(InputAction.CallbackContext ctx)
     {
@@ -84,7 +95,7 @@ public class PlayerBoatController : MonoBehaviour
         }
 
         var lookVector = ctx.ReadValue<Vector2>();
-        rotationThisTick = lookVector.x;
+        lookVectorForThisTick = lookVector;
 
         // check to see if input was from mouse delta
         if (ctx.action.GetBindingDisplayString() == "Delta")
@@ -97,44 +108,97 @@ public class PlayerBoatController : MonoBehaviour
         }
     }
 
+    // Class Functions ------------------------------------------------------------------
 
-    private void MoveCharacter(Vector2 vec)
+    private void MoveCharacter(Vector2 input)
     {
-        var displacementVector = Vector3.zero;
-        displacementVector += vec.x * transform.right;
-        displacementVector += vec.y * transform.up;         // y as up-down
-      //displacementVector += vec.y * transform.forward;    // y as depth
-
-
         if (Keyboard.current.leftShiftKey.isPressed)
         {
-            displacementVector *= debugSprintMultiplier;
+            input *= debugSprintMultiplier;
         }
 
-        Vector3 currentPos = transform.localPosition;
+        var vec = buildRawMovementVector(input);
+        vec = applyMovementCalculations(vec);
+        transform.localPosition = clampMovementVector(vec);
+    }
+
+    // takes the Vec2 input, and creates a Vec3 representation of it
+    Vector3 buildRawMovementVector(Vector2 input)
+    {
+        var displacementVector = Vector3.zero;
+        displacementVector += input.x * transform.right;
+        displacementVector += input.y * transform.up;         // y as up-down
+      //displacementVector += input.y * transform.forward;    // y as depth
+
+        return displacementVector;
+    }
+
+    // takes the Vec3 input, and applies all movement calculations
+    Vector3 applyMovementCalculations(Vector3 displacement)
+    {
+        Vector3 movementVector = transform.localPosition;
 
         // change current position, according to each component
         // each component, is increased by the displacement vector component
         //           , scaled by the corresponding movement vector component
         // all of these are also scaled by dt
-        currentPos.x += Time.deltaTime * displacementVector.x * movementSpeedVector.x;
-        currentPos.y += Time.deltaTime * displacementVector.y * movementSpeedVector.y;
-        currentPos.z += Time.deltaTime * displacementVector.z * movementSpeedVector.z;
+        movementVector.x += Time.deltaTime * displacement.x * movementSpeedVector.x;
+        movementVector.y += Time.deltaTime * displacement.y * movementSpeedVector.y;
+        movementVector.z += Time.deltaTime * displacement.z * movementSpeedVector.z;
 
-        // clamp resulting change to acceptable boundary
-        currentPos.x = Mathf.Clamp(currentPos.x, -xAxisClampMag, xAxisClampMag);
-        currentPos.y = Mathf.Clamp(currentPos.y, yAxisClampHeight.min, yAxisClampHeight.max);
-        currentPos.z = fixedPlayerDepth;
+        return movementVector;
+    }
 
-        transform.localPosition = currentPos;
+    // clamps movement vector to acceptable ranges
+    Vector3 clampMovementVector(Vector3 movement)
+    {    
+        movement.x = Mathf.Clamp(movement.x, -xAxisClampMag, xAxisClampMag);
+        movement.y = Mathf.Clamp(movement.y, yAxisClampHeight.min, yAxisClampHeight.max);
+        movement.z = fixedPlayerDepth;
+
+        return movement;
     }
 
 
-    private void RotateCharacter(float degrees)
+    private void RotateCharacter(Vector2 input)
     {
-        var ro = transform.localRotation.eulerAngles;
-        ro.y += degrees * currentRotationSpeed * Time.deltaTime;
-        transform.localRotation = Quaternion.Euler(ro.x, ro.y, ro.z);
+        var vec = buildRawRotationEuler(input);
+        vec = applyRotationCalculations(vec);
+        vec = clampRotationEuler(vec);
+        transform.localRotation = Quaternion.Euler(vec.x, vec.y, vec.z);
+
+        //var ro = transform.localRotation.eulerAngles;
+        //ro.y += degrees * currentRotationSpeed * Time.deltaTime;
+        //transform.localRotation = Quaternion.Euler(ro.x, ro.y, ro.z);
     }
+
+
+    Vector3 buildRawRotationEuler(Vector2 input)
+    {
+        var rotation = Vector3.zero;
+
+        rotation += input.x * Vector3.up;
+        //rotation += input.y * Vector3.right;
+
+        return rotation;
+    }
+
+    Vector3 applyRotationCalculations(Vector3 vec)
+    {
+        var rotation = transform.localEulerAngles;
+
+        rotation.x += Time.deltaTime * vec.x * currentRotationSpeed.x;
+        rotation.y += Time.deltaTime * vec.y * currentRotationSpeed.y;
+        rotation.z += Time.deltaTime * vec.z * currentRotationSpeed.z;
+
+        return rotation;
+    }
+
+    Vector3 clampRotationEuler(Vector3 vec)
+    {
+        return vec;
+    }
+
+
 
 }
