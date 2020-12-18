@@ -449,12 +449,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 69fc208f13334374da5dca6c92c967b0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  lateralMoveSpeed: 20
+  movementSpeedVector: {x: 20, y: 1, z: 20}
   rotationSpeed: 5
   debugSprintMultiplier: 20
   controllerRotationSpeed: 200
   mouseRotationSpeed: 5
   xAxisClampMag: 20
+  yAxisClampHeight:
+    min: -3
+    max: -1.5
   fixedPlayerDepth: 25
 --- !u!1001 &71267922
 PrefabInstance:
