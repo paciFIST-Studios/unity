@@ -22,12 +22,13 @@ public class PlayerBoatController : MonoBehaviour
     [SerializeField] private Vector3 mouseRotationSpeed      = new Vector3(0.3f, 5f, 0.3f);
 
     [Header("Clamp Ranges")]
-    [SerializeField] private ClampRange horizontalClampRange;
-    [SerializeField] private ClampRange verticalClampRange;
-    [SerializeField] private ClampRange depthClampRange;
-    [SerializeField] private ClampRange pitchClampRange;
-    [SerializeField] private ClampRange yawClampRange;
-    [SerializeField] private ClampRange rollClampRange;
+    [SerializeField] private ClampRange horizontalClampRange;   // x-axis movement(along)
+    [SerializeField] private ClampRange verticalClampRange;     // y-axis    "
+    [SerializeField] private ClampRange depthClampRange;        // z-axis    "
+
+    [SerializeField] private ClampRange pitchClampRange;        // z-axis rotation(about)
+    [SerializeField] private ClampRange yawClampRange;          // y-axis    "
+    [SerializeField] private ClampRange rollClampRange;         // x-axis    "
     
     bool isMoving = false;
     Vector2 moveVectorForThisTick = Vector2.zero;
@@ -90,7 +91,7 @@ public class PlayerBoatController : MonoBehaviour
 
         lookVectorForThisTick = ctx.ReadValue<Vector2>();
 
-        // check to see if input was from mouse delta
+        // we use different values for mouse vs controller rotation
         var style = ctx.action.GetBindingDisplayString();
         matchRotationSpeedToInputStyle(style);
     }
@@ -111,6 +112,7 @@ public class PlayerBoatController : MonoBehaviour
     Vector3 buildRawMovementVector(Vector2 input)
     {
         var displacementVector = Vector3.zero;
+
         displacementVector += input.x * transform.right;
         displacementVector += input.y * transform.up;         // y as up-down
       //displacementVector += input.y * transform.forward;    // y as depth
@@ -118,19 +120,19 @@ public class PlayerBoatController : MonoBehaviour
         return displacementVector;
     }
 
-    Vector3 applyMovementCalculations(Vector3 displacement)
+    Vector3 applyMovementCalculations(Vector3 raw)
     {
-        var movementVector = transform.localPosition;
+        var movement = transform.localPosition;
 
         // change current position, according to each component
         // each component, is increased by the displacement vector component
         //           , scaled by the corresponding movement vector component
         // all of these are also scaled by dt
-        movementVector.x += Time.deltaTime * displacement.x * movementSpeedVector.x;
-        movementVector.y += Time.deltaTime * displacement.y * movementSpeedVector.y;
-        movementVector.z += Time.deltaTime * displacement.z * movementSpeedVector.z;
+        movement.x += Time.deltaTime * raw.x * movementSpeedVector.x;
+        movement.y += Time.deltaTime * raw.y * movementSpeedVector.y;
+        movement.z += Time.deltaTime * raw.z * movementSpeedVector.z;
 
-        return movementVector;
+        return movement;
     }
 
     Vector3 clampMovementVector(Vector3 movement)
@@ -165,24 +167,24 @@ public class PlayerBoatController : MonoBehaviour
         return rotation;
     }
 
-    Vector3 applyRotationCalculations(Vector3 vec)
+    Vector3 applyRotationCalculations(Vector3 raw)
     {
         var rotation = transform.localEulerAngles;
 
-        rotation.x += Time.deltaTime * vec.x * currentRotationSpeed.x;
-        rotation.y += Time.deltaTime * vec.y * currentRotationSpeed.y;
-        rotation.z += Time.deltaTime * vec.z * currentRotationSpeed.z;
+        rotation.x += Time.deltaTime * raw.x * currentRotationSpeed.x;
+        rotation.y += Time.deltaTime * raw.y * currentRotationSpeed.y;
+        rotation.z += Time.deltaTime * raw.z * currentRotationSpeed.z;
 
         return rotation;
     }
 
-    Vector3 clampRotationEuler(Vector3 vec)
+    Vector3 clampRotationEuler(Vector3 rotation)
     {
-        vec.x = Mathf.Clamp(vec.x, pitchClampRange.min, pitchClampRange.max );
-        vec.y = Mathf.Clamp(vec.y, yawClampRange.min,   yawClampRange.max   );
-        vec.z = Mathf.Clamp(vec.z, rollClampRange.min,  rollClampRange.max  );
+        rotation.x = Mathf.Clamp(rotation.x, pitchClampRange.min, pitchClampRange.max );
+        rotation.y = Mathf.Clamp(rotation.y, yawClampRange.min,   yawClampRange.max   );
+        rotation.z = Mathf.Clamp(rotation.z, rollClampRange.min,  rollClampRange.max  );
 
-        return vec;
+        return rotation;
     }
 
 
