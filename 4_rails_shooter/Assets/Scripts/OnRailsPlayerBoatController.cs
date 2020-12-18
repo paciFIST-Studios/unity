@@ -11,7 +11,7 @@ public struct ClampRange
     [SerializeField] public float max;
 }
 
-public class PlayerBoatController : MonoBehaviour
+public class OnRailsPlayerBoatController : MonoBehaviour
 {
     [Header("Movement Speeds")]
     [Tooltip("Movement speed of the player, per axis, to be applied in local space")]
