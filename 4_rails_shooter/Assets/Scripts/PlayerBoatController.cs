@@ -13,6 +13,8 @@ public class PlayerBoatController : MonoBehaviour
     [SerializeField] private float controllerRotationSpeed = 200f;
     [SerializeField] private float mouseRotationSpeed = 5f;
 
+    [SerializeField] private float xAxisClampMag;
+    [SerializeField] private float fixedPlayerDepth = 20f;
 
     bool isMoving = false;
     Vector2 moveVectorForThisTick = Vector2.zero;
@@ -20,8 +22,11 @@ public class PlayerBoatController : MonoBehaviour
     bool isRotating = false;
     float rotationThisTick = 0f;
 
-    void Start()
+    private void Start()
     {
+        var pos = transform.localPosition;
+        pos.z = fixedPlayerDepth;
+        transform.localPosition = pos;
     }
 
     void FixedUpdate()
@@ -35,7 +40,6 @@ public class PlayerBoatController : MonoBehaviour
         {
             RotateCharacter(rotationThisTick);
         }
-
     }
 
     public void OnMove(InputAction.CallbackContext ctx)
@@ -80,7 +84,6 @@ public class PlayerBoatController : MonoBehaviour
         {
             rotationSpeed = controllerRotationSpeed;
         }
-
     }
 
 
@@ -91,24 +94,24 @@ public class PlayerBoatController : MonoBehaviour
         // moveVector += transform.up * vec.y       // y as up-down
         // moveVector += transform.forward * vec.y  // y as depth
 
-
         if (Keyboard.current.leftShiftKey.isPressed)
         {
             moveVector *= debugSprintMultiplier;
         }
 
-
-        var currentPos = transform.position;
+        var currentPos = transform.localPosition;
         currentPos += Time.deltaTime * moveVector * lateralMoveSpeed;
-        transform.position = currentPos;
-
-        //characterController.Move(Time.deltaTime * moveVector * lateralMoveSpeed);
+        currentPos.x = Mathf.Clamp(currentPos.x, -xAxisClampMag, xAxisClampMag);
+        currentPos.z = fixedPlayerDepth;
+        transform.localPosition = currentPos;
     }
 
 
     private void RotateCharacter(float degrees)
     {
-        transform.Rotate(Vector3.up * degrees * rotationSpeed * Time.deltaTime);
+        var ro = transform.localRotation.eulerAngles;
+        ro.y += degrees * rotationSpeed * Time.deltaTime;
+        transform.localRotation = Quaternion.Euler(ro.x, ro.y, ro.z);
     }
 
 }

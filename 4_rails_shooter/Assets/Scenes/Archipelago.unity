@@ -454,6 +454,8 @@ MonoBehaviour:
   debugSprintMultiplier: 20
   controllerRotationSpeed: 200
   mouseRotationSpeed: 5
+  xAxisClampMag: 20
+  fixedPlayerDepth: 25
 --- !u!1001 &71267922
 PrefabInstance:
   m_ObjectHideFlags: 0
