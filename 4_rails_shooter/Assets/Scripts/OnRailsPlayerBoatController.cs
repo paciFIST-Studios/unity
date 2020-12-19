@@ -169,7 +169,7 @@ public class OnRailsPlayerBoatController : MonoBehaviour
         vec = applyRotationCalculations(vec);
         vec = clampRotationEuler(vec);
 
-        transform.localRotation = Quaternion.Euler(vec.x, vec.y, vec.z);
+        transform.localRotation = Quaternion.Euler(vec);
     }
 
     // takes vec2 as input, and creates a vec3 representation
@@ -178,7 +178,7 @@ public class OnRailsPlayerBoatController : MonoBehaviour
         var rotation = Vector3.zero;
 
         rotation += input.x * Vector3.up;
-      //rotation += input.y * Vector3.right;
+        rotation += input.y * Vector3.right;
 
         return rotation;
     }
@@ -203,18 +203,21 @@ public class OnRailsPlayerBoatController : MonoBehaviour
         return rotation;
     }
 
-
     void applyFinalPhysicsAnimation()
     {
         var rotation = transform.eulerAngles;
-        rotation.x += physAnimCache.pitch;
-        rotation.y += physAnimCache.yaw;
+        //rotation.x += physAnimCache.pitch;
+        //rotation.y += physAnimCache.yaw;
         rotation.z += physAnimCache.roll;
 
+        transform.rotation = Quaternion.Euler(rotation);
+        physAnimCache.roll = calculateValueFalloff(physAnimCache.roll);
+
+
+
+        return;
+
         rotation = clampRotationEuler(rotation);
-
-        transform.rotation = Quaternion.Euler(rotation.x, rotation.y, rotation.z);
-
         perfomPhysicsAnimationUpkeep();
     }
 
@@ -227,7 +230,6 @@ public class OnRailsPlayerBoatController : MonoBehaviour
         moveVectorForThisTick = Vector3.zero;
         lookVectorForThisTick = Vector3.zero;
     }
-
 
     // Utilities ---------------------------------------------------------------------------
 
@@ -264,6 +266,34 @@ public class OnRailsPlayerBoatController : MonoBehaviour
         }
 
         return result;
+    }
+
+
+    private float recenterAngleMeasurement(float degrees)
+    {
+        if (degrees < 0f)
+        {
+            return 360f - degrees;
+        }
+        else if (degrees > 360f)
+        {
+            return degrees - 360f;
+        }
+        else
+        {
+            return degrees;
+        }
+    }
+
+    private float clampRotationDegrees(float value, float min, float max)
+    {
+        value = recenterAngleMeasurement(value);
+        min   = recenterAngleMeasurement(min  );
+        max   = recenterAngleMeasurement(max  );
+
+        value = Mathf.Clamp(value, min, max);
+
+        return value;
     }
 
 
