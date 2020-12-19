@@ -103,11 +103,8 @@ public class OnRailsPlayerBoatController : MonoBehaviour
         Vector3 vec;
 
         vec = buildRawMovementVector(input);
-        vec = applyMovementCalculations(vec);
-
-
-        vec = clampMovementVector(vec);
-        transform.localPosition = vec;
+        vec = calculateMovement(vec);
+        applyLocalMovement(vec);
     }
 
     // takes the Vec2 input, and creates a Vec3 representation
@@ -122,9 +119,10 @@ public class OnRailsPlayerBoatController : MonoBehaviour
         return raw;
     }
 
-    Vector3 applyMovementCalculations(Vector3 raw)
+    Vector3 calculateMovement(Vector3 raw)
     {
-        var movement = transform.localPosition;
+        //var movement = transform.localPosition;
+        var movement = Vector3.zero;
 
         // change current position, according to each component
         // each component, is increased by the displacement vector component
@@ -146,6 +144,17 @@ public class OnRailsPlayerBoatController : MonoBehaviour
         return movement;
     }
     
+    private void applyLocalMovement(Vector3 vec)
+    {
+        // clamping the position isn't merely clamping the incoming
+        // movement, but the incoming movement plus the current position
+        // so we have to sample the current position (by adding it in)
+        // before we perform the clamp
+        vec += transform.localPosition;
+        vec = clampMovementVector(vec);
+        transform.localPosition = vec;
+    }
+
     private void RotatePlayerBoat(Vector2 input)
     {
         Vector3 vec;
