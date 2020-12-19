@@ -61,7 +61,7 @@ public class OnRailsPlayerBoatController : MonoBehaviour
             RotatePlayerBoat(lookVectorForThisTick);
         }
 
-        applyPhysicalAnimation();        
+        applyPhysicalAnimation();
     }
 
     // Input Callbacks ------------------------------------------------------------------
@@ -216,18 +216,21 @@ public class OnRailsPlayerBoatController : MonoBehaviour
 
     void applyPhysicalAnimation()
     {
-        //var xPos = transform.localPosition.x;
-        //var roll = xPos * -0.1f;
+        performRollDueToUserInput();
+        //performIncrementalSelfRighting();
+    }
 
+    void performRollDueToUserInput()
+    {
         var xInput = moveVectorForThisTick.x;
         var roll = xInput * -1f;
 
         var current = transform.localEulerAngles.z;
 
         // clamp roll too far left
-        if(current < 180f && current >= 0f)
+        if (current < 180f && current >= 0f)
         {
-            if(current > 15f)
+            if (current > 15f)
             {
                 roll *= (roll > 0f) ? -2f : 1f;
             }
@@ -235,13 +238,30 @@ public class OnRailsPlayerBoatController : MonoBehaviour
         // clamp roll too far right
         else if (current >= 180f && current <= 360f)
         {
-            if(current <= 345)
+            if (current <= 345)
             {
                 roll *= (roll > 0f) ? 1f : -2f;
             }
         }
 
         transform.Rotate(Vector3.forward * roll);
+    }
+
+    void performIncrementalSelfRighting()
+    {
+        var rotation = transform.localRotation;
+
+        var currentRoll = rotation.eulerAngles.z;
+        var selfRighting = currentRoll * -0.5f;
+
+        if(selfRighting < float.Epsilon)
+        {
+            return;
+        }
+
+        rotation *= Quaternion.AngleAxis(selfRighting, Vector3.forward);
+        transform.localRotation = rotation;
+
     }
 
 
