@@ -11,25 +11,12 @@ public struct ClampRange
     [SerializeField] public float max;
 }
 
-[System.Serializable]
-public struct PhysicsAnimationCache
-{
-    [System.NonSerialized] public float pitch;
-    [System.NonSerialized] public float yaw;
-    [System.NonSerialized] public float roll;
-
-    [SerializeField] public float pitchFalloff;
-    [SerializeField] public float yawFalloff;
-    [SerializeField] public float rollFalloff;
-}
-
 public class OnRailsPlayerBoatController : MonoBehaviour
 {
     [Header("Movement Speeds")]
     [Tooltip("Movement speed of the player, per axis, to be applied in local space")]
     [SerializeField] Vector3 movementSpeedVector;
 
-    private Vector3 currentRotationSpeed = Vector3.one;
     [SerializeField] private Vector3 controllerRotationSpeed = new Vector3(30f, 200f, 30f);
     [SerializeField] private Vector3 mouseRotationSpeed      = new Vector3(0.3f, 5f, 0.3f);
 
@@ -41,15 +28,16 @@ public class OnRailsPlayerBoatController : MonoBehaviour
     [SerializeField] private ClampRange pitchClampRange;        // z-axis rotation(about)
     [SerializeField] private ClampRange yawClampRange;          // y-axis    "
     [SerializeField] private ClampRange rollClampRange;         // x-axis    "
+
     
-    bool isMoving = false;
-    Vector2 moveVectorForThisTick = Vector2.zero;
+    // these are used in LateUpdate
+    private bool isMoving   = false;
+    private bool isRotating = false;
+    private Vector2 moveVectorForThisTick = Vector2.zero;
+    private Vector2 lookVectorForThisTick = Vector2.zero;
 
-    bool isRotating = false;
-    Vector2 lookVectorForThisTick = Vector2.zero;
-
-    [Header("Physical Animation")]
-    [SerializeField] private PhysicsAnimationCache physAnimCache;
+    private Vector3 currentRotationVector = Vector3.zero;
+    private Vector3 currentRotationSpeed  = Vector3.one;
 
 
     // Unity Functions ------------------------------------------------------------------
@@ -73,7 +61,7 @@ public class OnRailsPlayerBoatController : MonoBehaviour
             RotateCharacter(lookVectorForThisTick);
         }
 
-        //applyFinalPhysicsAnimation();
+        applyFinalPhysicsAnimation();
     }
 
     // Input Callbacks ------------------------------------------------------------------
@@ -86,7 +74,6 @@ public class OnRailsPlayerBoatController : MonoBehaviour
             isMoving = false;
             return;
         }
-
         isMoving = true;
 
         moveVectorForThisTick = ctx.ReadValue<Vector2>();
@@ -116,9 +103,6 @@ public class OnRailsPlayerBoatController : MonoBehaviour
         Vector3 vec;
 
         vec = buildRawMovementVector(input);
-        {
-            cacheMovementForRotation(vec); // for physical animation
-        }
         vec = applyMovementCalculations(vec);
         vec = clampMovementVector(vec);
 
@@ -128,13 +112,13 @@ public class OnRailsPlayerBoatController : MonoBehaviour
     // takes the Vec2 input, and creates a Vec3 representation
     Vector3 buildRawMovementVector(Vector2 input)
     {
-        var displacementVector = Vector3.zero;
+        var raw = Vector3.zero;
 
-        displacementVector += input.x * transform.right;
-        displacementVector += input.y * transform.up;         // y as up-down
-      //displacementVector += input.y * transform.forward;    // y as depth
+        raw += input.x * transform.right;
+        raw += input.y * transform.up;         // y as up-down
+      //raw += input.y * transform.forward;    // y as depth
 
-        return displacementVector;
+        return raw;
     }
 
     Vector3 applyMovementCalculations(Vector3 raw)
@@ -202,40 +186,25 @@ public class OnRailsPlayerBoatController : MonoBehaviour
     // Applies axis angles rotation to local transform
     void applyLocalRotation(Vector3 v)
     {
+        currentRotationVector = v;
+
         var rotation = transform.localRotation;
-        rotation *= Quaternion.AngleAxis(v.x, Vector3.right);
-        rotation *= Quaternion.AngleAxis(v.y, Vector3.up);
-        rotation *= Quaternion.AngleAxis(v.z, Vector3.forward);
+        rotation *= Quaternion.AngleAxis(currentRotationVector.x, Vector3.right);
+        rotation *= Quaternion.AngleAxis(currentRotationVector.y, Vector3.up);
+        rotation *= Quaternion.AngleAxis(currentRotationVector.z, Vector3.forward);
         transform.localRotation = rotation;
     }
 
     void applyFinalPhysicsAnimation()
     {
-        var rotation = transform.eulerAngles;
-        //rotation.x += physAnimCache.pitch;
-        //rotation.y += physAnimCache.yaw;
-        rotation.z += physAnimCache.roll;
+        var xPos = transform.localPosition.x;
+        var calculatedRotation = xPos * -0.1f;
 
-        transform.rotation = Quaternion.Euler(rotation);
-        physAnimCache.roll = calculateValueFalloff(physAnimCache.roll);
-
-
-
-        return;
-
-        rotation = clampRotationEuler(rotation);
-        perfomPhysicsAnimationUpkeep();
+        var rotation = transform.rotation;
+        rotation *= Quaternion.AngleAxis(calculatedRotation, Vector3.forward);
+        transform.rotation = rotation;
     }
 
-    private void perfomPhysicsAnimationUpkeep()
-    {
-        physAnimCache.pitch = calculateValueFalloff(physAnimCache.pitch);
-        physAnimCache.yaw   = calculateValueFalloff(physAnimCache.yaw  );
-        physAnimCache.roll  = calculateValueFalloff(physAnimCache.roll );
-
-        moveVectorForThisTick = Vector3.zero;
-        lookVectorForThisTick = Vector3.zero;
-    }
 
     // Utilities ---------------------------------------------------------------------------
 
@@ -252,17 +221,6 @@ public class OnRailsPlayerBoatController : MonoBehaviour
         }
     }
 
-    private void cacheMovementForRotation(Vector3 vec)
-    {
-        // NOTE: The incoming vectors represent the translations applied to the ship
-        // so pitch, (rotation about x-axis) is association with translation along y-axis
-        // roll, (rotation about z-axis) is associated with translation along x-axis
-        // and hypothetically, nothing comes in for yaw
-        physAnimCache.pitch +=  vec.y;
-        physAnimCache.yaw   +=  vec.z;
-        physAnimCache.roll  += -vec.x;
-    }
-
     private float calculateValueFalloff(float value, float fallRate = 0.5f, float fallTo = 0.0f, float threshhold = 0.001f)
     {
         var result = value * fallRate;
@@ -273,35 +231,5 @@ public class OnRailsPlayerBoatController : MonoBehaviour
 
         return result;
     }
-
-
-    private float recenterAngleMeasurement(float degrees)
-    {
-        if (degrees < 0f)
-        {
-            return 360f - degrees;
-        }
-        else if (degrees > 360f)
-        {
-            return degrees - 360f;
-        }
-        else
-        {
-            return degrees;
-        }
-    }
-
-    private float clampRotationDegrees(float value, float min, float max)
-    {
-        value = recenterAngleMeasurement(value);
-        min   = recenterAngleMeasurement(min  );
-        max   = recenterAngleMeasurement(max  );
-
-        value = Mathf.Clamp(value, min, max);
-
-        return value;
-    }
-
-
 
 }
