@@ -15,7 +15,7 @@ public class OnRailsPlayerBoatController : MonoBehaviour
 {
     [Header("Movement Speeds")]
     [Tooltip("Movement speed of the player, per axis, to be applied in local space")]
-    [SerializeField] Vector3 movementSpeedVector;
+    [SerializeField] Vector3 movementSpeedsPerVector;
 
     [SerializeField] private Vector3 controllerRotationSpeed = new Vector3(30f, 200f, 30f);
     [SerializeField] private Vector3 mouseRotationSpeed      = new Vector3(0.3f, 5f, 0.3f);
@@ -101,10 +101,9 @@ public class OnRailsPlayerBoatController : MonoBehaviour
     private void MovePlayerBoat(Vector2 input)
     {
         Vector3 vec;
-
         vec = buildRawMovementVector(input);
-        vec = calculateMovement(vec);
-        applyLocalMovement(vec);
+        vec = refineMovementVector(vec);
+        applyMovementVector(vec);
     }
 
     // takes the Vec2 input, and creates a Vec3 representation
@@ -119,20 +118,13 @@ public class OnRailsPlayerBoatController : MonoBehaviour
         return raw;
     }
 
-    Vector3 calculateMovement(Vector3 raw)
+    Vector3 refineMovementVector(Vector3 raw)
     {
-        //var movement = transform.localPosition;
-        var movement = Vector3.zero;
+        raw.x *= Time.deltaTime * movementSpeedsPerVector.x;
+        raw.y *= Time.deltaTime * movementSpeedsPerVector.y;
+        raw.z *= Time.deltaTime * movementSpeedsPerVector.z;
 
-        // change current position, according to each component
-        // each component, is increased by the displacement vector component
-        //           , scaled by the corresponding movement vector component
-        // all of these are also scaled by dt
-        movement.x += Time.deltaTime * raw.x * movementSpeedVector.x;
-        movement.y += Time.deltaTime * raw.y * movementSpeedVector.y;
-        movement.z += Time.deltaTime * raw.z * movementSpeedVector.z;
-
-        return movement;
+        return raw;
     }
 
     Vector3 clampMovementVector(Vector3 movement)
@@ -144,7 +136,7 @@ public class OnRailsPlayerBoatController : MonoBehaviour
         return movement;
     }
     
-    private void applyLocalMovement(Vector3 vec)
+    private void applyMovementVector(Vector3 vec)
     {
         // clamping the position isn't merely clamping the incoming
         // movement, but the incoming movement plus the current position
