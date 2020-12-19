@@ -61,7 +61,7 @@ public class OnRailsPlayerBoatController : MonoBehaviour
             RotatePlayerBoat(lookVectorForThisTick);
         }
 
-        applyFinalPhysicsAnimation();
+        //applyFinalPhysicsAnimation();
     }
 
     // Input Callbacks ------------------------------------------------------------------
@@ -98,6 +98,7 @@ public class OnRailsPlayerBoatController : MonoBehaviour
 
     // Class Functions ------------------------------------------------------------------
 
+    // Movement ----
     private void MovePlayerBoat(Vector2 input)
     {
         Vector3 vec;
@@ -147,12 +148,14 @@ public class OnRailsPlayerBoatController : MonoBehaviour
         transform.localPosition = vec;
     }
 
+
+    // Rotation ----
     private void RotatePlayerBoat(Vector2 input)
     {
         Vector3 vec;
         vec = buildRawRotationEuler(input);
-        vec = calculateAddedRotation(vec);
-        applyLocalRotation(vec);
+        vec = refineRotationEuler(vec);
+        //applyRotationEuler(vec);
     }
 
     // takes vec2 as input, and creates a vec3 representation
@@ -166,7 +169,7 @@ public class OnRailsPlayerBoatController : MonoBehaviour
         return rotation;
     }
 
-    Vector3 calculateAddedRotation(Vector3 raw)
+    Vector3 refineRotationEuler(Vector3 raw)
     {
         raw.x *= Time.deltaTime * currentRotationSpeed.x;
         raw.y *= Time.deltaTime * currentRotationSpeed.y;
@@ -175,27 +178,41 @@ public class OnRailsPlayerBoatController : MonoBehaviour
         return raw;
     }
 
-    Vector3 clampRotationEuler(Vector3 rotation)
+    Vector3 clampRotationEuler(Vector3 euler)
     {
-        //rotation.x = clampRotationDegrees(rotation.x, pitchClampRange.min, pitchClampRange.max);
-        //rotation.y = clampRotationDegrees(rotation.y, yawClampRange.min, yawClampRange.max);
-        //rotation.z = clampRotationDegrees(rotation.z, rollClampRange.min, rollClampRange.max);
+        //euler.x = clampSingleAxisRotation(euler.x, pitchClampRange.min, pitchClampRange.max);
+        //euler.y = clampSingleAxisRotation(euler.y, yawClampRange.min, yawClampRange.max);
+        //euler.z = clampSingleAxisRotation(euler.z, rollClampRange.min, rollClampRange.max);
 
-        return rotation;
+        return euler;
     }
 
-    // Applies axis angles rotation to local transform
-    void applyLocalRotation(Vector3 v)
+    float clampSingleAxisRotation(float value, float min, float max)
     {
-        currentRotationVector = v;
+        value += 360f;
+        min += 360f;
+        max += 360f;
+        Mathf.Clamp(value, min, max);
+        value -= 360f;   
+        return value;
+    }
+    
 
-        //vec = clampRotationEuler(vec);
-
-
+    // Applies axis angles rotation to local transform
+    void applyRotationEuler(Vector3 euler)
+    {
         var rotation = transform.localRotation;
-        rotation *= Quaternion.AngleAxis(currentRotationVector.x, Vector3.right);
-        rotation *= Quaternion.AngleAxis(currentRotationVector.y, Vector3.up);
-        rotation = Quaternion.AngleAxis(currentRotationVector.z, Vector3.forward);
+
+        // sample local rotation so we can perform a good clamp
+        euler += rotation.eulerAngles;
+        print("euler b4 clamp = " + euler);
+        euler = clampRotationEuler(euler);
+        print("euler after clamp = " + euler);
+
+        //rotation = Quaternion.identity;
+        rotation *= Quaternion.AngleAxis(euler.x, Vector3.right);
+        rotation *= Quaternion.AngleAxis(euler.y, Vector3.up);
+        rotation *= Quaternion.AngleAxis(euler.z, Vector3.forward);
         transform.localRotation = rotation;
     }
 
