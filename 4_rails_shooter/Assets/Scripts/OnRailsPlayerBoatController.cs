@@ -222,8 +222,10 @@ public class OnRailsPlayerBoatController : MonoBehaviour
 
     void performRollDueToUserInput()
     {
+        float rollSpeed = 0.1f;
+
         var xInput = moveVectorForThisTick.x;
-        var roll = xInput * -1f;
+        var roll = xInput * -1f * rollSpeed;
 
         var current = transform.localEulerAngles.z;
 
