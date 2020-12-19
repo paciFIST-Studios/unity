@@ -81,11 +81,6 @@ public class OnRailsPlayerBoatController : MonoBehaviour
 
     public void OnMove(InputAction.CallbackContext ctx)
     {
-        //if (ctx.started || ctx.performed)
-        //{
-        //    isMoving = true;
-        //}
-        //else if (ctx.canceled)
         if (ctx.canceled)
         {
             isMoving = false;
@@ -100,11 +95,6 @@ public class OnRailsPlayerBoatController : MonoBehaviour
 
     public void OnLook(InputAction.CallbackContext ctx)
     {
-        //if (ctx.started || ctx.performed)
-        //{
-        //    isRotating = true;
-        //}
-        //else if (ctx.canceled)
         if (ctx.canceled)
         {
             isRotating = false;
@@ -233,7 +223,6 @@ public class OnRailsPlayerBoatController : MonoBehaviour
         physAnimCache.pitch = calculateValueFalloff(physAnimCache.pitch);
         physAnimCache.yaw   = calculateValueFalloff(physAnimCache.yaw  );
         physAnimCache.roll  = calculateValueFalloff(physAnimCache.roll );
-
 
         moveVectorForThisTick = Vector3.zero;
         lookVectorForThisTick = Vector3.zero;
