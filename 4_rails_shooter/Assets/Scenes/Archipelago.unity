@@ -449,7 +449,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 69fc208f13334374da5dca6c92c967b0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  movementSpeedVector: {x: 20, y: 1, z: 20}
+  movementSpeedsPerVector: {x: 8, y: 1, z: 0}
   controllerRotationSpeed: {x: 30, y: 200, z: 30}
   mouseRotationSpeed: {x: 0.3, y: 5, z: 0.3}
   horizontalClampRange:
