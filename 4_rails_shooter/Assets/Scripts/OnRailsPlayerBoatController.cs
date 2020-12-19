@@ -164,12 +164,10 @@ public class OnRailsPlayerBoatController : MonoBehaviour
     private void RotateCharacter(Vector2 input)
     {
         Vector3 vec;
-
         vec = buildRawRotationEuler(input);
-        vec = applyRotationCalculations(vec);
+        vec = calculateRotation(vec);
         vec = clampRotationEuler(vec);
-
-        transform.localRotation = Quaternion.Euler(vec);
+        applyLocalRotation(vec);
     }
 
     // takes vec2 as input, and creates a vec3 representation
@@ -183,24 +181,32 @@ public class OnRailsPlayerBoatController : MonoBehaviour
         return rotation;
     }
 
-    Vector3 applyRotationCalculations(Vector3 raw)
+    Vector3 calculateRotation(Vector3 raw)
     {
-        var rotation = transform.localEulerAngles;
+        raw.x *= Time.deltaTime * currentRotationSpeed.x;
+        raw.y *= Time.deltaTime * currentRotationSpeed.y;
+        raw.z *= Time.deltaTime * currentRotationSpeed.z;
 
-        rotation.x += Time.deltaTime * raw.x * currentRotationSpeed.x;
-        rotation.y += Time.deltaTime * raw.y * currentRotationSpeed.y;
-        rotation.z += Time.deltaTime * raw.z * currentRotationSpeed.z;
-
-        return rotation;
+        return raw;
     }
 
     Vector3 clampRotationEuler(Vector3 rotation)
     {
-        //rotation.x = Mathf.Clamp(rotation.x, pitchClampRange.min, pitchClampRange.max );
-        ////rotation.y = Mathf.Clamp(rotation.y, yawClampRange.min,   yawClampRange.max   );
-        //rotation.z = Mathf.Clamp(rotation.z, rollClampRange.min,  rollClampRange.max  );
+        //rotation.x = clampRotationDegrees(rotation.x, pitchClampRange.min, pitchClampRange.max);
+        //rotation.y = clampRotationDegrees(rotation.y, yawClampRange.min, yawClampRange.max);
+        //rotation.z = clampRotationDegrees(rotation.z, rollClampRange.min, rollClampRange.max);
 
         return rotation;
+    }
+
+    // Applies axis angles rotation to local transform
+    void applyLocalRotation(Vector3 v)
+    {
+        var rotation = transform.localRotation;
+        rotation *= Quaternion.AngleAxis(v.x, Vector3.right);
+        rotation *= Quaternion.AngleAxis(v.y, Vector3.up);
+        rotation *= Quaternion.AngleAxis(v.z, Vector3.forward);
+        transform.localRotation = rotation;
     }
 
     void applyFinalPhysicsAnimation()
