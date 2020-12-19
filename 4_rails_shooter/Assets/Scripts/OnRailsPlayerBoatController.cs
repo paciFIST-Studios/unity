@@ -155,7 +155,7 @@ public class OnRailsPlayerBoatController : MonoBehaviour
         Vector3 vec;
         vec = buildRawRotationEuler(input);
         vec = refineRotationEuler(vec);
-        //applyRotationEuler(vec);
+        applyRotationEuler(vec);
     }
 
     // takes vec2 as input, and creates a vec3 representation
@@ -195,8 +195,7 @@ public class OnRailsPlayerBoatController : MonoBehaviour
         Mathf.Clamp(value, min, max);
         value -= 360f;   
         return value;
-    }
-    
+    }    
 
     // Applies axis angles rotation to local transform
     void applyRotationEuler(Vector3 euler)
@@ -204,12 +203,9 @@ public class OnRailsPlayerBoatController : MonoBehaviour
         var rotation = transform.localRotation;
 
         // sample local rotation so we can perform a good clamp
-        euler += rotation.eulerAngles;
-        print("euler b4 clamp = " + euler);
-        euler = clampRotationEuler(euler);
-        print("euler after clamp = " + euler);
+        //euler += rotation.eulerAngles;
+        //euler = clampRotationEuler(euler);
 
-        //rotation = Quaternion.identity;
         rotation *= Quaternion.AngleAxis(euler.x, Vector3.right);
         rotation *= Quaternion.AngleAxis(euler.y, Vector3.up);
         rotation *= Quaternion.AngleAxis(euler.z, Vector3.forward);
