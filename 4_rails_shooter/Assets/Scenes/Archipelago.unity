@@ -462,18 +462,14 @@ MonoBehaviour:
     min: 20
     max: 20
   pitchClampRange:
-    min: -5
-    max: 5
+    min: -10
+    max: 10
   yawClampRange:
     min: -360
     max: 360
   rollClampRange:
     min: -30
     max: 30
-  physAnimCache:
-    pitchFalloff: 0.8
-    yawFalloff: 0.8
-    rollFalloff: 0.8
 --- !u!1001 &71267922
 PrefabInstance:
   m_ObjectHideFlags: 0
