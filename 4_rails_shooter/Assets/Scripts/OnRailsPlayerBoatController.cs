@@ -104,8 +104,9 @@ public class OnRailsPlayerBoatController : MonoBehaviour
 
         vec = buildRawMovementVector(input);
         vec = applyMovementCalculations(vec);
-        vec = clampMovementVector(vec);
 
+
+        vec = clampMovementVector(vec);
         transform.localPosition = vec;
     }
 
@@ -149,8 +150,7 @@ public class OnRailsPlayerBoatController : MonoBehaviour
     {
         Vector3 vec;
         vec = buildRawRotationEuler(input);
-        vec = calculateRotation(vec);
-        vec = clampRotationEuler(vec);
+        vec = calculateAddedRotation(vec);
         applyLocalRotation(vec);
     }
 
@@ -165,7 +165,7 @@ public class OnRailsPlayerBoatController : MonoBehaviour
         return rotation;
     }
 
-    Vector3 calculateRotation(Vector3 raw)
+    Vector3 calculateAddedRotation(Vector3 raw)
     {
         raw.x *= Time.deltaTime * currentRotationSpeed.x;
         raw.y *= Time.deltaTime * currentRotationSpeed.y;
@@ -188,10 +188,13 @@ public class OnRailsPlayerBoatController : MonoBehaviour
     {
         currentRotationVector = v;
 
+        //vec = clampRotationEuler(vec);
+
+
         var rotation = transform.localRotation;
         rotation *= Quaternion.AngleAxis(currentRotationVector.x, Vector3.right);
         rotation *= Quaternion.AngleAxis(currentRotationVector.y, Vector3.up);
-        rotation *= Quaternion.AngleAxis(currentRotationVector.z, Vector3.forward);
+        rotation = Quaternion.AngleAxis(currentRotationVector.z, Vector3.forward);
         transform.localRotation = rotation;
     }
 
