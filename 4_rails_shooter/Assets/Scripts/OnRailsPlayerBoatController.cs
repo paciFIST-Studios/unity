@@ -61,7 +61,7 @@ public class OnRailsPlayerBoatController : MonoBehaviour
             RotatePlayerBoat(lookVectorForThisTick);
         }
 
-        applyPhysicalAnimation();
+        applyPhysicalAnimation();        
     }
 
     // Input Callbacks ------------------------------------------------------------------
@@ -71,6 +71,7 @@ public class OnRailsPlayerBoatController : MonoBehaviour
     {
         if (ctx.canceled)
         {
+            moveVectorForThisTick = Vector2.zero;
             isMoving = false;
             return;
         }
@@ -84,6 +85,7 @@ public class OnRailsPlayerBoatController : MonoBehaviour
     {
         if (ctx.canceled)
         {
+            lookVectorForThisTick = Vector2.zero;
             isRotating = false;
             return;
         }
@@ -214,8 +216,11 @@ public class OnRailsPlayerBoatController : MonoBehaviour
 
     void applyPhysicalAnimation()
     {
-        var xPos = transform.localPosition.x;
-        var roll = xPos * -0.1f;
+        //var xPos = transform.localPosition.x;
+        //var roll = xPos * -0.1f;
+
+        var xInput = moveVectorForThisTick.x;
+        var roll = xInput * -1f;
 
         var current = transform.localEulerAngles.z;
 
