@@ -53,12 +53,12 @@ public class OnRailsPlayerBoatController : MonoBehaviour
     {
         if (isMoving)
         {
-            MoveCharacter(moveVectorForThisTick);
+            MovePlayerBoat(moveVectorForThisTick);
         }
 
         if (isRotating)
         {
-            RotateCharacter(lookVectorForThisTick);
+            RotatePlayerBoat(lookVectorForThisTick);
         }
 
         applyFinalPhysicsAnimation();
@@ -98,7 +98,7 @@ public class OnRailsPlayerBoatController : MonoBehaviour
 
     // Class Functions ------------------------------------------------------------------
 
-    private void MoveCharacter(Vector2 input)
+    private void MovePlayerBoat(Vector2 input)
     {
         Vector3 vec;
 
@@ -145,7 +145,7 @@ public class OnRailsPlayerBoatController : MonoBehaviour
         return movement;
     }
     
-    private void RotateCharacter(Vector2 input)
+    private void RotatePlayerBoat(Vector2 input)
     {
         Vector3 vec;
         vec = buildRawRotationEuler(input);
