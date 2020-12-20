@@ -278,8 +278,7 @@ public class OnRailsPlayerBoatController : MonoBehaviour
         var rotation = transform.localRotation;
         var currentRoll = rotation.eulerAngles.z;
 
-        print("currentRoll=" + currentRoll);
-
+        // set roll to zero, if we're close to zero
         if(Mathf.Abs(currentRoll) < float.Epsilon)
         {
             transform.localRotation = Quaternion.Euler(
