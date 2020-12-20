@@ -29,6 +29,7 @@ public class OnRailsPlayerBoatController : MonoBehaviour
     [SerializeField] private ClampRange yawClampRange;          // y-axis    "
     [SerializeField] private ClampRange rollClampRange;         // x-axis    "
 
+    [SerializeField] private float rollSelfRightingSpeed = 1f;
     
     // these are used in LateUpdate
     private bool isMoving   = false;
@@ -217,7 +218,7 @@ public class OnRailsPlayerBoatController : MonoBehaviour
     void applyPhysicalAnimation()
     {
         performRollDueToUserInput();
-        //performIncrementalSelfRighting();
+        performIncrementalSelfRighting();
     }
 
     void performRollDueToUserInput()
@@ -225,14 +226,14 @@ public class OnRailsPlayerBoatController : MonoBehaviour
         var xInput = moveVectorForThisTick.x * -1f;
         var roll = xInput * currentRotationSpeed.z;
 
-        roll = clampRoll(roll);
+        roll = clampRollDueToUserInput(roll);
 
         var rotation = transform.localRotation;
         rotation *= Quaternion.AngleAxis(roll, Vector3.forward);
         transform.localRotation = rotation;
     }
 
-    private float clampRoll(float roll)
+    private float clampRollDueToUserInput(float roll)
     {
         var currentRoll = transform.localEulerAngles.z;
 
@@ -275,18 +276,37 @@ public class OnRailsPlayerBoatController : MonoBehaviour
     void performIncrementalSelfRighting()
     {
         var rotation = transform.localRotation;
-
         var currentRoll = rotation.eulerAngles.z;
-        var selfRighting = currentRoll * -0.5f;
 
-        if(selfRighting < float.Epsilon)
+        print("currentRoll=" + currentRoll);
+
+        if(Mathf.Abs(currentRoll) < float.Epsilon)
         {
+            transform.localRotation = Quaternion.Euler(
+                  transform.localEulerAngles.x
+                , transform.localEulerAngles.y
+                , 0f
+                );
             return;
         }
 
-        rotation *= Quaternion.AngleAxis(selfRighting, Vector3.forward);
-        transform.localRotation = rotation;
 
+        float roll = 0f;
+        if(currentRoll >= 180f && currentRoll <= 360f)
+        {
+            roll = Time.deltaTime * (360f - currentRoll) * rollSelfRightingSpeed;
+        }
+        else if (currentRoll < 180f && currentRoll > 0f)
+        {
+            roll = Time.deltaTime * -currentRoll * rollSelfRightingSpeed;
+        }
+        else
+        {
+            print("Rotation error: OnRailsPlayerBoatController::SelfRighting !");
+        }
+
+        rotation *= Quaternion.AngleAxis(roll, Vector3.forward);
+        transform.localRotation = rotation;
     }
 
 
