@@ -17,7 +17,7 @@ public class OnRailsPlayerBoatController : MonoBehaviour
     [Tooltip("Movement speed of the player, per axis, to be applied in local space")]
     [SerializeField] Vector3 movementSpeedsPerVector;
 
-    [SerializeField] private Vector3 controllerRotationSpeed = new Vector3(30f, 200f, 30f);
+    [SerializeField] private Vector3 controllerRotationSpeed = new Vector3(30f, 200f, 1.0f);
     [SerializeField] private Vector3 mouseRotationSpeed      = new Vector3(0.3f, 5f, 0.3f);
 
     [Header("Clamp Ranges")]
@@ -222,31 +222,54 @@ public class OnRailsPlayerBoatController : MonoBehaviour
 
     void performRollDueToUserInput()
     {
-        float rollSpeed = 0.1f;
+        var xInput = moveVectorForThisTick.x * -1f;
+        var roll = xInput * currentRotationSpeed.z;
 
-        var xInput = moveVectorForThisTick.x;
-        var roll = xInput * -1f * rollSpeed;
+        roll = clampRoll(roll);
 
-        var current = transform.localEulerAngles.z;
+        var rotation = transform.localRotation;
+        rotation *= Quaternion.AngleAxis(roll, Vector3.forward);
+        transform.localRotation = rotation;
+    }
+
+    private float clampRoll(float roll)
+    {
+        var currentRoll = transform.localEulerAngles.z;
 
         // clamp roll too far left
-        if (current < 180f && current >= 0f)
+        if (currentRoll < 180f && currentRoll >= 0f)
         {
-            if (current > 15f)
+            if (currentRoll > rollClampRange.max)
             {
-                roll *= (roll > 0f) ? -2f : 1f;
+                // if we're greater than the limit and we would
+                // continue on in that direction
+                if (roll > 0f)
+                {
+                    // prevent further roll
+                    roll = 0f;
+                }
             }
         }
         // clamp roll too far right
-        else if (current >= 180f && current <= 360f)
+        else if (currentRoll >= 180f && currentRoll <= 360f)
         {
-            if (current <= 345)
+            if (currentRoll <= rollClampRange.min  + 360f)
             {
-                roll *= (roll > 0f) ? 1f : -2f;
+                // if we're lower than the max, but we would
+                // keep getting lower
+                if(roll < 0f)
+                {
+                    // prevent further roll
+                    roll = 0f;
+                }
             }
         }
+        else
+        {
+            print("Rotation error: OnRailsPlayerBoatController::ClampRoll !");
+        }
 
-        transform.Rotate(Vector3.forward * roll);
+        return roll;
     }
 
     void performIncrementalSelfRighting()

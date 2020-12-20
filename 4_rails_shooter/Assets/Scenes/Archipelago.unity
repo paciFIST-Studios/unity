@@ -450,8 +450,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   movementSpeedsPerVector: {x: 8, y: 1, z: 0}
-  controllerRotationSpeed: {x: 30, y: 200, z: 30}
-  mouseRotationSpeed: {x: 0.3, y: 5, z: 0.3}
+  controllerRotationSpeed: {x: 30, y: 200, z: 1}
+  mouseRotationSpeed: {x: 0.3, y: 5, z: 1}
   horizontalClampRange:
     min: -16
     max: 16
