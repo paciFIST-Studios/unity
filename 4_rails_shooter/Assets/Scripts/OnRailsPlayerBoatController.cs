@@ -34,8 +34,8 @@ public class OnRailsPlayerBoatController : MonoBehaviour
     // these are used in LateUpdate
     private bool isMoving   = false;
     private bool isRotating = false;
-    private Vector2 moveVectorForThisTick = Vector2.zero;
-    private Vector2 lookVectorForThisTick = Vector2.zero;
+    private Vector2 moveInputThisTick = Vector2.zero;
+    private Vector2 lookInputThisTick = Vector2.zero;
 
     private Vector3 currentRotationVector = Vector3.zero;
     private Vector3 currentRotationSpeed  = Vector3.one;
@@ -54,12 +54,12 @@ public class OnRailsPlayerBoatController : MonoBehaviour
     {
         if (isMoving)
         {
-            MovePlayerBoat(moveVectorForThisTick);
+            MovePlayerBoat(moveInputThisTick);
         }
 
         if (isRotating)
         {
-            RotatePlayerBoat(lookVectorForThisTick);
+            RotatePlayerBoat(lookInputThisTick);
         }
 
         applyPhysicalAnimation();
@@ -72,13 +72,13 @@ public class OnRailsPlayerBoatController : MonoBehaviour
     {
         if (ctx.canceled)
         {
-            moveVectorForThisTick = Vector2.zero;
+            moveInputThisTick = Vector2.zero;
             isMoving = false;
             return;
         }
         isMoving = true;
 
-        moveVectorForThisTick = ctx.ReadValue<Vector2>();
+        moveInputThisTick = ctx.ReadValue<Vector2>();
     }
 
 
@@ -86,13 +86,13 @@ public class OnRailsPlayerBoatController : MonoBehaviour
     {
         if (ctx.canceled)
         {
-            lookVectorForThisTick = Vector2.zero;
+            lookInputThisTick = Vector2.zero;
             isRotating = false;
             return;
         }
         isRotating = true;
 
-        lookVectorForThisTick = ctx.ReadValue<Vector2>();
+        lookInputThisTick = ctx.ReadValue<Vector2>();
 
         // we use different values for mouse vs controller rotation
         var style = ctx.action.GetBindingDisplayString();
@@ -181,26 +181,27 @@ public class OnRailsPlayerBoatController : MonoBehaviour
         return raw;
     }
 
-    Vector3 clampRotationEuler(Vector3 euler)
-    {
-        //euler.x = clampSingleAxisRotation(euler.x, pitchClampRange.min, pitchClampRange.max);
-        //euler.y = clampSingleAxisRotation(euler.y, yawClampRange.min, yawClampRange.max);
-        //euler.z = clampSingleAxisRotation(euler.z, rollClampRange.min, rollClampRange.max);
-
-        return euler;
-    }
-
-    float clampSingleAxisRotation(float value, float min, float max)
-    {
-        value += 360f;
-        min += 360f;
-        max += 360f;
-        Mathf.Clamp(value, min, max);
-        value -= 360f;   
-        return value;
-    }    
+    //Vector3 clampRotationEuler(Vector3 euler)
+    //{
+    //    //euler.x = clampSingleAxisRotation(euler.x, pitchClampRange.min, pitchClampRange.max);
+    //    //euler.y = clampSingleAxisRotation(euler.y, yawClampRange.min, yawClampRange.max);
+    //    //euler.z = clampSingleAxisRotation(euler.z, rollClampRange.min, rollClampRange.max);
+    //
+    //    return euler;
+    //}
+    //
+    //float clampSingleAxisRotation(float value, float min, float max)
+    //{
+    //    value += 360f;
+    //    min += 360f;
+    //    max += 360f;
+    //    Mathf.Clamp(value, min, max);
+    //    value -= 360f;   
+    //    return value;
+    //}    
 
     // Applies axis angles rotation to local transform
+
     void applyRotationEuler(Vector3 euler)
     {
         var rotation = transform.localRotation;
@@ -223,10 +224,13 @@ public class OnRailsPlayerBoatController : MonoBehaviour
 
     void performRollDueToUserInput()
     {
-        var xInput = moveVectorForThisTick.x * -1f;
+        var xInput = moveInputThisTick.x * -1f;
+        //var roll = Time.deltaTime * xInput * currentRotationSpeed.z;
         var roll = xInput * currentRotationSpeed.z;
 
+        print("roll=" + roll);
         roll = clampRollDueToUserInput(roll);
+        print("clamped roll=" + roll);
 
         var rotation = transform.localRotation;
         rotation *= Quaternion.AngleAxis(roll, Vector3.forward);
@@ -236,6 +240,8 @@ public class OnRailsPlayerBoatController : MonoBehaviour
     private float clampRollDueToUserInput(float roll)
     {
         var currentRoll = transform.localEulerAngles.z;
+
+        if(currentRoll < 0f) { currentRoll += 360f; }
 
         // clamp roll too far left
         if (currentRoll < 180f && currentRoll >= 0f)
@@ -267,6 +273,7 @@ public class OnRailsPlayerBoatController : MonoBehaviour
         }
         else
         {
+            roll = 0f;
             print("Rotation error: OnRailsPlayerBoatController::ClampRoll !");
         }
 
@@ -278,35 +285,38 @@ public class OnRailsPlayerBoatController : MonoBehaviour
         var rotation = transform.localRotation;
         var currentRoll = rotation.eulerAngles.z;
 
-        // set roll to zero, if we're close to zero
-        if(Mathf.Abs(currentRoll) < float.Epsilon)
-        {
-            transform.localRotation = Quaternion.Euler(
-                  transform.localEulerAngles.x
-                , transform.localEulerAngles.y
-                , 0f
-                );
-            return;
-        }
+        //// set roll to zero, if we're close to zero
+        //if(Mathf.Abs(currentRoll) < float.Epsilon)
+        //{
+        //    transform.localRotation = Quaternion.Euler(
+        //          transform.localEulerAngles.x
+        //        , transform.localEulerAngles.y
+        //        , 0f
+        //        );
+        //    return;
+        //}
 
-        var roll = clampIncrementalSelfRighting(currentRoll);
+        var roll = calculateIncrementalSelfRighting(currentRoll);
         rotation *= Quaternion.AngleAxis(roll, Vector3.forward);
         transform.localRotation = rotation;
     }
 
-    private float clampIncrementalSelfRighting(float currentRoll)
+    private float calculateIncrementalSelfRighting(float current)
     {
+        if(current < 0f) { current += 360f; }
+
         float roll = 0f;
-        if (currentRoll >= 180f && currentRoll <= 360f)
+        if (current >= 180f && current <= 360f)
         {
-            roll = Time.deltaTime * (360f - currentRoll) * rollSelfRightingSpeed;
+            roll = Time.deltaTime * (360f - current) * rollSelfRightingSpeed;
         }
-        else if (currentRoll < 180f && currentRoll >= 0f)
+        else if (current < 180f && current >= 0f)
         {
-            roll = Time.deltaTime * -currentRoll * rollSelfRightingSpeed;
+            roll = Time.deltaTime * -current * rollSelfRightingSpeed;
         }
         else
         {
+            roll = 0f;
             print("Rotation error: OnRailsPlayerBoatController::SelfRighting !");
         }
         return roll;
@@ -327,15 +337,15 @@ public class OnRailsPlayerBoatController : MonoBehaviour
         }
     }
 
-    private float calculateValueFalloff(float value, float fallRate = 0.5f, float fallTo = 0.0f, float threshhold = 0.001f)
-    {
-        var result = value * fallRate;
-        if (Mathf.Abs(result) < Mathf.Abs(fallTo + threshhold))
-        {
-            result = fallTo;
-        }
-
-        return result;
-    }
+    //private float calculateValueFalloff(float value, float fallRate = 0.5f, float fallTo = 0.0f, float threshhold = 0.001f)
+    //{
+    //    var result = value * fallRate;
+    //    if (Mathf.Abs(result) < Mathf.Abs(fallTo + threshhold))
+    //    {
+    //        result = fallTo;
+    //    }
+    //
+    //    return result;
+    //}
 
 }
