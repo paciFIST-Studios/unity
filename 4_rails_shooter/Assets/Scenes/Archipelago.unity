@@ -449,7 +449,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 69fc208f13334374da5dca6c92c967b0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  movementSpeedsPerVector: {x: 8, y: 1, z: 0}
+  movementSpeedsPerVector: {x: 12, y: 1, z: 0}
   controllerRotationSpeed: {x: 30, y: 200, z: 1}
   mouseRotationSpeed: {x: 0.3, y: 5, z: 1}
   horizontalClampRange:
@@ -470,6 +470,7 @@ MonoBehaviour:
   rollClampRange:
     min: -30
     max: 30
+  rollSelfRightingSpeed: 1
 --- !u!1001 &71267922
 PrefabInstance:
   m_ObjectHideFlags: 0

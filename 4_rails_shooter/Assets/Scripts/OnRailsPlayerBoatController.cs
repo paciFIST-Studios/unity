@@ -289,13 +289,19 @@ public class OnRailsPlayerBoatController : MonoBehaviour
             return;
         }
 
+        var roll = clampIncrementalSelfRighting(currentRoll);
+        rotation *= Quaternion.AngleAxis(roll, Vector3.forward);
+        transform.localRotation = rotation;
+    }
 
+    private float clampIncrementalSelfRighting(float currentRoll)
+    {
         float roll = 0f;
-        if(currentRoll >= 180f && currentRoll <= 360f)
+        if (currentRoll >= 180f && currentRoll <= 360f)
         {
             roll = Time.deltaTime * (360f - currentRoll) * rollSelfRightingSpeed;
         }
-        else if (currentRoll < 180f && currentRoll > 0f)
+        else if (currentRoll < 180f && currentRoll >= 0f)
         {
             roll = Time.deltaTime * -currentRoll * rollSelfRightingSpeed;
         }
@@ -303,11 +309,8 @@ public class OnRailsPlayerBoatController : MonoBehaviour
         {
             print("Rotation error: OnRailsPlayerBoatController::SelfRighting !");
         }
-
-        rotation *= Quaternion.AngleAxis(roll, Vector3.forward);
-        transform.localRotation = rotation;
+        return roll;
     }
-
 
     // Utilities ---------------------------------------------------------------------------
 
