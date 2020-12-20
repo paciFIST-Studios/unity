@@ -450,8 +450,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   movementSpeedsPerVector: {x: 8, y: 1, z: 0}
-  controllerRotationSpeed: {x: 30, y: 200, z: 5}
-  mouseRotationSpeed: {x: 0.3, y: 5, z: 5}
+  controllerRotationSpeed: {x: 30, y: 200, z: 100}
+  mouseRotationSpeed: {x: 0.3, y: 5, z: 100}
   horizontalClampRange:
     min: -16
     max: 16
@@ -470,7 +470,7 @@ MonoBehaviour:
   rollClampRange:
     min: -20
     max: 20
-  rollSelfRightingSpeed: 1
+  rollSelfRightingSpeed: 2
 --- !u!1001 &71267922
 PrefabInstance:
   m_ObjectHideFlags: 0

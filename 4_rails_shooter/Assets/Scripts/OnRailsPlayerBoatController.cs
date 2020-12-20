@@ -40,7 +40,6 @@ public class OnRailsPlayerBoatController : MonoBehaviour
     private Vector3 currentRotationVector = Vector3.zero;
     private Vector3 currentRotationSpeed  = Vector3.one;
 
-
     // Unity Functions ------------------------------------------------------------------
 
     private void Start()
@@ -62,11 +61,10 @@ public class OnRailsPlayerBoatController : MonoBehaviour
             RotatePlayerBoat(lookInputThisTick);
         }
 
-        applyPhysicalAnimation();
+        ApplyPhysicalAnimation();
     }
 
     // Input Callbacks ------------------------------------------------------------------
-
 
     public void OnMove(InputAction.CallbackContext ctx)
     {
@@ -80,7 +78,6 @@ public class OnRailsPlayerBoatController : MonoBehaviour
 
         moveInputThisTick = ctx.ReadValue<Vector2>();
     }
-
 
     public void OnLook(InputAction.CallbackContext ctx)
     {
@@ -96,7 +93,7 @@ public class OnRailsPlayerBoatController : MonoBehaviour
 
         // we use different values for mouse vs controller rotation
         var style = ctx.action.GetBindingDisplayString();
-        matchRotationSpeedToInputStyle(style);
+        MatchRotationSpeedToInputStyle(style);
     }
 
     // Class Functions ------------------------------------------------------------------
@@ -105,16 +102,15 @@ public class OnRailsPlayerBoatController : MonoBehaviour
     private void MovePlayerBoat(Vector2 input)
     {
         Vector3 vec;
-        vec = buildRawMovementVector(input);
-        vec = refineMovementVector(vec);
-        applyMovementVector(vec);
+        vec = BuildRawMovementVector(input);
+        vec = RefineMovementVector(vec);
+        ApplyMovementVector(vec);
     }
 
     // takes the Vec2 input, and creates a Vec3 representation
-    Vector3 buildRawMovementVector(Vector2 input)
+    Vector3 BuildRawMovementVector(Vector2 input)
     {
         var raw = Vector3.zero;
-
         raw += input.x * transform.right;
         raw += input.y * transform.up;         // y as up-down
       //raw += input.y * transform.forward;    // y as depth
@@ -122,7 +118,7 @@ public class OnRailsPlayerBoatController : MonoBehaviour
         return raw;
     }
 
-    Vector3 refineMovementVector(Vector3 raw)
+    Vector3 RefineMovementVector(Vector3 raw)
     {
         raw.x *= Time.deltaTime * movementSpeedsPerVector.x;
         raw.y *= Time.deltaTime * movementSpeedsPerVector.y;
@@ -131,7 +127,7 @@ public class OnRailsPlayerBoatController : MonoBehaviour
         return raw;
     }
 
-    Vector3 clampMovementVector(Vector3 movement)
+    Vector3 ClampMovementVector(Vector3 movement)
     {    
         movement.x = Mathf.Clamp(movement.x, horizontalClampRange.min, horizontalClampRange.max );
         movement.y = Mathf.Clamp(movement.y, verticalClampRange.min  , verticalClampRange.max   );
@@ -140,39 +136,37 @@ public class OnRailsPlayerBoatController : MonoBehaviour
         return movement;
     }
     
-    private void applyMovementVector(Vector3 vec)
+    private void ApplyMovementVector(Vector3 vec)
     {
         // clamping the position isn't merely clamping the incoming
         // movement, but the incoming movement plus the current position
         // so we have to sample the current position (by adding it in)
         // before we perform the clamp
         vec += transform.localPosition;
-        vec = clampMovementVector(vec);
+        vec = ClampMovementVector(vec);
         transform.localPosition = vec;
     }
-
 
     // Rotation ----
     private void RotatePlayerBoat(Vector2 input)
     {
         Vector3 vec;
-        vec = buildRawRotationEuler(input);
-        vec = refineRotationEuler(vec);
-        applyRotationEuler(vec);
+        vec = BuildRawRotationEuler(input);
+        vec = RefineRotationEuler(vec);
+        ApplyRotationEuler(vec);
     }
 
     // takes vec2 as input, and creates a vec3 representation
-    Vector3 buildRawRotationEuler(Vector2 input)
+    Vector3 BuildRawRotationEuler(Vector2 input)
     {
         var rotation = Vector3.zero;
-
         rotation += input.x * Vector3.up;
         rotation += input.y * Vector3.right;
 
         return rotation;
     }
 
-    Vector3 refineRotationEuler(Vector3 raw)
+    Vector3 RefineRotationEuler(Vector3 raw)
     {
         raw.x *= Time.deltaTime * currentRotationSpeed.x;
         raw.y *= Time.deltaTime * currentRotationSpeed.y;
@@ -181,63 +175,32 @@ public class OnRailsPlayerBoatController : MonoBehaviour
         return raw;
     }
 
-    //Vector3 clampRotationEuler(Vector3 euler)
-    //{
-    //    //euler.x = clampSingleAxisRotation(euler.x, pitchClampRange.min, pitchClampRange.max);
-    //    //euler.y = clampSingleAxisRotation(euler.y, yawClampRange.min, yawClampRange.max);
-    //    //euler.z = clampSingleAxisRotation(euler.z, rollClampRange.min, rollClampRange.max);
-    //
-    //    return euler;
-    //}
-    //
-    //float clampSingleAxisRotation(float value, float min, float max)
-    //{
-    //    value += 360f;
-    //    min += 360f;
-    //    max += 360f;
-    //    Mathf.Clamp(value, min, max);
-    //    value -= 360f;   
-    //    return value;
-    //}    
-
-    // Applies axis angles rotation to local transform
-
-    void applyRotationEuler(Vector3 euler)
+    void ApplyRotationEuler(Vector3 euler)
     {
         var rotation = transform.localRotation;
-
-        // sample local rotation so we can perform a good clamp
-        //euler += rotation.eulerAngles;
-        //euler = clampRotationEuler(euler);
-
         rotation *= Quaternion.AngleAxis(euler.x, Vector3.right);
         rotation *= Quaternion.AngleAxis(euler.y, Vector3.up);
         rotation *= Quaternion.AngleAxis(euler.z, Vector3.forward);
         transform.localRotation = rotation;
     }
 
-    void applyPhysicalAnimation()
+    void ApplyPhysicalAnimation()
     {
-        performRollDueToUserInput();
-        performIncrementalSelfRighting();
+        PerformRollDueToUserInput();
+        PerformIncrementalSelfRighting();
     }
 
-    void performRollDueToUserInput()
+    void PerformRollDueToUserInput()
     {
-        var xInput = moveInputThisTick.x * -1f;
-        //var roll = Time.deltaTime * xInput * currentRotationSpeed.z;
-        var roll = xInput * currentRotationSpeed.z;
-
-        print("roll=" + roll);
-        roll = clampRollDueToUserInput(roll);
-        print("clamped roll=" + roll);
+        var roll = -moveInputThisTick.x * currentRotationSpeed.z;
+        roll = ClampRollDueToUserInput(roll);
 
         var rotation = transform.localRotation;
         rotation *= Quaternion.AngleAxis(roll, Vector3.forward);
         transform.localRotation = rotation;
     }
 
-    private float clampRollDueToUserInput(float roll)
+    private float ClampRollDueToUserInput(float roll)
     {
         var currentRoll = transform.localEulerAngles.z;
 
@@ -280,28 +243,17 @@ public class OnRailsPlayerBoatController : MonoBehaviour
         return roll;
     }
 
-    void performIncrementalSelfRighting()
+    void PerformIncrementalSelfRighting()
     {
         var rotation = transform.localRotation;
         var currentRoll = rotation.eulerAngles.z;
 
-        //// set roll to zero, if we're close to zero
-        //if(Mathf.Abs(currentRoll) < float.Epsilon)
-        //{
-        //    transform.localRotation = Quaternion.Euler(
-        //          transform.localEulerAngles.x
-        //        , transform.localEulerAngles.y
-        //        , 0f
-        //        );
-        //    return;
-        //}
-
-        var roll = calculateIncrementalSelfRighting(currentRoll);
+        var roll = CalculateIncrementalSelfRighting(currentRoll);
         rotation *= Quaternion.AngleAxis(roll, Vector3.forward);
         transform.localRotation = rotation;
     }
 
-    private float calculateIncrementalSelfRighting(float current)
+    private float CalculateIncrementalSelfRighting(float current)
     {
         if(current < 0f) { current += 360f; }
 
@@ -319,12 +271,13 @@ public class OnRailsPlayerBoatController : MonoBehaviour
             roll = 0f;
             print("Rotation error: OnRailsPlayerBoatController::SelfRighting !");
         }
+
         return roll;
     }
 
     // Utilities ---------------------------------------------------------------------------
 
-    private void matchRotationSpeedToInputStyle(string style)
+    private void MatchRotationSpeedToInputStyle(string style)
     {
         // check to see if input was from mouse delta, vs game pad input
         if (style == "Delta")
@@ -336,16 +289,4 @@ public class OnRailsPlayerBoatController : MonoBehaviour
             currentRotationSpeed = controllerRotationSpeed;
         }
     }
-
-    //private float calculateValueFalloff(float value, float fallRate = 0.5f, float fallTo = 0.0f, float threshhold = 0.001f)
-    //{
-    //    var result = value * fallRate;
-    //    if (Mathf.Abs(result) < Mathf.Abs(fallTo + threshhold))
-    //    {
-    //        result = fallTo;
-    //    }
-    //
-    //    return result;
-    //}
-
 }
