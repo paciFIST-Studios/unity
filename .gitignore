@@ -114,6 +114,8 @@ _networking/Networking2020Windows/obj/*
 
 # boat one-off
 _boat/boat/*
+
+# fall-in project
 fall_in/fall_in/Assets/Shop/*
 fall_in/fall_in/Assets/Plugins/*
 fall_in/fall_in/Library/*
@@ -123,6 +125,8 @@ fall_in/fall_in/Build/*
 fall_in/fall_in/Builds/*
 fall_in/fall_in/UserSettings/*
 fall_in/fall_in/Logs/*
+
+# ignore lighting files
 fall_in/fall_in/Assets/Scenes/canyon/LightingData.asset
 fall_in/fall_in/Assets/Scenes/canyon/LightingData.asset.meta
 fall_in/fall_in/Assets/Scenes/canyon/Lightmap-0_comp_dir.png
@@ -133,3 +137,5 @@ fall_in/fall_in/Assets/Scenes/canyon/Lightmap-0_comp_shadowmask.png
 fall_in/fall_in/Assets/Scenes/canyon/Lightmap-0_comp_shadowmask.png.meta
 fall_in/fall_in/Assets/Scenes/canyon/ReflectionProbe-0.exr
 fall_in/fall_in/Assets/Scenes/canyon/ReflectionProbe-0.exr.meta
+#ignore roads
+fall_in/fall_in/Assets/EasyRoads3D/*
