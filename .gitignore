@@ -79,6 +79,7 @@ crashlytics-build.properties
 
 *.gif
 *.mp4
+*.m4v
 *.zip
 *.7z
 
@@ -103,11 +104,13 @@ _combat_rpg/combat rpg/Temp/*
 # not sure if we want to try and make this a multiplayer title
 4_rails_shooter/Assets/Scripts/SetupLocalPlayer.cs
 4_rails_shooter/Assets/Scripts/SetupLocalPlayer.cs.meta
+4_rails_shooter/__design/Buoyancy.cs
 
 
 # networking course
 _networking/Networking2020Windows/library/*
 _networking/Networking2020Windows/build/*
 _networking/Networking2020Windows/obj/*
-*.m4v
-4_rails_shooter/__design/Buoyancy.cs
+
+# boat one-off
+_boat/boat/*
