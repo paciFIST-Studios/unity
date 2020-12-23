@@ -123,3 +123,13 @@ fall_in/fall_in/Build/*
 fall_in/fall_in/Builds/*
 fall_in/fall_in/UserSettings/*
 fall_in/fall_in/Logs/*
+fall_in/fall_in/Assets/Scenes/canyon/LightingData.asset
+fall_in/fall_in/Assets/Scenes/canyon/LightingData.asset.meta
+fall_in/fall_in/Assets/Scenes/canyon/Lightmap-0_comp_dir.png
+fall_in/fall_in/Assets/Scenes/canyon/Lightmap-0_comp_dir.png.meta
+fall_in/fall_in/Assets/Scenes/canyon/Lightmap-0_comp_light.exr
+fall_in/fall_in/Assets/Scenes/canyon/Lightmap-0_comp_light.exr.meta
+fall_in/fall_in/Assets/Scenes/canyon/Lightmap-0_comp_shadowmask.png
+fall_in/fall_in/Assets/Scenes/canyon/Lightmap-0_comp_shadowmask.png.meta
+fall_in/fall_in/Assets/Scenes/canyon/ReflectionProbe-0.exr
+fall_in/fall_in/Assets/Scenes/canyon/ReflectionProbe-0.exr.meta
