@@ -30,7 +30,7 @@ public class OnRailsPlayerBoatController : MonoBehaviour
     [SerializeField] private ClampRange rollClampRange;         // x-axis    "
 
     [SerializeField] private float rollSelfRightingSpeed = 1f;
-    
+
     // these are used in LateUpdate
     private bool isMoving   = false;
     private bool isRotating = false;
@@ -110,7 +110,8 @@ public class OnRailsPlayerBoatController : MonoBehaviour
     // takes the Vec2 input, and creates a Vec3 representation
     Vector3 BuildRawMovementVector(Vector2 input)
     {
-        var raw = Vector3.zero;
+        //var raw = Vector3.zero;
+        var raw = transform.forward;
         raw += input.x * transform.right;
         raw += input.y * transform.up;         // y as up-down
       //raw += input.y * transform.forward;    // y as depth
@@ -128,14 +129,14 @@ public class OnRailsPlayerBoatController : MonoBehaviour
     }
 
     Vector3 ClampMovementVector(Vector3 movement)
-    {    
+    {
         movement.x = Mathf.Clamp(movement.x, horizontalClampRange.min, horizontalClampRange.max );
         movement.y = Mathf.Clamp(movement.y, verticalClampRange.min  , verticalClampRange.max   );
         movement.z = Mathf.Clamp(movement.z, depthClampRange.min     , depthClampRange.max      );
 
         return movement;
     }
-    
+
     private void ApplyMovementVector(Vector3 vec)
     {
         // clamping the position isn't merely clamping the incoming
