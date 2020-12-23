@@ -140,3 +140,9 @@ fall_in/fall_in/Assets/Scenes/canyon/ReflectionProbe-0.exr.meta
 #ignore roads
 fall_in/fall_in/Assets/EasyRoads3D/*
 fall_in/fall_in/EasyRoads3Dv3/*
+fall_in/fall_in/Assets/Scenes/canyon/Lightmap-1_comp_dir.png
+fall_in/fall_in/Assets/Scenes/canyon/Lightmap-1_comp_dir.png.meta
+fall_in/fall_in/Assets/Scenes/canyon/Lightmap-1_comp_light.exr
+fall_in/fall_in/Assets/Scenes/canyon/Lightmap-1_comp_light.exr.meta
+fall_in/fall_in/Assets/Scenes/canyon/Lightmap-1_comp_shadowmask.png
+fall_in/fall_in/Assets/Scenes/canyon/Lightmap-1_comp_shadowmask.png.meta
