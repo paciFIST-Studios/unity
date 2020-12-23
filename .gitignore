@@ -114,3 +114,12 @@ _networking/Networking2020Windows/obj/*
 
 # boat one-off
 _boat/boat/*
+fall_in/fall_in/Assets/Shop/*
+fall_in/fall_in/Assets/Plugins/*
+fall_in/fall_in/Library/*
+fall_in/fall_in/Temp/*
+fall_in/fall_in/Obj/*
+fall_in/fall_in/Build/*
+fall_in/fall_in/Builds/*
+fall_in/fall_in/UserSettings/*
+fall_in/fall_in/Logs/*
