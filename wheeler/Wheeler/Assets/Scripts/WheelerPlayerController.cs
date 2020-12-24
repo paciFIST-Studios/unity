@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 
 [System.Serializable]
@@ -49,7 +50,17 @@ public class WheelerPlayerController : MonoBehaviour
     [SerializeField] float hoverForce = 10f;
     [SerializeField] float targetAltitude = 1f;
 
+    [SerializeField] float groundMovementForce = 100f;
+
     private Rigidbody rb;
+
+    private bool isMoving = false;
+    private bool isLooking = false;
+
+    private Vector2 movementInputThisTick;
+    private Vector2 lookInputThisTick;
+
+    // ---------------------------------------------------------------
 
     void Start()
     {
@@ -57,7 +68,7 @@ public class WheelerPlayerController : MonoBehaviour
         
     }
 
-    void Update()
+    void FixedUpdate()
     {
         float currentAltitude = transform.position.y;
 
@@ -65,5 +76,63 @@ public class WheelerPlayerController : MonoBehaviour
         var correction = pid.Update(error);
         rb.AddForce(Vector3.up * hoverForce * correction);
 
+        if(isMoving)
+        {
+            MovePlayerCharacter(movementInputThisTick);
+        }
+
+        if(isLooking)
+        { }
+
     }
+
+    // Input System Callbacks ----------------------------------------
+
+    public void OnLook(InputAction.CallbackContext ctx)
+    {
+
+    }
+
+    public void OnMove(InputAction.CallbackContext ctx)
+    {
+        if(ctx.canceled || ctx.performed)
+        {
+            isMoving = false;
+            return;
+        }
+
+        isMoving = true;
+        movementInputThisTick = ctx.ReadValue<Vector2>();
+    }
+
+    public void OnFire(InputAction.CallbackContext ctx)
+    {
+
+    }
+
+    // ---------------------------------------------------------------
+
+    void MovePlayerCharacter(Vector2 input)
+    {
+        var movement = Vector3.right;
+        movement.x *= input.x * groundMovementForce;
+        rb.AddForce(movement);
+    }
+
+    void AboutFacePlayerCharacter()
+    {
+
+    }
+
+    void RotatePlayerCharacter()
+    {
+
+    }
+
+    // ---------------------------------------------------------------
+    // ---------------------------------------------------------------
+    // ---------------------------------------------------------------
+
+
+
 }
