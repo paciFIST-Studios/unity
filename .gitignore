@@ -137,6 +137,7 @@ fall_in/fall_in/Assets/Scenes/canyon/Lightmap-0_comp_shadowmask.png
 fall_in/fall_in/Assets/Scenes/canyon/Lightmap-0_comp_shadowmask.png.meta
 fall_in/fall_in/Assets/Scenes/canyon/ReflectionProbe-0.exr
 fall_in/fall_in/Assets/Scenes/canyon/ReflectionProbe-0.exr.meta
+
 #ignore roads
 fall_in/fall_in/Assets/EasyRoads3D/*
 fall_in/fall_in/EasyRoads3Dv3/*
@@ -146,3 +147,18 @@ fall_in/fall_in/Assets/Scenes/canyon/Lightmap-1_comp_light.exr
 fall_in/fall_in/Assets/Scenes/canyon/Lightmap-1_comp_light.exr.meta
 fall_in/fall_in/Assets/Scenes/canyon/Lightmap-1_comp_shadowmask.png
 fall_in/fall_in/Assets/Scenes/canyon/Lightmap-1_comp_shadowmask.png.meta
+
+
+#wheeler project
+wheeler/Wheeler/Assets/Procedural Primitives/*
+wheeler/Wheeler/Assets/Shop/*
+
+wheeler/Wheeler/Assets/Shop/*
+wheeler/Wheeler/Assets/Plugins/*
+wheeler/Wheeler/Library/*
+wheeler/Wheeler/Temp/*
+wheeler/Wheeler/Obj/*
+wheeler/Wheeler/Build/*
+wheeler/Wheeler/Builds/*
+wheeler/Wheeler/UserSettings/*
+wheeler/Wheeler/Logs/*
