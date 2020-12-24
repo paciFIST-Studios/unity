@@ -45,6 +45,7 @@ public class PIDController
 
 public class WheelerPlayerController : MonoBehaviour
 {
+    [Header("Movement")]
     [SerializeField] PIDController pid;
 
     [SerializeField] float hoverForce = 10f;
@@ -52,13 +53,23 @@ public class WheelerPlayerController : MonoBehaviour
 
     [SerializeField] float groundMovementForce = 100f;
 
+    [Header("Firing")]
+    [SerializeField] GameObject[] shots;
+
+
     private Rigidbody rb;
 
     private bool isMoving = false;
-    private bool isLooking = false;
+    private bool isRotating = false;
 
     private Vector2 movementInputThisTick;
-    private Vector2 lookInputThisTick;
+    private Vector2 rotateInputThisTick;
+
+    private float zAxisRotation = 0f;
+
+    private float screenHalfWidth = Screen.width * 0.5f;
+    private float screenHalfHeight = Screen.height * 0.5f;
+
 
     // ---------------------------------------------------------------
 
@@ -73,16 +84,22 @@ public class WheelerPlayerController : MonoBehaviour
         float currentAltitude = transform.position.y;
 
         float error = targetAltitude - currentAltitude;
-        var correction = pid.Update(error);
-        rb.AddForce(Vector3.up * hoverForce * correction);
+        var correction = Vector3.up;
+        correction *= pid.Update(error);
+        correction *= hoverForce;
+        //correction *= Time.deltaTime;
+        
+        rb.AddForce(correction);
 
         if(isMoving)
         {
             MovePlayerCharacter(movementInputThisTick);
         }
 
-        if(isLooking)
-        { }
+        if(isRotating)
+        {
+            RotatePlayerCharacter(rotateInputThisTick);
+        }
 
     }
 
@@ -90,12 +107,19 @@ public class WheelerPlayerController : MonoBehaviour
 
     public void OnLook(InputAction.CallbackContext ctx)
     {
+        if(ctx.canceled)
+        {
+            isRotating = false;
+            return;
+        }
 
+        isRotating = true;
+        rotateInputThisTick = ctx.ReadValue<Vector2>();
     }
 
     public void OnMove(InputAction.CallbackContext ctx)
     {
-        if(ctx.canceled || ctx.performed)
+        if(ctx.canceled)
         {
             isMoving = false;
             return;
@@ -124,9 +148,23 @@ public class WheelerPlayerController : MonoBehaviour
 
     }
 
-    void RotatePlayerCharacter()
+    void RotatePlayerCharacter(Vector2 input)
     {
+        var mouseControl = Mouse.current.position;
 
+        Vector2 screenCoordinate;
+        screenCoordinate.x = mouseControl.x.ReadValue();
+        screenCoordinate.y = mouseControl.y.ReadValue();
+
+        // recenter to middle of screen
+        screenCoordinate.x -= screenHalfWidth;
+        screenCoordinate.y -= screenHalfHeight;
+        
+        float angle = Mathf.Atan2(screenCoordinate.y, screenCoordinate.x) * Mathf.Rad2Deg;
+
+        var rotation = rb.rotation.eulerAngles;
+        rotation.z = angle;
+        rb.rotation = Quaternion.Euler(rotation);
     }
 
     // ---------------------------------------------------------------
