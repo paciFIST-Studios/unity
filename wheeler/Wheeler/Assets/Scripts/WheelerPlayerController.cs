@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -54,15 +55,21 @@ public class WheelerPlayerController : MonoBehaviour
     [SerializeField] float groundMovementForce = 100f;
 
     [Header("Firing")]
-    [SerializeField] int objectPoolSize = 10;
-    [SerializeField] GameObject shotPrefab;
-    [SerializeField] List<GameObject> shots;
+    [SerializeField] float fireCooldownTime = 0.1f;
+    float lastShotFiredAt;
 
+    [SerializeField] ParticleSystem[] scanners;
+    private int activeScannerIdx;
+    private ParticleSystem.EmissionModule emission;
 
+    private ParticleSystem ps;
     private Rigidbody rb;
 
     private bool isMoving = false;
     private bool isRotating = false;
+    private bool isFiring = false;
+
+
 
     private Vector2 movementInputThisTick;
     private Vector2 rotateInputThisTick;
@@ -73,20 +80,59 @@ public class WheelerPlayerController : MonoBehaviour
     private float screenHalfHeight = Screen.height * 0.5f;
 
 
+    // Debug ---------------------------------------------------------
+
+    private void OnGUI()
+    {
+        // scanner switcher
+        {
+            GUI.Box(new Rect(10, 10, 200, 60), "Scanner Equipped:");
+
+            if (activeScannerIdx == 0)
+            {
+                if (GUI.Button(new Rect(30, 35, 160, 30), "ForwardScanner"))
+                {
+                    ActivateScanner(1);
+                }
+            }
+            else if (activeScannerIdx == 1)
+            {
+                if (GUI.Button(new Rect(30, 35, 160, 30), "ExplosionScanner"))
+                {
+                    ActivateScanner(0);
+                }
+            }
+        }
+
+        // player stats
+        {
+            GUI.Box(new Rect(10, 80, 200, 100), "Stats");
+            GUI.Label(new Rect(30, 100, 180, 30), string.Format("XYZ: {0}", transform.position));
+            GUI.Label(new Rect(30, 120, 180, 30), string.Format("Rotation: {0}", transform.localEulerAngles.z.ToString("#.00")));
+            GUI.Label(new Rect(30, 140, 180, 30), "");
+            GUI.Label(new Rect(30, 160, 180, 30), "");
+        }
+
+        // particle system
+        {
+            GUI.Box(new Rect(10, 180, 200, 100), "Particle System");
+            GUI.Label(new Rect(30, 200, 180, 30), string.Format("Name: {0}", transform.position));
+            GUI.Label(new Rect(30, 220, 180, 30), string.Format("Rotation: {0}", transform.localEulerAngles.z.ToString("#.00")));
+            GUI.Label(new Rect(30, 240, 180, 30), "");
+            GUI.Label(new Rect(30, 260, 180, 30), "");
+        }
+    }
+
+
+
     // ---------------------------------------------------------------
 
     void Start()
     {
         rb = this.GetComponent<Rigidbody>();
-
-        shots = new List<GameObject>(objectPoolSize);
-
-        for(int i = 0; i < objectPoolSize; i++)
-        {
-            shots[i] = Instantiate(shotPrefab, transform);
-            shots[i].GetComponent<MeshRenderer>().enabled = false;
-            shots[i].GetComponent<CapsuleCollider>().enabled = false;
-        }
+        ps = this.GetComponent<ParticleSystem>();
+       
+        ActivateScanner(0);
     }
 
     void FixedUpdate()
@@ -109,6 +155,11 @@ public class WheelerPlayerController : MonoBehaviour
         if(isRotating)
         {
             RotatePlayerCharacter(rotateInputThisTick);
+        }
+
+        if (isFiring)
+        {
+            FireProjectile();
         }
 
     }
@@ -141,7 +192,27 @@ public class WheelerPlayerController : MonoBehaviour
 
     public void OnFire(InputAction.CallbackContext ctx)
     {
+        if(ctx.canceled)
+        {
+            isFiring = false;
+            return;
+        }
 
+        if(lastShotFiredAt + fireCooldownTime < Time.time)
+        {
+            isFiring = true;
+        }
+
+    }
+
+    public void OnSetScanner1(InputAction.CallbackContext ctx)
+    {
+        ActivateScanner(0);
+    }
+
+    public void OnSetScanner2(InputAction.CallbackContext ctx)
+    {
+        ActivateScanner(1);
     }
 
     // ---------------------------------------------------------------
@@ -153,10 +224,6 @@ public class WheelerPlayerController : MonoBehaviour
         rb.AddForce(movement);
     }
 
-    void AboutFacePlayerCharacter()
-    {
-
-    }
 
     void RotatePlayerCharacter(Vector2 input)
     {
@@ -177,9 +244,28 @@ public class WheelerPlayerController : MonoBehaviour
         rb.rotation = Quaternion.Euler(rotation);
     }
 
+
+    private void FireProjectile()
+    {
+        print("Firing: " + activeScannerIdx + " = " + ps.name);
+        ps.Play();
+    }
+
+
+    private void ActivateScanner(int n)
+    {
+        ps = scanners[n];
+        activeScannerIdx = n;
+        ps.Stop();
+    }
+
+
+
     // ---------------------------------------------------------------
     // ---------------------------------------------------------------
     // ---------------------------------------------------------------
+
+
 
 
 
