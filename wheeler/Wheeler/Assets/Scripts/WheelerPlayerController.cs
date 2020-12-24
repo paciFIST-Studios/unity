@@ -54,7 +54,9 @@ public class WheelerPlayerController : MonoBehaviour
     [SerializeField] float groundMovementForce = 100f;
 
     [Header("Firing")]
-    [SerializeField] GameObject[] shots;
+    [SerializeField] int objectPoolSize = 10;
+    [SerializeField] GameObject shotPrefab;
+    [SerializeField] List<GameObject> shots;
 
 
     private Rigidbody rb;
@@ -76,7 +78,15 @@ public class WheelerPlayerController : MonoBehaviour
     void Start()
     {
         rb = this.GetComponent<Rigidbody>();
-        
+
+        shots = new List<GameObject>(objectPoolSize);
+
+        for(int i = 0; i < objectPoolSize; i++)
+        {
+            shots[i] = Instantiate(shotPrefab, transform);
+            shots[i].GetComponent<MeshRenderer>().enabled = false;
+            shots[i].GetComponent<CapsuleCollider>().enabled = false;
+        }
     }
 
     void FixedUpdate()
