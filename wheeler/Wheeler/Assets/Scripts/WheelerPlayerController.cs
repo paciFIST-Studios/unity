@@ -84,6 +84,8 @@ public class WheelerPlayerController : MonoBehaviour
     private bool isRotating = false;
     private bool isFiring = false;
 
+    private bool isRotationLocked = false;
+
 
 
     private Vector2 movementInputThisTick;
@@ -172,7 +174,7 @@ public class WheelerPlayerController : MonoBehaviour
             MovePlayerCharacter(movementInputThisTick);
         }
 
-        if(isRotating)
+        if(isRotating && !isRotationLocked)
         {
             RotatePlayerCharacter(rotateInputThisTick);
         }
@@ -224,6 +226,7 @@ public class WheelerPlayerController : MonoBehaviour
         {
             isFiring = false;
             LockParticleSystemRotation();
+            //UnlockPlayerRotation();
             return;
         }
 
@@ -231,6 +234,7 @@ public class WheelerPlayerController : MonoBehaviour
         {
             isFiring = true;
             UnlockParticleSystemRotation();
+            //LockPlayerRotation();
         }
     }
 
@@ -316,6 +320,16 @@ public class WheelerPlayerController : MonoBehaviour
     private void UnlockParticleSystemRotation()
     {
         particleSystemRotationIsLocked = false;
+    }
+
+    private void LockPlayerRotation()
+    {
+        isRotationLocked = true;
+    }
+
+    private void UnlockPlayerRotation()
+    {
+        isRotationLocked = false;
     }
 
 
