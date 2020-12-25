@@ -169,5 +169,13 @@ wheeler/Wheeler/Assets/Scenes/Test/ReflectionProbe-0.exr.meta
 wheeler/Wheeler/Assets/CommentObjectTool/*
 
 # dialogue demonstration
-dialogue/assets/*
-dialogue/zips/*
+dialogue2/*
+dialogue/dialogue/Assets/Shop/*
+dialogue/dialogue/Assets/Plugins/*
+dialogue/dialogue/Library/*
+dialogue/dialogue/Temp/*
+dialogue/dialogue/Obj/*
+dialogue/dialogue/Build/*
+dialogue/dialogue/Builds/*
+dialogue/dialogue/UserSettings/*
+dialogue/dialogue/Logs/*
