@@ -58,12 +58,27 @@ public class WheelerPlayerController : MonoBehaviour
     [SerializeField] float fireCooldownTime = 0.1f;
     float lastShotFiredAt;
 
-    [SerializeField] ParticleSystem[] scanners;
-    private int activeScannerIdx;
-    private ParticleSystem.EmissionModule emission;
+    [SerializeField] ParticleSystem forwardScanParticleSystemPrefab;
+    [SerializeField] ParticleSystem explosionScanParticleSystemPrefab;
+    [SerializeField] Transform particleSystemCarrier;
 
-    private ParticleSystem ps;
+
+    private ParticleSystem forwardScanParticleSystem;
+    private ParticleSystem explosionScanParticleSystem;
+
+    bool particleSystemRotationIsLocked;
+
+
+    enum ScannerType
+    {
+          ForwardScan
+        , ExplosionScan
+    }
+    private ScannerType currentScanner;
+
     private Rigidbody rb;
+
+
 
     private bool isMoving = false;
     private bool isRotating = false;
@@ -88,18 +103,18 @@ public class WheelerPlayerController : MonoBehaviour
         {
             GUI.Box(new Rect(10, 10, 200, 60), "Scanner Equipped:");
 
-            if (activeScannerIdx == 0)
+            if (currentScanner == ScannerType.ForwardScan)
             {
                 if (GUI.Button(new Rect(30, 35, 160, 30), "ForwardScanner"))
                 {
-                    ActivateScanner(1);
+                    ActivateScanner(ScannerType.ExplosionScan);
                 }
             }
-            else if (activeScannerIdx == 1)
+            else if (currentScanner == ScannerType.ExplosionScan)
             {
                 if (GUI.Button(new Rect(30, 35, 160, 30), "ExplosionScanner"))
                 {
-                    ActivateScanner(0);
+                    ActivateScanner(ScannerType.ForwardScan);
                 }
             }
         }
@@ -130,9 +145,14 @@ public class WheelerPlayerController : MonoBehaviour
     void Start()
     {
         rb = this.GetComponent<Rigidbody>();
-        ps = this.GetComponent<ParticleSystem>();
-       
-        ActivateScanner(0);
+
+        forwardScanParticleSystem = Instantiate(forwardScanParticleSystemPrefab, particleSystemCarrier);
+        forwardScanParticleSystem.Stop();
+
+        explosionScanParticleSystem = Instantiate(explosionScanParticleSystemPrefab, particleSystemCarrier);
+        explosionScanParticleSystem.Stop();
+
+        currentScanner = ScannerType.ForwardScan;
     }
 
     void FixedUpdate()
@@ -161,6 +181,14 @@ public class WheelerPlayerController : MonoBehaviour
         {
             FireProjectile();
         }
+
+        if(!particleSystemRotationIsLocked)
+        {
+            var euler = transform.localEulerAngles;
+            euler.z = zAxisRotation;
+            SetParticleSystemRotation(Quaternion.Euler(euler));
+        }
+
 
     }
 
@@ -195,24 +223,25 @@ public class WheelerPlayerController : MonoBehaviour
         if(ctx.canceled)
         {
             isFiring = false;
+            LockParticleSystemRotation();
             return;
         }
 
         if(lastShotFiredAt + fireCooldownTime < Time.time)
         {
             isFiring = true;
+            UnlockParticleSystemRotation();
         }
-
     }
 
     public void OnSetScanner1(InputAction.CallbackContext ctx)
     {
-        ActivateScanner(0);
+        ActivateScanner(ScannerType.ForwardScan);
     }
 
     public void OnSetScanner2(InputAction.CallbackContext ctx)
     {
-        ActivateScanner(1);
+        ActivateScanner(ScannerType.ExplosionScan);
     }
 
     // ---------------------------------------------------------------
@@ -242,23 +271,52 @@ public class WheelerPlayerController : MonoBehaviour
         var rotation = rb.rotation.eulerAngles;
         rotation.z = angle;
         rb.rotation = Quaternion.Euler(rotation);
+        zAxisRotation = angle;
     }
 
 
     private void FireProjectile()
     {
-        print("Firing: " + activeScannerIdx + " = " + ps.name);
-        ps.Play();
+        if(currentScanner == ScannerType.ForwardScan)
+        {
+            forwardScanParticleSystem.Play();
+        }
+        else if (currentScanner == ScannerType.ExplosionScan)
+        {
+            explosionScanParticleSystem.Play();
+        }
     }
 
 
-    private void ActivateScanner(int n)
+    private void ActivateScanner(ScannerType activate)
     {
-        ps = scanners[n];
-        activeScannerIdx = n;
-        ps.Stop();
+        if (activate == ScannerType.ForwardScan)
+        {
+            explosionScanParticleSystem.Stop();
+        }
+        else if (activate == ScannerType.ExplosionScan)
+        {
+            forwardScanParticleSystem.Stop();            
+        }
+
+        currentScanner = activate;
     }
 
+    private void SetParticleSystemRotation(Quaternion rotation)
+    {
+        forwardScanParticleSystem.transform.localRotation = rotation;
+        explosionScanParticleSystem.transform.localRotation = rotation;
+    }
+
+    private void LockParticleSystemRotation()
+    {
+        particleSystemRotationIsLocked = true;
+    }
+
+    private void UnlockParticleSystemRotation()
+    {
+        particleSystemRotationIsLocked = false;
+    }
 
 
     // ---------------------------------------------------------------
