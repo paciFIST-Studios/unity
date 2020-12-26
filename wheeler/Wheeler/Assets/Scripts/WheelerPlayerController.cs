@@ -151,8 +151,17 @@ public class WheelerPlayerController : MonoBehaviour
         forwardScanParticleSystem = Instantiate(forwardScanParticleSystemPrefab, particleSystemCarrier);
         forwardScanParticleSystem.Stop();
 
+        var data = forwardScanParticleSystem.customData;
+        data.SetMode(ParticleSystemCustomData.Custom1, ParticleSystemCustomDataMode.Vector);
+        data.SetVector(ParticleSystemCustomData.Custom1, 0, new ParticleSystem.MinMaxCurve(0));
+
         explosionScanParticleSystem = Instantiate(explosionScanParticleSystemPrefab, particleSystemCarrier);
         explosionScanParticleSystem.Stop();
+
+        data = explosionScanParticleSystem.customData;
+        data.SetMode(ParticleSystemCustomData.Custom1, ParticleSystemCustomDataMode.Vector);
+        data.SetVector(ParticleSystemCustomData.Custom1, 0, new ParticleSystem.MinMaxCurve(1));
+
 
         currentScanner = ScannerType.ForwardScan;
     }
