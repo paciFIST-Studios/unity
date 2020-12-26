@@ -94,7 +94,7 @@ public class DialogueGraphView : GraphView
         };
 
         var inputPort = GeneratePort(node, Direction.Input, Port.Capacity.Multi);
-        inputPort.name = "Input";
+        inputPort.portName = "Input";
         node.inputContainer.Add(inputPort);
 
         var button = new UnityEngine.UIElements.Button(clickEvent: () => { AddChoicePort(node);});
@@ -115,7 +115,7 @@ public class DialogueGraphView : GraphView
         var port = GeneratePort(node, Direction.Output, Port.Capacity.Single);
 
         var outputPortCount = node.outputContainer.Query(name: "connector").ToList().Count;
-        port.portName = $"Choice: {outputPortCount}";
+        port.portName = $"idx: {outputPortCount}";
 
         node.outputContainer.Add(port);
         node.RefreshPorts();

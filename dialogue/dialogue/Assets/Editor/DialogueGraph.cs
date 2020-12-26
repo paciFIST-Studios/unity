@@ -49,23 +49,42 @@ public class DialogueGraph : EditorWindow
     {
         var toolbar = new Toolbar();
 
-        //var fileNameTexField = new TextField(label: "File Name");
-        //fileNameTexField.SetValueWithoutNotify(_fileName);
-        //fileNameTexField.MarkDirtyRepaint();
-        //fileNameTexField.RegisterValueChangedCallback(
-        //    evt: ChangeEvent<string> => _fileName = evt.newValue
-        //    );
+        // File Name
+        var fileNameTextField = new TextField(label: "File Name");
+        fileNameTextField.SetValueWithoutNotify(_fileName);
+        fileNameTextField.MarkDirtyRepaint();
+        fileNameTextField.RegisterValueChangedCallback(
+            // outer param: (lambda param) => { lambda code; }    
+            callback: (ChangeEvent<string> evt) => { _fileName = evt.newValue; } 
+        );
+        toolbar.Add(fileNameTextField);
+
+        toolbar.Add(child: new Button(clickEvent: () => RequestDataOperation(save: true))  { text = "Save" });
+        toolbar.Add(child: new Button(clickEvent: () => RequestDataOperation(save: false)) { text = "Load" });
 
 
-
+        // Create Node
         var nodeCreateButton = new Button(
+            // outer param: (lambda) => { lambda code; }    
             clickEvent: () => { _graphView.CreateNode("DialogueNode"); }
         );
         nodeCreateButton.text = "Create Node";
-
         toolbar.Add(nodeCreateButton);
+
+
         rootVisualElement.Add(toolbar);
 
+    }
+
+    private void RequestDataOperation(bool save)
+    {
+        if(string.IsNullOrEmpty(_fileName))
+        {
+            EditorUtility.DisplayDialog(title: "Invalid file name", message: "Enter valid file name", ok: "ok");
+            return;
+        }
+
+        //var saveUtility = GraphSaveUtility.GetInstance();
     }
 
 }

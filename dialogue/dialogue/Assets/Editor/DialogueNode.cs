@@ -9,5 +9,4 @@ public class DialogueNode : Node
     public string DialogueText;
 
     public bool entryPoint = false;
-
 }
