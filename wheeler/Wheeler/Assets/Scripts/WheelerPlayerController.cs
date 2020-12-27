@@ -46,6 +46,8 @@ public class PIDController
 
 public class WheelerPlayerController : MonoBehaviour
 {
+    // Editor facing vars --------------------------------------------
+
     [Header("Movement")]
     [SerializeField] PIDController pid;
 
@@ -54,19 +56,34 @@ public class WheelerPlayerController : MonoBehaviour
 
     [SerializeField] float groundMovementForce = 100f;
 
+
     [Header("Firing")]
     [SerializeField] float fireCooldownTime = 0.1f;
     float lastShotFiredAt;
 
     [SerializeField] ParticleSystem forwardScanParticleSystemPrefab;
-    [SerializeField] ParticleSystem explosionScanParticleSystemPrefab;
+    [SerializeField] ParticleSystem radialScanParticleSystemPrefab;
+    [SerializeField] ParticleSystem sphericalScanParticleSystemPrefab;
     [SerializeField] Transform particleSystemCarrier;
 
 
+    // Particle system vars ------------------------------------------
+
+
     private ParticleSystem forwardScanParticleSystem;
-    private ParticleSystem explosionScanParticleSystem;
+    private ParticleSystem radialScanParticleSystem;
+    private ParticleSystem sphericalScanParticleSystem;
+
 
     bool particleSystemRotationIsLocked;
+
+    enum ScannerType
+    {
+          ForwardScan
+        , RadialScan
+        , SphericalScan
+    }
+    private ScannerType currentScanner;
 
     public enum ElementType
     {
@@ -76,35 +93,45 @@ public class WheelerPlayerController : MonoBehaviour
         , Grape     = 3
     }
 
-    enum ScannerType
+
+    // Input vars ----------------------------------------------------
+
+    public enum InputSource
     {
-          ForwardScan
-        , ExplosionScan
+          Unknown
+        , MouseAndKeyboard
+        , XboxController
     }
-    private ScannerType currentScanner;
+    private InputSource inputSource;
+    private string InputSourceString = "Mouse+Keyboard";
+    private string MKInput = "Mouse+Keyboard";
+    private string XBInput = "Xbox Controller";
+
+
+    // Movement vars -------------------------------------------------
 
     private Rigidbody rb;
-
-
-
+    
     private bool isMoving = false;
     private bool isRotating = false;
     private bool isFiring = false;
 
     private bool isRotationLocked = false;
 
-
-
     private Vector2 movementInputThisTick;
     private Vector2 rotateInputThisTick;
 
     private float zAxisRotation = 0f;
 
+
+    // Misc vars -------------------------------------------------
+
     private float screenHalfWidth = Screen.width * 0.5f;
     private float screenHalfHeight = Screen.height * 0.5f;
 
 
-    // Debug ---------------------------------------------------------
+
+    // Debug fns -----------------------------------------------------
 
     private void OnGUI()
     {
@@ -116,12 +143,19 @@ public class WheelerPlayerController : MonoBehaviour
             {
                 if (GUI.Button(new Rect(30, 35, 160, 30), "ForwardScanner"))
                 {
-                    ActivateScanner(ScannerType.ExplosionScan);
+                    ActivateScanner(ScannerType.RadialScan);
                 }
             }
-            else if (currentScanner == ScannerType.ExplosionScan)
+            else if (currentScanner == ScannerType.RadialScan)
             {
-                if (GUI.Button(new Rect(30, 35, 160, 30), "ExplosionScanner"))
+                if (GUI.Button(new Rect(30, 35, 160, 30), "RadialScanner"))
+                {
+                    ActivateScanner(ScannerType.SphericalScan);
+                }
+            }
+            else if (currentScanner == ScannerType.SphericalScan)
+            {
+                if (GUI.Button(new Rect(30, 35, 160, 30), "SphericalScanner"))
                 {
                     ActivateScanner(ScannerType.ForwardScan);
                 }
@@ -145,11 +179,18 @@ public class WheelerPlayerController : MonoBehaviour
             GUI.Label(new Rect(30, 240, 180, 30), "");
             GUI.Label(new Rect(30, 260, 180, 30), "");
         }
+
+        // input system
+        {
+            GUI.Box(new Rect(10, 280, 200, 100), "Input system");
+            GUI.Label(new Rect(30, 300, 180, 30), string.Format("Source: {0}", InputSourceString));
+            GUI.Label(new Rect(30, 320, 180, 30), string.Format("Look: {0}", rotateInputThisTick.ToString()));
+            GUI.Label(new Rect(30, 340, 180, 30), string.Format("Move: {0}", movementInputThisTick.ToString()));
+        }
     }
 
 
-
-    // ---------------------------------------------------------------
+    // Unity Engine fns ----------------------------------------------
 
     void Start()
     {
@@ -160,10 +201,16 @@ public class WheelerPlayerController : MonoBehaviour
         forwardScanParticleSystem.Stop();
         SetParticleSystemElementType(forwardScanParticleSystem, ElementType.Berry);
 
-        // Explosion system, Orange
-        explosionScanParticleSystem = Instantiate(explosionScanParticleSystemPrefab, particleSystemCarrier);
-        explosionScanParticleSystem.Stop();
-        SetParticleSystemElementType(explosionScanParticleSystem, ElementType.Orange);
+        // Radial system, Orange
+        radialScanParticleSystem = Instantiate(radialScanParticleSystemPrefab, particleSystemCarrier);
+        radialScanParticleSystem.Stop();
+        SetParticleSystemElementType(radialScanParticleSystem, ElementType.Orange);
+
+        // spherical system, lime
+        sphericalScanParticleSystem = Instantiate(sphericalScanParticleSystemPrefab, particleSystemCarrier);
+        sphericalScanParticleSystem.Stop();
+        SetParticleSystemElementType(sphericalScanParticleSystem, ElementType.Lime);
+
 
         currentScanner = ScannerType.ForwardScan;
     }
@@ -173,12 +220,12 @@ public class WheelerPlayerController : MonoBehaviour
         float currentAltitude = transform.position.y;
 
         float error = targetAltitude - currentAltitude;
-        var correction = Vector3.up;
-        correction *= pid.Update(error);
-        correction *= hoverForce;
+        var hoveCorrection = Vector3.up;
+        hoveCorrection *= pid.Update(error);
+        hoveCorrection *= hoverForce;
         //correction *= Time.deltaTime;
         
-        rb.AddForce(correction);
+        rb.AddForce(hoveCorrection);
 
         if(isMoving)
         {
@@ -201,9 +248,8 @@ public class WheelerPlayerController : MonoBehaviour
             euler.z = zAxisRotation;
             SetParticleSystemRotation(Quaternion.Euler(euler));
         }
-
-
     }
+
 
     // Input System Callbacks ----------------------------------------
 
@@ -217,6 +263,8 @@ public class WheelerPlayerController : MonoBehaviour
 
         isRotating = true;
         rotateInputThisTick = ctx.ReadValue<Vector2>();
+
+        UpdateInputSource(ctx);
     }
 
     public void OnMove(InputAction.CallbackContext ctx)
@@ -229,6 +277,8 @@ public class WheelerPlayerController : MonoBehaviour
 
         isMoving = true;
         movementInputThisTick = ctx.ReadValue<Vector2>();
+
+        UpdateInputSource(ctx);
     }
 
     public void OnFire(InputAction.CallbackContext ctx)
@@ -256,10 +306,31 @@ public class WheelerPlayerController : MonoBehaviour
 
     public void OnSetScanner2(InputAction.CallbackContext ctx)
     {
-        ActivateScanner(ScannerType.ExplosionScan);
+        ActivateScanner(ScannerType.RadialScan);
     }
 
-    // ---------------------------------------------------------------
+    public void OnSetScanner3(InputAction.CallbackContext ctx)
+    {
+        ActivateScanner(ScannerType.SphericalScan);
+    }
+
+    public void OnToggleScanner(InputAction.CallbackContext ctx)
+    {
+        if(currentScanner == ScannerType.ForwardScan)
+        {
+            ActivateScanner(ScannerType.RadialScan);
+        }
+        else if (currentScanner == ScannerType.RadialScan)
+        {
+            ActivateScanner(ScannerType.SphericalScan);
+        }
+        else if (currentScanner == ScannerType.SphericalScan)
+        {
+            ActivateScanner(ScannerType.ForwardScan);
+        }
+    }
+
+    // Player Character Management fns -------------------------------
 
     void MovePlayerCharacter(Vector2 input)
     {
@@ -268,18 +339,32 @@ public class WheelerPlayerController : MonoBehaviour
         rb.AddForce(movement);
     }
 
-
     void RotatePlayerCharacter(Vector2 input)
     {
-        var mouseControl = Mouse.current.position;
-
         Vector2 screenCoordinate;
-        screenCoordinate.x = mouseControl.x.ReadValue();
-        screenCoordinate.y = mouseControl.y.ReadValue();
 
-        // recenter to middle of screen
-        screenCoordinate.x -= screenHalfWidth;
-        screenCoordinate.y -= screenHalfHeight;
+        if (inputSource == InputSource.MouseAndKeyboard)
+        {
+            //var mouseControl = Mouse.current.position;
+            //screenCoordinate.x = mouseControl.x.ReadValue();
+            //screenCoordinate.y = mouseControl.y.ReadValue();
+
+            var mouseControl = input;
+            screenCoordinate.x = mouseControl.x;
+            screenCoordinate.y = mouseControl.y;
+
+            // recenter to middle of screen
+            screenCoordinate.x -= screenHalfWidth;
+            screenCoordinate.y -= screenHalfHeight;
+        }
+        else if (inputSource == InputSource.XboxController)
+        {
+            screenCoordinate = input;
+        }
+        else
+        {
+            return;
+        }
         
         float angle = Mathf.Atan2(screenCoordinate.y, screenCoordinate.x) * Mathf.Rad2Deg;
 
@@ -296,9 +381,13 @@ public class WheelerPlayerController : MonoBehaviour
         {
             forwardScanParticleSystem.Play();
         }
-        else if (currentScanner == ScannerType.ExplosionScan)
+        else if (currentScanner == ScannerType.RadialScan)
         {
-            explosionScanParticleSystem.Play();
+            radialScanParticleSystem.Play();
+        }
+        else if (currentScanner == ScannerType.SphericalScan)
+        {
+            sphericalScanParticleSystem.Play();
         }
     }
 
@@ -307,11 +396,18 @@ public class WheelerPlayerController : MonoBehaviour
     {
         if (activate == ScannerType.ForwardScan)
         {
-            explosionScanParticleSystem.Stop();
+            radialScanParticleSystem.Stop();
+            sphericalScanParticleSystem.Stop();
         }
-        else if (activate == ScannerType.ExplosionScan)
+        else if (activate == ScannerType.RadialScan)
         {
             forwardScanParticleSystem.Stop();            
+            sphericalScanParticleSystem.Stop();
+        }
+        else if (activate == ScannerType.SphericalScan)
+        {
+            forwardScanParticleSystem.Stop();
+            radialScanParticleSystem.Stop();
         }
 
         currentScanner = activate;
@@ -319,8 +415,9 @@ public class WheelerPlayerController : MonoBehaviour
 
     private void SetParticleSystemRotation(Quaternion rotation)
     {
-        forwardScanParticleSystem.transform.localRotation = rotation;
-        explosionScanParticleSystem.transform.localRotation = rotation;
+        forwardScanParticleSystem.transform.localRotation   = rotation;
+        radialScanParticleSystem.transform.localRotation    = rotation;
+        sphericalScanParticleSystem.transform.localRotation = rotation;
     }
 
     private void LockParticleSystemRotation()
@@ -343,8 +440,48 @@ public class WheelerPlayerController : MonoBehaviour
         isRotationLocked = false;
     }
 
+    private void UpdateInputSource(InputAction.CallbackContext ctx)
+    {
+        inputSource = DetermineInputStyle(ctx);
+        if (inputSource == InputSource.MouseAndKeyboard)
+        {
+            InputSourceString = MKInput;
+        }
+        else if (inputSource == InputSource.XboxController)
+        {
+            InputSourceString = XBInput;
+        }
+        else
+        {
+            InputSourceString = "";
+        }
+    }
 
-    // ---------------------------------------------------------------
+    // Utility fns ---------------------------------------------------
+
+    InputSource DetermineInputStyle(InputAction.CallbackContext ctx)
+    {
+        // ellie:todo: someday, change this, it's fragile
+        var str = ctx.action.GetBindingDisplayString();
+
+        if(str.Contains("LS") || str.Contains("RS"))
+        {
+            return InputSource.XboxController;
+        }
+        else if (str.Contains("Position"))
+        {
+            return InputSource.MouseAndKeyboard;
+        }
+        else if (str.Contains("W | Up | S | Down | A | Left | D | Right"))
+        {
+            return InputSource.MouseAndKeyboard;
+        }
+        else
+        {
+            return InputSource.Unknown;
+        }
+    }
+
 
     void SetParticleSystemElementType(ParticleSystem ps, ElementType type)
     {       
