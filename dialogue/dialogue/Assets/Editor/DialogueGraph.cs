@@ -80,11 +80,23 @@ public class DialogueGraph : EditorWindow
     {
         if(string.IsNullOrEmpty(_fileName))
         {
-            EditorUtility.DisplayDialog(title: "Invalid file name", message: "Enter valid file name", ok: "ok");
+            EditorUtility.DisplayDialog(
+                  title: "Invalid file name"
+                , message: $"Filename invalid: \"{ _fileName }\"\n\nEnter valid file name"
+                , ok: "ok"
+            );
             return;
         }
 
-        //var saveUtility = GraphSaveUtility.GetInstance();
+        var saveUtility = GraphSaveUtility.GetInstance(_graphView);
+        if(save)
+        {
+            saveUtility.SaveGraph(_fileName);
+        }
+        else
+        {
+            saveUtility.LoadGraph(_fileName);
+        }
     }
 
 }

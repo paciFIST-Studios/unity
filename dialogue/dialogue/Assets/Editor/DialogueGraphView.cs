@@ -1,11 +1,14 @@
-﻿
+﻿using System.Linq;
+using System.Collections.Generic;
+
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.UIElements;
 
 using UnityEditor;
 using UnityEditor.Experimental.GraphView;
-using System.Collections.Generic;
+
+using Button = UnityEngine.UIElements.Button;
 
 public class DialogueGraphView : GraphView
 {
@@ -110,17 +113,58 @@ public class DialogueGraphView : GraphView
     }
 
 
-    private void AddChoicePort(DialogueNode node)
+    public void AddChoicePort(DialogueNode node, string overridePortName = "")
     {
         var port = GeneratePort(node, Direction.Output, Port.Capacity.Single);
 
+        // this removes the visual label on the node's output ports.  However, when this is done,
+        // the output ports stop being able to generate an edge.  they can still accept an edge, but
+        // they don't make one when you try to use the mouse to pull one out
+        //var oldLabel = port.contentContainer.Q<Label>(name: "type");
+        //port.contentContainer.Remove(oldLabel);
+
         var outputPortCount = node.outputContainer.Query(name: "connector").ToList().Count;
-        port.portName = $"idx: {outputPortCount}";
+
+        var portNameChoice = string.IsNullOrEmpty(overridePortName) ? $"idx: {outputPortCount}" : overridePortName;
+        port.portName = portNameChoice;
+
+        var textField = new TextField
+        {
+              name = string.Empty
+            , value = portNameChoice
+        };
+        textField.RegisterValueChangedCallback((ChangeEvent<string> evt) => port.portName = evt.newValue);
+        port.contentContainer.Add(new Label("  "));
+        port.contentContainer.Add(textField);
+
+
+        var removePortButton = new Button(clickEvent: () => RemovePort(node, port)) { text = "X"};
+        port.contentContainer.Add(removePortButton);
+
 
         node.outputContainer.Add(port);
         node.RefreshPorts();
         node.RefreshExpandedState();
 
     }
+
+    void RemovePort(DialogueNode node, Port port)
+    {
+        var targetEdge = edges.ToList().Where(
+               (Edge x) => x.output.portName == port.portName
+            && x.output.node == port.node
+        );
+
+        if (!targetEdge.Any()) { return; }
+
+        var edge = targetEdge.First();
+        edge.input.Disconnect(edge);
+        RemoveElement(targetEdge.First());
+
+        node.outputContainer.Remove(port);
+        node.RefreshPorts();
+        node.RefreshExpandedState();
+    }
+
 
 }
