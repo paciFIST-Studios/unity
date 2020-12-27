@@ -27,8 +27,23 @@ public class ScannableObject : MonoBehaviour
     [SerializeField] private MaterialCollection materials;
     [SerializeField] private bool isScanned = false;
 
+    [SerializeField] private float descanAfterSeconds = 1f;
+    private float scannedAtTime;
+
+
     private MeshRenderer meshRenderer => GetComponent<MeshRenderer>();
-    
+
+
+    private void Update()
+    {
+        if(!isScanned) { return; }
+
+        if (scannedAtTime + descanAfterSeconds <= Time.time)
+        {
+            meshRenderer.material = materials.unscannedLight;
+            isScanned = false;
+        }
+    }
 
 
     private ElementType GetParticleElementType(GameObject obj)
@@ -40,7 +55,6 @@ public class ScannableObject : MonoBehaviour
         return (ElementType)id;
     }
 
-
     private void OnParticleCollision(GameObject other)
     {
         if(isScanned)
@@ -49,6 +63,7 @@ public class ScannableObject : MonoBehaviour
         }
 
         isScanned = true;
+        scannedAtTime = Time.time;
 
         var type = GetParticleElementType(other);
         if (type == ElementType.Berry)
