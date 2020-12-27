@@ -7,6 +7,7 @@ public struct MaterialCollection
 {
     [SerializeField] public Material scannedOrange;
     [SerializeField] public Material scannedBerry;
+    [SerializeField] public Material scannedLime;
                      
     [SerializeField] public Material unscannedLight;
     [SerializeField] public Material unscannedDark;
@@ -57,6 +58,10 @@ public class ScannableObject : MonoBehaviour
         else if (type == ElementType.Orange)
         {
             meshRenderer.material = materials.scannedOrange;
+        }
+        else if (type == ElementType.Lime)
+        {
+            meshRenderer.material = materials.scannedLime;
         }
     }
 
