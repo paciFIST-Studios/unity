@@ -68,6 +68,13 @@ public class WheelerPlayerController : MonoBehaviour
 
     bool particleSystemRotationIsLocked;
 
+    public enum ElementType
+    {
+          Berry     = 0
+        , Orange    = 1
+        , Lime      = 2
+        , Grape     = 3
+    }
 
     enum ScannerType
     {
@@ -148,20 +155,15 @@ public class WheelerPlayerController : MonoBehaviour
     {
         rb = this.GetComponent<Rigidbody>();
 
+        // Forward system, Berry
         forwardScanParticleSystem = Instantiate(forwardScanParticleSystemPrefab, particleSystemCarrier);
         forwardScanParticleSystem.Stop();
+        SetParticleSystemElementType(forwardScanParticleSystem, ElementType.Berry);
 
-        var data = forwardScanParticleSystem.customData;
-        data.SetMode(ParticleSystemCustomData.Custom1, ParticleSystemCustomDataMode.Vector);
-        data.SetVector(ParticleSystemCustomData.Custom1, 0, new ParticleSystem.MinMaxCurve(0));
-
+        // Explosion system, Orange
         explosionScanParticleSystem = Instantiate(explosionScanParticleSystemPrefab, particleSystemCarrier);
         explosionScanParticleSystem.Stop();
-
-        data = explosionScanParticleSystem.customData;
-        data.SetMode(ParticleSystemCustomData.Custom1, ParticleSystemCustomDataMode.Vector);
-        data.SetVector(ParticleSystemCustomData.Custom1, 0, new ParticleSystem.MinMaxCurve(1));
-
+        SetParticleSystemElementType(explosionScanParticleSystem, ElementType.Orange);
 
         currentScanner = ScannerType.ForwardScan;
     }
@@ -343,6 +345,14 @@ public class WheelerPlayerController : MonoBehaviour
 
 
     // ---------------------------------------------------------------
+
+    void SetParticleSystemElementType(ParticleSystem ps, ElementType type)
+    {       
+        var data = ps.customData;
+        data.SetMode(ParticleSystemCustomData.Custom1, ParticleSystemCustomDataMode.Vector);
+        data.SetVector(ParticleSystemCustomData.Custom1, 0, new ParticleSystem.MinMaxCurve((float)type));
+    }
+
     // ---------------------------------------------------------------
     // ---------------------------------------------------------------
 
