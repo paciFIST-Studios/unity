@@ -24,10 +24,10 @@ public enum ElementType
 public class ScannableObject : MonoBehaviour
 {
     [SerializeField] private MaterialCollection materials;
+    [SerializeField] private bool isScanned = false;
 
     private MeshRenderer meshRenderer => GetComponent<MeshRenderer>();
     
-    private bool isScanned = false;
 
 
     private ElementType GetParticleElementType(GameObject obj)
@@ -50,7 +50,6 @@ public class ScannableObject : MonoBehaviour
         isScanned = true;
 
         var type = GetParticleElementType(other);
-
         if (type == ElementType.Berry)
         {
             meshRenderer.material = materials.scannedBerry;
