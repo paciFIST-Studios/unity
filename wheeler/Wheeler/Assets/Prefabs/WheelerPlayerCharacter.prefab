@@ -167,7 +167,9 @@ MonoBehaviour:
   fireCooldownTime: 0.1
   forwardScanParticleSystemPrefab: {fileID: 510880570107978573, guid: 19795a735010c78408965e79c8e1dc5e,
     type: 3}
-  explosionScanParticleSystemPrefab: {fileID: 510880570107978573, guid: 141c235f5b5481841968b0ee20315b04,
+  radialScanParticleSystemPrefab: {fileID: 510880570107978573, guid: 0ca6b0698d72dd14a9d33a8183cb92be,
+    type: 3}
+  sphericalScanParticleSystemPrefab: {fileID: 510880570107978573, guid: 9cd008b91035cef4b9097cfb8e38f5e1,
     type: 3}
   particleSystemCarrier: {fileID: 0}
 --- !u!135 &1374496718783798543
@@ -340,6 +342,36 @@ MonoBehaviour:
         m_CallState: 2
     m_ActionId: 0e96a1de-30c8-4065-af52-273f86cd2e2d
     m_ActionName: Player/SetScanner2[/Keyboard/2]
+  - m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 1374496718783798542}
+        m_MethodName: OnSetScanner3
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+    m_ActionId: 32465cd1-755a-4c43-81e1-e24c72df31dc
+    m_ActionName: Player/SetScanner3[/Keyboard/3,/Keyboard/numpad3]
+  - m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 1374496718783798542}
+        m_MethodName: OnToggleScanner
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+    m_ActionId: 269d9e95-f861-4c04-9f5e-3c7e4df4358b
+    m_ActionName: Player/ToggleScanner[/XInputControllerWindows/buttonNorth,/XInputControllerWindows/buttonNorth]
   m_NeverAutoSwitchControlSchemes: 0
   m_DefaultControlScheme: 
   m_DefaultActionMap: Player
