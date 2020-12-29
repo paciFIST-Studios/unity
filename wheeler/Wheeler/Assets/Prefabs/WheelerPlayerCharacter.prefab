@@ -122,7 +122,7 @@ GameObject:
   - component: {fileID: 1374496718783798769}
   m_Layer: 0
   m_Name: WheelerPlayerCharacter
-  m_TagString: Untagged
+  m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -172,6 +172,13 @@ MonoBehaviour:
   sphericalScanParticleSystemPrefab: {fileID: 510880570107978573, guid: 9cd008b91035cef4b9097cfb8e38f5e1,
     type: 3}
   particleSystemCarrier: {fileID: 0}
+  currentDialogueData:
+    ID: 
+    partnerID: 
+    partner: {fileID: 0}
+    isInterruptible: 0
+    isRunning: 0
+    isUnseatable: 0
 --- !u!135 &1374496718783798543
 SphereCollider:
   m_ObjectHideFlags: 0
@@ -372,6 +379,14 @@ MonoBehaviour:
         m_CallState: 2
     m_ActionId: 269d9e95-f861-4c04-9f5e-3c7e4df4358b
     m_ActionName: Player/ToggleScanner[/XInputControllerWindows/buttonNorth,/XInputControllerWindows/buttonNorth]
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: 4107bd00-8b9a-4903-97f1-f63e574fd3f1
+    m_ActionName: Player/BeginScriptedConversation[/XInputControllerWindows/buttonSouth,/XInputControllerWindows/buttonSouth,/Mouse/leftButton]
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: 850dafc0-8e18-4d0d-bd8d-a7a423dc2949
+    m_ActionName: Conversation/Initiate/Advance[/Mouse/leftButton,/XInputControllerWindows/buttonSouth,/XInputControllerWindows/buttonSouth]
   m_NeverAutoSwitchControlSchemes: 0
   m_DefaultControlScheme: 
   m_DefaultActionMap: Player

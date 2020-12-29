@@ -25,6 +25,18 @@ public class WheelerPlayerController : MonoBehaviour
     [SerializeField] Transform particleSystemCarrier;
 
 
+    [Header("Dialogue")]
+    [SerializeField] private DialogueData currentDialogueData;
+    private DialogueData emptyDialogue = new DialogueData()
+    {
+          ID = "uninit"
+        , partnerID = "uninit"
+        , isRunning = false
+        , isUnseatable = true
+        , isInterruptible = true
+    };
+
+
     // Particle system vars ------------------------------------------
 
     private ParticleSystem forwardScanParticleSystem;
@@ -167,6 +179,8 @@ public class WheelerPlayerController : MonoBehaviour
         SetParticleSystemElementType(sphericalScanParticleSystem, ElementType.Lime);
 
         currentScanner = ScannerType.ForwardScan;
+
+        currentDialogueData = emptyDialogue;
     }
 
     void FixedUpdate()
@@ -396,6 +410,21 @@ public class WheelerPlayerController : MonoBehaviour
         }
     }
 
+
+    public void SetDialogueData(DialogueData data)
+    {
+        if(!currentDialogueData.isUnseatable) { return; }
+
+        currentDialogueData = data;
+    }
+
+    public void RemoveDialogueData(DialogueData data)
+    {
+        if(currentDialogueData.ID == data.ID)
+        {
+            currentDialogueData = emptyDialogue;
+        }
+    }
 
     // Utility fns ---------------------------------------------------
 
