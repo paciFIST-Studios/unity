@@ -40,6 +40,9 @@ TagManager:
   - 
   - 
   m_SortingLayers:
+  - name: NPCSprites
+    uniqueID: 3944044965
+    locked: 0
   - name: Default
     uniqueID: 0
     locked: 0
