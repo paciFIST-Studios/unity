@@ -151,9 +151,8 @@ fall_in/fall_in/Assets/Scenes/canyon/Lightmap-1_comp_shadowmask.png.meta
 
 #wheeler project
 wheeler/Wheeler/Assets/Procedural Primitives/*
-wheeler/Wheeler/Assets/Shop/*
+wheeler/Wheeler/Assets/AssetStore/*
 
-wheeler/Wheeler/Assets/Shop/*
 wheeler/Wheeler/Assets/Plugins/*
 wheeler/Wheeler/Library/*
 wheeler/Wheeler/Temp/*
@@ -167,6 +166,7 @@ wheeler/Wheeler/Assets/Scenes/Test/LightingData.asset.meta
 wheeler/Wheeler/Assets/Scenes/Test/ReflectionProbe-0.exr
 wheeler/Wheeler/Assets/Scenes/Test/ReflectionProbe-0.exr.meta
 wheeler/Wheeler/Assets/CommentObjectTool/*
+
 
 # dialogue demonstration
 dialogue2/*
