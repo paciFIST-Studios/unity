@@ -1,48 +1,5 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.InputSystem;
-
-
-[System.Serializable]
-public class PIDController
-{
-    // patron saint
-    // http://luminaryapps.com/blog/use-a-pid-loop-to-control-unity-game-objects/
-
-    [Tooltip("Proportional constant (counters error)")]
-    public float Kp = 0.2f;
-
-    [Tooltip("Integral constant (counters accumulated error)")]
-    public float Ki = 0.05f;
-
-    [Tooltip("Derivative constant (fights oscillation)")]
-    public float Kd = 1f;
-
-    [Tooltip("current control value")]
-    public float value = 0f;
-
-    private float lastError;
-    private float integral;
-
-
-    public float Update(float error)
-    {
-        return Update(error, Time.deltaTime);
-    }
-
-    public float Update(float error, float dt)
-    {
-        float derivative = (error - lastError) / dt;
-        integral += error * dt;
-        lastError = error;
-
-        value = Kp * error + Ki * integral + Kd * derivative;
-        return value;
-    }
-}
-
 
 public class WheelerPlayerController : MonoBehaviour
 {
@@ -64,16 +21,15 @@ public class WheelerPlayerController : MonoBehaviour
     [SerializeField] ParticleSystem forwardScanParticleSystemPrefab;
     [SerializeField] ParticleSystem radialScanParticleSystemPrefab;
     [SerializeField] ParticleSystem sphericalScanParticleSystemPrefab;
+
     [SerializeField] Transform particleSystemCarrier;
 
 
     // Particle system vars ------------------------------------------
 
-
     private ParticleSystem forwardScanParticleSystem;
     private ParticleSystem radialScanParticleSystem;
     private ParticleSystem sphericalScanParticleSystem;
-
 
     bool particleSystemRotationIsLocked;
 
@@ -112,9 +68,9 @@ public class WheelerPlayerController : MonoBehaviour
 
     private Rigidbody rb;
     
-    private bool isMoving = false;
+    private bool isMoving   = false;
     private bool isRotating = false;
-    private bool isFiring = false;
+    private bool isFiring   = false;
 
     private bool isRotationLocked = false;
 
@@ -128,7 +84,6 @@ public class WheelerPlayerController : MonoBehaviour
 
     private float screenHalfWidth = Screen.width * 0.5f;
     private float screenHalfHeight = Screen.height * 0.5f;
-
 
 
     // Debug fns -----------------------------------------------------
@@ -206,11 +161,10 @@ public class WheelerPlayerController : MonoBehaviour
         radialScanParticleSystem.Stop();
         SetParticleSystemElementType(radialScanParticleSystem, ElementType.Orange);
 
-        // spherical system, lime
+        // spherical system, Lime
         sphericalScanParticleSystem = Instantiate(sphericalScanParticleSystemPrefab, particleSystemCarrier);
         sphericalScanParticleSystem.Stop();
         SetParticleSystemElementType(sphericalScanParticleSystem, ElementType.Lime);
-
 
         currentScanner = ScannerType.ForwardScan;
     }
@@ -330,6 +284,7 @@ public class WheelerPlayerController : MonoBehaviour
         }
     }
 
+
     // Player Character Management fns -------------------------------
 
     void MovePlayerCharacter(Vector2 input)
@@ -341,39 +296,24 @@ public class WheelerPlayerController : MonoBehaviour
 
     void RotatePlayerCharacter(Vector2 input)
     {
-        Vector2 screenCoordinate;
-
-        if (inputSource == InputSource.MouseAndKeyboard)
-        {
-            //var mouseControl = Mouse.current.position;
-            //screenCoordinate.x = mouseControl.x.ReadValue();
-            //screenCoordinate.y = mouseControl.y.ReadValue();
-
-            var mouseControl = input;
-            screenCoordinate.x = mouseControl.x;
-            screenCoordinate.y = mouseControl.y;
-
-            // recenter to middle of screen
-            screenCoordinate.x -= screenHalfWidth;
-            screenCoordinate.y -= screenHalfHeight;
-        }
-        else if (inputSource == InputSource.XboxController)
-        {
-            screenCoordinate = input;
-        }
-        else
+        if (inputSource == InputSource.Unknown)
         {
             return;
         }
+        else if (inputSource == InputSource.MouseAndKeyboard)
+        {
+            // recenter to middle of screen
+            input.x -= screenHalfWidth;
+            input.y -= screenHalfHeight;
+        }
         
-        float angle = Mathf.Atan2(screenCoordinate.y, screenCoordinate.x) * Mathf.Rad2Deg;
+        float angle = Mathf.Atan2(input.y, input.x) * Mathf.Rad2Deg;
 
         var rotation = rb.rotation.eulerAngles;
         rotation.z = angle;
         rb.rotation = Quaternion.Euler(rotation);
-        zAxisRotation = angle;
+        zAxisRotation = angle; // cache value
     }
-
 
     private void FireProjectile()
     {
@@ -390,7 +330,6 @@ public class WheelerPlayerController : MonoBehaviour
             sphericalScanParticleSystem.Play();
         }
     }
-
 
     private void ActivateScanner(ScannerType activate)
     {
@@ -457,6 +396,7 @@ public class WheelerPlayerController : MonoBehaviour
         }
     }
 
+
     // Utility fns ---------------------------------------------------
 
     InputSource DetermineInputStyle(InputAction.CallbackContext ctx)
@@ -481,14 +421,14 @@ public class WheelerPlayerController : MonoBehaviour
             return InputSource.Unknown;
         }
     }
-
-
+    
     void SetParticleSystemElementType(ParticleSystem ps, ElementType type)
     {       
         var data = ps.customData;
         data.SetMode(ParticleSystemCustomData.Custom1, ParticleSystemCustomDataMode.Vector);
         data.SetVector(ParticleSystemCustomData.Custom1, 0, new ParticleSystem.MinMaxCurve((float)type));
     }
+
 
     // ---------------------------------------------------------------
     // ---------------------------------------------------------------
