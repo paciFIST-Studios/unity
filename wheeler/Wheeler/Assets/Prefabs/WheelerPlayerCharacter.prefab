@@ -161,10 +161,10 @@ MonoBehaviour:
     Ki: 0.1
     Kd: 1
     value: 0
-  hoverForce: 15
-  targetAltitude: 1
-  groundMovementForce: 10
-  fireCooldownTime: 0.1
+  hoverForce: {fileID: 0}
+  targetAltitude: {fileID: 0}
+  groundMovementForce: {fileID: 0}
+  fireCooldownTime: {fileID: 0}
   forwardScanParticleSystemPrefab: {fileID: 510880570107978573, guid: 19795a735010c78408965e79c8e1dc5e,
     type: 3}
   radialScanParticleSystemPrefab: {fileID: 510880570107978573, guid: 0ca6b0698d72dd14a9d33a8183cb92be,
@@ -172,13 +172,6 @@ MonoBehaviour:
   sphericalScanParticleSystemPrefab: {fileID: 510880570107978573, guid: 9cd008b91035cef4b9097cfb8e38f5e1,
     type: 3}
   particleSystemCarrier: {fileID: 0}
-  currentDialogueData:
-    ID: 
-    partnerID: 
-    partner: {fileID: 0}
-    isInterruptible: 0
-    isRunning: 0
-    isUnseatable: 0
 --- !u!135 &1374496718783798543
 SphereCollider:
   m_ObjectHideFlags: 0
