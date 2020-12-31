@@ -1,29 +1,35 @@
 ﻿using UnityEngine;
 using UnityEngine.InputSystem;
 
-using pacifist.core;
+using Sirenix.OdinInspector;
 
 public class WheelerPlayerController : MonoBehaviour
 {
     // Editor facing vars --------------------------------------------
+    [FoldoutGroup("Movement")][HideLabel][SerializeField]
+    PIDController pid;
 
-    [Header("Movement")]
-    [SerializeField] PIDController pid;
+    [FoldoutGroup("Movement")][HideLabel][SerializeField]
+    FloatReference hoverForce;
+    [FoldoutGroup("Movement")][HideLabel][SerializeField]
+    FloatReference hoverHeight;
+    [FoldoutGroup("Movement")][HideLabel][SerializeField]
+    FloatReference moveSpeed;
 
-    [SerializeField] FloatReference hoverForce;
-    [SerializeField] FloatReference hoverHeight;
-    [SerializeField] FloatReference moveSpeed;
 
-
-    [Header("Scanner")]
-    [SerializeField] FloatReference emitCooldown;
+    [FoldoutGroup("Scanner")][HideLabel][SerializeField]
+    FloatReference emitCooldown;
     private float lastShotFiredAt;
 
-    [SerializeField] ParticleSystem forwardScanParticleSystemPrefab;
-    [SerializeField] ParticleSystem radialScanParticleSystemPrefab;
-    [SerializeField] ParticleSystem sphericalScanParticleSystemPrefab;
+    [FoldoutGroup("Scanner")][SerializeField]
+    ParticleSystem forwardScanParticleSystemPrefab;
+    [FoldoutGroup("Scanner")][SerializeField]
+    ParticleSystem radialScanParticleSystemPrefab;
+    [FoldoutGroup("Scanner")][SerializeField]
+    ParticleSystem sphericalScanParticleSystemPrefab;
 
-    [SerializeField] Transform particleSystemCarrier;
+    [FoldoutGroup("Scanner")][SerializeField]
+    Transform particleSystemCarrier;
 
 
     //[Header("Dialogue")]
