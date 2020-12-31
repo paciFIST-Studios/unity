@@ -1,6 +1,8 @@
 ﻿using UnityEngine;
 using UnityEngine.InputSystem;
 
+using pacifist.core;
+
 public class WheelerPlayerController : MonoBehaviour
 {
     // Editor facing vars --------------------------------------------
@@ -8,13 +10,13 @@ public class WheelerPlayerController : MonoBehaviour
     [Header("Movement")]
     [SerializeField] PIDController pid;
 
-    [SerializeField] FloatVariable hoverForce;
-    [SerializeField] FloatVariable targetAltitude;
-    [SerializeField] FloatVariable groundMovementForce;
+    [SerializeField] FloatReference hoverForce;
+    [SerializeField] FloatReference hoverHeight;
+    [SerializeField] FloatReference moveSpeed;
 
 
-    [Header("Firing")]
-    [SerializeField] FloatVariable fireCooldownTime;
+    [Header("Scanner")]
+    [SerializeField] FloatReference emitCooldown;
     private float lastShotFiredAt;
 
     [SerializeField] ParticleSystem forwardScanParticleSystemPrefab;
@@ -95,7 +97,7 @@ public class WheelerPlayerController : MonoBehaviour
 
     // Misc vars -------------------------------------------------
 
-    private float screenHalfWidth = Screen.width * 0.5f;
+    private float screenHalfWidth  = Screen.width  * 0.5f;
     private float screenHalfHeight = Screen.height * 0.5f;
 
 
@@ -191,13 +193,13 @@ public class WheelerPlayerController : MonoBehaviour
     {
         float currentAltitude = transform.position.y;
 
-        float error = targetAltitude - currentAltitude;
-        var hoveCorrection = Vector3.up;
-        hoveCorrection *= pid.Update(error);
-        hoveCorrection *= hoverForce;
+        float error = hoverHeight - currentAltitude;
+        var hoverCorrection = Vector3.up;
+        hoverCorrection *= pid.Update(error);
+        hoverCorrection *= hoverForce;
         //correction *= Time.deltaTime;
         
-        rb.AddForce(hoveCorrection);
+        rb.AddForce(hoverCorrection);
 
         if(isMoving)
         {
@@ -263,7 +265,7 @@ public class WheelerPlayerController : MonoBehaviour
             return;
         }
 
-        if(lastShotFiredAt + fireCooldownTime < Time.time)
+        if(lastShotFiredAt + emitCooldown < Time.time)
         {
             isFiring = true;
             UnlockParticleSystemRotation();
@@ -318,7 +320,7 @@ public class WheelerPlayerController : MonoBehaviour
     void MovePlayerCharacter(Vector2 input)
     {
         var movement = Vector3.right;
-        movement.x *= input.x * groundMovementForce;
+        movement.x *= input.x * moveSpeed;
         rb.AddForce(movement);
     }
 
