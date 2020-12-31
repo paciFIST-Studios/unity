@@ -160,11 +160,27 @@ MonoBehaviour:
     Kp: 20
     Ki: 0.1
     Kd: 1
-    value: 0
-  hoverForce: {fileID: 0}
-  targetAltitude: {fileID: 0}
-  groundMovementForce: {fileID: 0}
-  fireCooldownTime: {fileID: 0}
+    value: 1
+  hoverForce:
+    UseOverride: 0
+    OverrideValue: 20
+    ReferencedValue: 10
+    Reference: {fileID: 11400000, guid: 628c323a012585c4ebd06b855aa2eec7, type: 2}
+  hoverHeight:
+    UseOverride: 0
+    OverrideValue: 1.5
+    ReferencedValue: 1
+    Reference: {fileID: 11400000, guid: 30affe34ca7b8c34a8029ef3dbb3306d, type: 2}
+  moveSpeed:
+    UseOverride: 0
+    OverrideValue: 10
+    ReferencedValue: 10
+    Reference: {fileID: 11400000, guid: ba2a69c767605604cbe9111e901b1351, type: 2}
+  emitCooldown:
+    UseOverride: 0
+    OverrideValue: 0
+    ReferencedValue: 0
+    Reference: {fileID: 11400000, guid: 3d2a051c51e12c54289d34d5774b464f, type: 2}
   forwardScanParticleSystemPrefab: {fileID: 510880570107978573, guid: 19795a735010c78408965e79c8e1dc5e,
     type: 3}
   radialScanParticleSystemPrefab: {fileID: 510880570107978573, guid: 0ca6b0698d72dd14a9d33a8183cb92be,
@@ -373,7 +389,18 @@ MonoBehaviour:
     m_ActionId: 269d9e95-f861-4c04-9f5e-3c7e4df4358b
     m_ActionName: Player/ToggleScanner[/XInputControllerWindows/buttonNorth,/XInputControllerWindows/buttonNorth]
   - m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 1374496718783798542}
+        m_MethodName: OnInitiateDialogue
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
     m_ActionId: 4107bd00-8b9a-4903-97f1-f63e574fd3f1
     m_ActionName: Player/BeginScriptedConversation[/XInputControllerWindows/buttonSouth,/XInputControllerWindows/buttonSouth,/Mouse/leftButton]
   - m_PersistentCalls:
