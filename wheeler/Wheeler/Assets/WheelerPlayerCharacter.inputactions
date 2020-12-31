@@ -62,7 +62,7 @@
                     "interactions": ""
                 },
                 {
-                    "name": "BeginScriptedConversation",
+                    "name": "OnInitiateDialogue",
                     "type": "Button",
                     "id": "4107bd00-8b9a-4903-97f1-f63e574fd3f1",
                     "expectedControlType": "Button",
@@ -386,7 +386,7 @@
                     "interactions": "",
                     "processors": "",
                     "groups": "Gamepad",
-                    "action": "BeginScriptedConversation",
+                    "action": "OnInitiateDialogue",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
@@ -397,7 +397,7 @@
                     "interactions": "",
                     "processors": "",
                     "groups": "Gamepad",
-                    "action": "BeginScriptedConversation",
+                    "action": "OnInitiateDialogue",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
@@ -408,7 +408,7 @@
                     "interactions": "",
                     "processors": "",
                     "groups": "Keyboard&Mouse",
-                    "action": "BeginScriptedConversation",
+                    "action": "OnInitiateDialogue",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
@@ -419,7 +419,7 @@
                     "interactions": "",
                     "processors": "",
                     "groups": "Keyboard&Mouse",
-                    "action": "BeginScriptedConversation",
+                    "action": "OnInitiateDialogue",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }
