@@ -149,6 +149,9 @@ fall_in/fall_in/Assets/Scenes/canyon/Lightmap-1_comp_shadowmask.png
 fall_in/fall_in/Assets/Scenes/canyon/Lightmap-1_comp_shadowmask.png.meta
 
 
+
+
+
 #wheeler project
 wheeler/Wheeler/Assets/Procedural Primitives/*
 wheeler/Wheeler/Assets/AssetStore/*
@@ -167,6 +170,11 @@ wheeler/Wheeler/Assets/Scenes/Test/LightingData.asset.meta
 wheeler/Wheeler/Assets/Scenes/Test/ReflectionProbe-0.exr
 wheeler/Wheeler/Assets/Scenes/Test/ReflectionProbe-0.exr.meta
 wheeler/Wheeler/Assets/CommentObjectTool/*
+
+wheeler/Wheeler/Assets/Plugins/Sirenix/Assemblies/AOT/*
+wheeler/Wheeler/Assets/Plugins/Sirenix/Demos/*
+!wheeler/Wheeler/Assets/Plugins/Sirenix/Demos/*.unitypackage
+
 
 
 # dialogue demonstration
