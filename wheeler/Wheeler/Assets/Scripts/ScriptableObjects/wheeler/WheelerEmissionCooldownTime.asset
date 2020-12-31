@@ -12,6 +12,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 649528f45566e0f4487d9ed6ac3a23b6, type: 3}
   m_Name: WheelerEmissionCooldownTime
   m_EditorClassIdentifier: 
-  DeveloperDescription: How long Wheeler has to wait, before emitting another signal
-    scan
+  Description: How long Wheeler has to wait, before emitting another signal scan
+  DisplayName: Emission Cooldown Time
   value: 0.1

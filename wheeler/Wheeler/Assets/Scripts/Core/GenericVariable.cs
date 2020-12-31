@@ -1,5 +1,7 @@
 ﻿using UnityEngine;
 
+using Sirenix.OdinInspector;
+
 namespace pacifist
 {
     namespace core
@@ -9,10 +11,9 @@ namespace pacifist
         public abstract class GenericVariable<T> : ScriptableObject
         {
 #if UNITY_EDITOR
-            [Multiline(2)]
-            public string DeveloperDescription = "";
+            public string Description = "";
+            public string DisplayName = "";
 #endif
-
             public T value;
 
             public T GetValue()

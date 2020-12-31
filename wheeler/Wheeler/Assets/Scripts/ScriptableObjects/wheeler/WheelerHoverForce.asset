@@ -12,5 +12,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 649528f45566e0f4487d9ed6ac3a23b6, type: 3}
   m_Name: WheelerHoverForce
   m_EditorClassIdentifier: 
-  DeveloperDescription: How strongly wheeler can push up from the ground
+  Description: How strongly wheeler can push up from the ground
+  DisplayName: Hover Force
   value: 10

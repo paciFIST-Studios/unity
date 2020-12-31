@@ -12,5 +12,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 649528f45566e0f4487d9ed6ac3a23b6, type: 3}
   m_Name: WheelerHoverHeight
   m_EditorClassIdentifier: 
-  DeveloperDescription: Height Wheeler will hover off the ground
+  Description: How high Wheeler will hover off the ground
+  DisplayName: Hover Height
   value: 1
