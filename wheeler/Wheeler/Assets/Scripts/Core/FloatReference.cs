@@ -18,6 +18,7 @@ public class FloatReference : GenericVariableReference<float>
     public FloatReference()
     {
         this.GuiTitle = "FloatReference";
+        UpdateReference();
     }
 
     public FloatReference(float f)
@@ -25,6 +26,8 @@ public class FloatReference : GenericVariableReference<float>
         this.UseOverride = true;
         this.OverrideValue = f;
         this.GuiTitle = "FloatReference";
+
+        UpdateReference();
     }
 
     public new float Value
@@ -37,10 +40,24 @@ public class FloatReference : GenericVariableReference<float>
         return fr.Value;
     }
 
-    private void UpdateReference()
-    {
-        if(this.Reference == null) { return; }
 
-        this.GuiTitle = this.Reference.DisplayName;
+    public override void UpdateReference()
+    {
+        if(Reference)
+        {
+            this.GuiTitle = this.Reference.DisplayName;
+            this.ReferencedValue = this.Reference.value;
+        }
     }
+
+    public override void SaveOverrideToReference()
+    {
+        if (Reference)
+        {
+            this.Reference.SetValue(OverrideValue);
+            UpdateReference();
+        }
+    }
+
+
 }

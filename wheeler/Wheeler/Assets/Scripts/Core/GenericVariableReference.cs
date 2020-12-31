@@ -13,7 +13,7 @@ namespace pacifist
             [FoldoutGroup("$GuiTitle")]
             [VerticalGroup("$GuiTitle/Column")]
             [HorizontalGroup("$GuiTitle/Column/Top", width: 100)]
-            [OnValueChanged("UpdateValueDisplay")]
+            [OnValueChanged("UpdateReference")]
             [LabelWidth(85)]
             public bool UseOverride = true;
 
@@ -21,6 +21,7 @@ namespace pacifist
             [HorizontalGroup("$GuiTitle/Column/Top", width: 1200)]
             [LabelWidth(105)]
             [ShowIf("UseOverride")]
+            [CustomContextMenu("Overwrite Reference With Current", "SaveOverrideToReference")]
             public T OverrideValue;
 
             [FoldoutGroup("$GuiTitle")]
@@ -36,27 +37,11 @@ namespace pacifist
             [LabelWidth(100)]
             public GenericVariable<T> Reference;
 
-            public T Value
-            {
-                get { return UseOverride ? OverrideValue : Reference.value; }
-            }
-
-            public static implicit operator T(GenericVariableReference<T> reference)
-            {
-                return reference.Value;
-            }
-
             protected string GuiTitle = "GenericVariableReference<T>";
 
-            private void UpdateValueDisplay()
-            {
-                if (Reference == null) { return; }
-
-                this.ReferencedValue = Reference.value;
-
-            }
+            public abstract void UpdateReference();            
+            public abstract void SaveOverrideToReference();
         }
 
-
-    }
-}
+    }   // core
+}       // pacifist
