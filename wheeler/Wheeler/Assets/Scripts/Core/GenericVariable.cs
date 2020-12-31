@@ -1,7 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-
+﻿using UnityEngine;
 
 namespace pacifist
 {
@@ -9,11 +6,10 @@ namespace pacifist
     {
         // https://github.com/roboryantron/Unite2017/blob/master/Assets/Code/Variables/FloatVariable.cs
 
-
         public abstract class GenericVariable<T> : ScriptableObject
         {
 #if UNITY_EDITOR
-            [Multiline]
+            [Multiline(2)]
             public string DeveloperDescription = "";
 #endif
 
@@ -30,9 +26,5 @@ namespace pacifist
             }
         }
 
-
-
-
-
-    }
-}
+    }  // core
+}      // pacifist

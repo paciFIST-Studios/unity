@@ -8,15 +8,14 @@ public class WheelerPlayerController : MonoBehaviour
     [Header("Movement")]
     [SerializeField] PIDController pid;
 
-    [SerializeField] float hoverForce = 10f;
-    [SerializeField] float targetAltitude = 1f;
-
-    [SerializeField] float groundMovementForce = 100f;
+    [SerializeField] FloatVariable hoverForce;
+    [SerializeField] FloatVariable targetAltitude;
+    [SerializeField] FloatVariable groundMovementForce;
 
 
     [Header("Firing")]
-    [SerializeField] float fireCooldownTime = 0.1f;
-    float lastShotFiredAt;
+    [SerializeField] FloatVariable fireCooldownTime;
+    private float lastShotFiredAt;
 
     [SerializeField] ParticleSystem forwardScanParticleSystemPrefab;
     [SerializeField] ParticleSystem radialScanParticleSystemPrefab;
@@ -25,17 +24,18 @@ public class WheelerPlayerController : MonoBehaviour
     [SerializeField] Transform particleSystemCarrier;
 
 
-    [Header("Dialogue")]
-    [SerializeField] private DialogueData currentDialogueData;
-    private DialogueData emptyDialogue = new DialogueData()
-    {
-          ID = "uninit"
-        , partnerID = "uninit"
-        , isRunning = false
-        , isUnseatable = true
-        , isInterruptible = true
-    };
-
+    //[Header("Dialogue")]
+    //[SerializeField] private DialogueData currentDialogueData;
+    //private DialogueData emptyDialogue = new DialogueData()
+    //{
+    //      ID = "uninit"
+    //    , partnerID = "uninit"
+    //    , isRunning = false
+    //    , isUnseatable = true
+    //    , isInterruptible = true
+    //};
+    //
+    //private DialogueManager dm;
 
     // Particle system vars ------------------------------------------
 
@@ -84,6 +84,7 @@ public class WheelerPlayerController : MonoBehaviour
     private bool isRotating = false;
     private bool isFiring   = false;
 
+    private bool isScannerActivationLocked = false;
     private bool isRotationLocked = false;
 
     private Vector2 movementInputThisTick;
@@ -110,21 +111,21 @@ public class WheelerPlayerController : MonoBehaviour
             {
                 if (GUI.Button(new Rect(30, 35, 160, 30), "ForwardScanner"))
                 {
-                    ActivateScanner(ScannerType.RadialScan);
+                    SetActiveScanner(ScannerType.RadialScan);
                 }
             }
             else if (currentScanner == ScannerType.RadialScan)
             {
                 if (GUI.Button(new Rect(30, 35, 160, 30), "RadialScanner"))
                 {
-                    ActivateScanner(ScannerType.SphericalScan);
+                    SetActiveScanner(ScannerType.SphericalScan);
                 }
             }
             else if (currentScanner == ScannerType.SphericalScan)
             {
                 if (GUI.Button(new Rect(30, 35, 160, 30), "SphericalScanner"))
                 {
-                    ActivateScanner(ScannerType.ForwardScan);
+                    SetActiveScanner(ScannerType.ForwardScan);
                 }
             }
         }
@@ -180,7 +181,10 @@ public class WheelerPlayerController : MonoBehaviour
 
         currentScanner = ScannerType.ForwardScan;
 
-        currentDialogueData = emptyDialogue;
+        //currentDialogueData = emptyDialogue;
+        //dm = (DialogueManager)GlobalManager.Instance.GetGlobalComponent(
+        //        GlobalManager.GlobalComponent.DialogueManager.ToString()
+        //    );
     }
 
     void FixedUpdate()
@@ -269,35 +273,45 @@ public class WheelerPlayerController : MonoBehaviour
 
     public void OnSetScanner1(InputAction.CallbackContext ctx)
     {
-        ActivateScanner(ScannerType.ForwardScan);
+        SetActiveScanner(ScannerType.ForwardScan);
     }
 
     public void OnSetScanner2(InputAction.CallbackContext ctx)
     {
-        ActivateScanner(ScannerType.RadialScan);
+        SetActiveScanner(ScannerType.RadialScan);
     }
 
     public void OnSetScanner3(InputAction.CallbackContext ctx)
     {
-        ActivateScanner(ScannerType.SphericalScan);
+        SetActiveScanner(ScannerType.SphericalScan);
     }
 
     public void OnToggleScanner(InputAction.CallbackContext ctx)
     {
         if(currentScanner == ScannerType.ForwardScan)
         {
-            ActivateScanner(ScannerType.RadialScan);
+            SetActiveScanner(ScannerType.RadialScan);
         }
         else if (currentScanner == ScannerType.RadialScan)
         {
-            ActivateScanner(ScannerType.SphericalScan);
+            SetActiveScanner(ScannerType.SphericalScan);
         }
         else if (currentScanner == ScannerType.SphericalScan)
         {
-            ActivateScanner(ScannerType.ForwardScan);
+            SetActiveScanner(ScannerType.ForwardScan);
         }
     }
 
+
+    public void OnInitiateDialogue(InputAction.CallbackContext ctx)
+    {
+        //if(currentDialogueData.ID == emptyDialogue.ID)
+        //{
+        //    return;
+        //}
+        //
+        //dm.StartConversation(currentDialogueData);
+    }
 
     // Player Character Management fns -------------------------------
 
@@ -331,6 +345,8 @@ public class WheelerPlayerController : MonoBehaviour
 
     private void FireProjectile()
     {
+        if(isScannerActivationLocked) { return; }
+
         if(currentScanner == ScannerType.ForwardScan)
         {
             forwardScanParticleSystem.Play();
@@ -345,25 +361,35 @@ public class WheelerPlayerController : MonoBehaviour
         }
     }
 
-    private void ActivateScanner(ScannerType activate)
+    private void SetActiveScanner(ScannerType scanner)
     {
-        if (activate == ScannerType.ForwardScan)
+        if (scanner == ScannerType.ForwardScan)
         {
             radialScanParticleSystem.Stop();
             sphericalScanParticleSystem.Stop();
         }
-        else if (activate == ScannerType.RadialScan)
+        else if (scanner == ScannerType.RadialScan)
         {
             forwardScanParticleSystem.Stop();            
             sphericalScanParticleSystem.Stop();
         }
-        else if (activate == ScannerType.SphericalScan)
+        else if (scanner == ScannerType.SphericalScan)
         {
             forwardScanParticleSystem.Stop();
             radialScanParticleSystem.Stop();
         }
 
-        currentScanner = activate;
+        currentScanner = scanner;
+    }
+
+    private void LockScannerActivation()
+    {
+        isScannerActivationLocked = true;
+    }
+
+    private void UnlockScannerActivation()
+    {
+        isScannerActivationLocked = false;
     }
 
     private void SetParticleSystemRotation(Quaternion rotation)
@@ -382,6 +408,7 @@ public class WheelerPlayerController : MonoBehaviour
     {
         particleSystemRotationIsLocked = false;
     }
+
 
     private void LockPlayerRotation()
     {
@@ -413,17 +440,17 @@ public class WheelerPlayerController : MonoBehaviour
 
     public void SetDialogueData(DialogueData data)
     {
-        if(!currentDialogueData.isUnseatable) { return; }
-
-        currentDialogueData = data;
+        //if(!currentDialogueData.isUnseatable) { return; }
+        //
+        //currentDialogueData = data;
     }
 
     public void RemoveDialogueData(DialogueData data)
     {
-        if(currentDialogueData.ID == data.ID)
-        {
-            currentDialogueData = emptyDialogue;
-        }
+        //if(currentDialogueData.ID == data.ID)
+        //{
+        //    currentDialogueData = emptyDialogue;
+        //}
     }
 
     // Utility fns ---------------------------------------------------

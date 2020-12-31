@@ -4,7 +4,7 @@ using UnityEngine;
 
 using pacifist.core;
 
-[CreateAssetMenu(fileName = "New Float Variable", menuName = "paciFIST/Core/FloatVariable")]
+[CreateAssetMenu(fileName = "New Float Variable", menuName = "paciFIST/FloatVariable")]
 public class FloatVariable : GenericVariable<float>
 {
     // ctors
@@ -26,6 +26,12 @@ public class FloatVariable : GenericVariable<float>
     public void ApplyChange(FloatVariable amount)
     {
         this.value += amount.value;
+    }
+
+    // NOTE: 
+    public static implicit operator float(FloatVariable fv)
+    {
+        return fv.value;
     }
 
 }
