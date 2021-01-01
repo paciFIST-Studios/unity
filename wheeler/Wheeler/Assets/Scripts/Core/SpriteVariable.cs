@@ -1,7 +1,5 @@
 ﻿using UnityEngine;
 
-using pacifist.core;
-
 using Sirenix.OdinInspector;
 
 [CreateAssetMenu(fileName = "New Sprite Variable", menuName = "paciFIST/SpriteVariable")]

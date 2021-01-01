@@ -10,7 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: e368061597506dc45b3197aab71d858f, type: 3}
-  m_Name: TheFactions
+  m_Name: FactionEnum
   m_EditorClassIdentifier: 
   TheElements:
   - {fileID: 11400000, guid: d4ee06914af399c4d8de3080def0b5c4, type: 2}
