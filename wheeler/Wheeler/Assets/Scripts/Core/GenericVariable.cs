@@ -1,20 +1,20 @@
 ﻿using UnityEngine;
 
-using Sirenix.OdinInspector;
-
 namespace pacifist
 {
     namespace core
-    {
+    {               
         // https://github.com/roboryantron/Unite2017/blob/master/Assets/Code/Variables/FloatVariable.cs
 
         public abstract class GenericVariable<T> : ScriptableObject
         {
+
 #if UNITY_EDITOR
-            public string Description = "";
             public string DisplayName = "";
+            public string Description = "";
 #endif
             public T value;
+
 
             public T GetValue()
             {
