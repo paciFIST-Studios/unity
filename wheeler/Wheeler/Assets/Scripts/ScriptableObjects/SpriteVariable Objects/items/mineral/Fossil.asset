@@ -14,4 +14,4 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Value: {fileID: 21300000, guid: b1a885ddfcb74d8449291674e302cb75, type: 3}
   DisplayName: Fossil
-  Description: 
+  Description: A fossil of an ancient organism
