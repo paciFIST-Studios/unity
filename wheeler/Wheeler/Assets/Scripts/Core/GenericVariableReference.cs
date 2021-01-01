@@ -18,7 +18,7 @@ namespace pacifist
             public bool UseOverride = true;
 
             [FoldoutGroup("$GuiTitle")]
-            [HorizontalGroup("$GuiTitle/Column/Top", width: 1200)]
+            [HorizontalGroup("$GuiTitle/Column/Top", width: 400)]
             [LabelWidth(105)]
             [ShowIf("UseOverride")]
             [CustomContextMenu("Overwrite Reference With Current", "SaveOverrideToReference")]
@@ -26,7 +26,7 @@ namespace pacifist
 
             [FoldoutGroup("$GuiTitle")]
             [HideIf("UseOverride")]
-            [HorizontalGroup("$GuiTitle/Column/Top", marginLeft: -1200, width: 1200)]
+            [HorizontalGroup("$GuiTitle/Column/Top", marginLeft: -400, width: 400)]
             [LabelWidth(105)]
             [ReadOnly]
             public T ReferencedValue;

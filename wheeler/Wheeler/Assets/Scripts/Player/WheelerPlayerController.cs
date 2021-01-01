@@ -14,7 +14,7 @@ public class WheelerPlayerController : MonoBehaviour
     [FoldoutGroup("Movement")][HideLabel][SerializeField]
     FloatReference hoverHeight;
     [FoldoutGroup("Movement")][HideLabel][SerializeField]
-    FloatReference moveSpeed;
+    FloatReference moveForce;
 
 
     [FoldoutGroup("Scanner")][HideLabel][SerializeField]
@@ -53,7 +53,7 @@ public class WheelerPlayerController : MonoBehaviour
 
     bool particleSystemRotationIsLocked;
 
-    enum ScannerType
+    public enum ScannerType
     {
           ForwardScan
         , RadialScan
@@ -111,32 +111,47 @@ public class WheelerPlayerController : MonoBehaviour
 
     private void OnGUI()
     {
-        // scanner switcher
+        // save load
         {
-            GUI.Box(new Rect(10, 10, 200, 60), "Scanner Equipped:");
-
-            if (currentScanner == ScannerType.ForwardScan)
+            GUI.Box(new Rect(10, 10, 200, 60), "State Management");
+            if(GUI.Button(new Rect(35, 35, 80, 20), "Save"))
             {
-                if (GUI.Button(new Rect(30, 35, 160, 30), "ForwardScanner"))
-                {
-                    SetActiveScanner(ScannerType.RadialScan);
-                }
-            }
-            else if (currentScanner == ScannerType.RadialScan)
+                var data = this.BuildSaveData();
+                SaveSystem.SavePlayer(data);
+            } 
+            if(GUI.Button(new Rect(120, 35, 60, 20), "Load"))
             {
-                if (GUI.Button(new Rect(30, 35, 160, 30), "RadialScanner"))
-                {
-                    SetActiveScanner(ScannerType.SphericalScan);
-                }
-            }
-            else if (currentScanner == ScannerType.SphericalScan)
-            {
-                if (GUI.Button(new Rect(30, 35, 160, 30), "SphericalScanner"))
-                {
-                    SetActiveScanner(ScannerType.ForwardScan);
-                }
+                var data = SaveSystem.LoadPlayer();
+                this.ApplySaveData(data);
             }
         }
+
+        // scanner switcher
+        //{
+        //    GUI.Box(new Rect(10, 10, 200, 60), "Scanner Equipped:");
+        //
+        //    if (currentScanner == ScannerType.ForwardScan)
+        //    {
+        //        if (GUI.Button(new Rect(30, 35, 160, 30), "ForwardScanner"))
+        //        {
+        //            SetActiveScanner(ScannerType.RadialScan);
+        //        }
+        //    }
+        //    else if (currentScanner == ScannerType.RadialScan)
+        //    {
+        //        if (GUI.Button(new Rect(30, 35, 160, 30), "RadialScanner"))
+        //        {
+        //            SetActiveScanner(ScannerType.SphericalScan);
+        //        }
+        //    }
+        //    else if (currentScanner == ScannerType.SphericalScan)
+        //    {
+        //        if (GUI.Button(new Rect(30, 35, 160, 30), "SphericalScanner"))
+        //        {
+        //            SetActiveScanner(ScannerType.ForwardScan);
+        //        }
+        //    }
+        //}
 
         // player stats
         {
@@ -326,7 +341,7 @@ public class WheelerPlayerController : MonoBehaviour
     void MovePlayerCharacter(Vector2 input)
     {
         var movement = Vector3.right;
-        movement.x *= input.x * moveSpeed;
+        movement.x *= input.x * moveForce;
         rb.AddForce(movement);
     }
 
@@ -493,6 +508,34 @@ public class WheelerPlayerController : MonoBehaviour
         data.SetVector(ParticleSystemCustomData.Custom1, 0, new ParticleSystem.MinMaxCurve((float)type));
     }
 
+
+    public PlayerData BuildSaveData()
+    {
+        var data = new PlayerData
+        {
+              WheelerHoverForce     = this.hoverForce
+            , WheelerHoverHeight    = this.hoverHeight
+            , WheelerMoveForce      = this.moveForce
+            , WheelerPosition       = this.transform.position
+            , WheelerCurrentScanner = this.currentScanner
+            , WheelerForwardScan    = this.forwardScanParticleSystem
+            , WheelerRadialScan     = this.radialScanParticleSystem
+            , WheelerSphericalScan  = this.sphericalScanParticleSystem
+        };
+        return data;
+    }
+
+    public void ApplySaveData(PlayerData data)
+    {
+        this.hoverForce  = data.WheelerHoverForce;
+        this.hoverHeight = data.WheelerHoverHeight;
+        this.moveForce   = data.WheelerMoveForce;
+        this.transform.position = data.WheelerPosition;
+        this.currentScanner     = data.WheelerCurrentScanner;
+        //this.forwardScanParticleSystem   = data.WheelerForwardScan;
+        //this.radialScanParticleSystem    = data.WheelerRadialScan;
+        //this.sphericalScanParticleSystem = data.WheelerSphericalScan;
+    }
 
     // ---------------------------------------------------------------
     // ---------------------------------------------------------------

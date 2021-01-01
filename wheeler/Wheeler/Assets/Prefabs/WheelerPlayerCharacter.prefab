@@ -171,11 +171,11 @@ MonoBehaviour:
     OverrideValue: 1.5
     ReferencedValue: 1
     Reference: {fileID: 11400000, guid: 30affe34ca7b8c34a8029ef3dbb3306d, type: 2}
-  moveSpeed:
-    UseOverride: 0
-    OverrideValue: 10
-    ReferencedValue: 10
-    Reference: {fileID: 11400000, guid: ba2a69c767605604cbe9111e901b1351, type: 2}
+  moveForce:
+    UseOverride: 1
+    OverrideValue: 0
+    ReferencedValue: 0
+    Reference: {fileID: 0}
   emitCooldown:
     UseOverride: 0
     OverrideValue: 0
