@@ -12,6 +12,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a20698866b042a4419acc999d73080f6, type: 3}
   m_Name: ForwardScannerSprite
   m_EditorClassIdentifier: 
+  Value: {fileID: 21300000, guid: 134b5d91c517ec344bcd793a093fd54f, type: 3}
   DisplayName: Forward Scanner
   Description: A sprite indicating the forward scanner
-  value: {fileID: 21300000, guid: 134b5d91c517ec344bcd793a093fd54f, type: 3}

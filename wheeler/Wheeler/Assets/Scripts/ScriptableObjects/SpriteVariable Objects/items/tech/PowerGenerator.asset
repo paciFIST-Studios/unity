@@ -12,6 +12,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a20698866b042a4419acc999d73080f6, type: 3}
   m_Name: PowerGenerator
   m_EditorClassIdentifier: 
+  Value: {fileID: 21300000, guid: b71799bf79f32d64383509e1464af05b, type: 3}
   DisplayName: Power Generator
   Description: 
-  value: {fileID: 21300000, guid: b71799bf79f32d64383509e1464af05b, type: 3}

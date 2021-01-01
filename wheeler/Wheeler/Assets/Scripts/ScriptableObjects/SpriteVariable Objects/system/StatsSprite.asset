@@ -12,6 +12,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a20698866b042a4419acc999d73080f6, type: 3}
   m_Name: StatsSprite
   m_EditorClassIdentifier: 
-  Description: A sprite used to represent player stats
+  Value: {fileID: 21300000, guid: 76a80d66171c32e4594ae7d86e3cfb36, type: 3}
   DisplayName: Stats
-  value: {fileID: 21300000, guid: 76a80d66171c32e4594ae7d86e3cfb36, type: 3}
+  Description: A sprite used to represent player stats

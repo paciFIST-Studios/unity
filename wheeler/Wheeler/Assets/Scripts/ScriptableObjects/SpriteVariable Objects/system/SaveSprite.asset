@@ -12,6 +12,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a20698866b042a4419acc999d73080f6, type: 3}
   m_Name: SaveSprite
   m_EditorClassIdentifier: 
-  Description: A sprite used to indicate that data is saving
+  Value: {fileID: 21300000, guid: 72279dfb54de1284f8a9f2c1d82ee022, type: 3}
   DisplayName: Save Data
-  value: {fileID: 21300000, guid: 72279dfb54de1284f8a9f2c1d82ee022, type: 3}
+  Description: A sprite used to indicate that data is saving

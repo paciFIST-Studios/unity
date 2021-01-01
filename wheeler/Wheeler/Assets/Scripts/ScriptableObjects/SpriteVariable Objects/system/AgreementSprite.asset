@@ -12,6 +12,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a20698866b042a4419acc999d73080f6, type: 3}
   m_Name: AgreementSprite
   m_EditorClassIdentifier: 
-  Description: A sprite indicating that the player has accepted some form of proposition
+  Value: {fileID: 21300000, guid: 760617b0bd155094891dc6f14cfda026, type: 3}
   DisplayName: Agreement Sprite
-  value: {fileID: 21300000, guid: 760617b0bd155094891dc6f14cfda026, type: 3}
+  Description: A sprite indicating that the player has accepted some form of proposition
