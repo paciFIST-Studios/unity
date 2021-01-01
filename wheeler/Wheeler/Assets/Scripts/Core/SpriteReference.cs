@@ -1,18 +1,61 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System;
+
 using UnityEngine;
 
-public class SpriteReference : MonoBehaviour
+using pacifist.core;
+
+using Sirenix.OdinInspector;
+
+[Serializable]
+public class SpriteReference : GenericVariableReference<Sprite>
 {
-    // Start is called before the first frame update
-    void Start()
+    [FoldoutGroup("$GuiTitle")]
+    [HorizontalGroup("$GuiTitle/Column/Bottom")]
+    [OnStateUpdate("UpdateReference")]
+    [LabelWidth(85)]
+    public new SpriteVariable Reference;
+
+    public SpriteReference()
     {
-        
+        this.GuiTitle = "SpriteReference";
+        UpdateReference();
     }
 
-    // Update is called once per frame
-    void Update()
+    public SpriteReference(Sprite s)
     {
-        
+        this.UseOverride = true;
+        this.OverrideValue = s;
+        this.GuiTitle = "SpriteReference";
+
+        UpdateReference();
+    }
+
+    public Sprite Value
+    {
+        get { return UseOverride ? OverrideValue : Reference.Value; }
+    }
+
+    public static implicit operator Sprite(SpriteReference sr)
+    {
+        return sr.Value;
+    }
+
+
+    public override void UpdateReference()
+    {
+        if (Reference)
+        {
+            this.GuiTitle = this.Reference.DisplayName;
+            this.ReferencedValue = this.Reference.Value;
+        }
+    }
+
+    public override void SaveOverrideToReference()
+    {
+        if (Reference)
+        {
+            this.Reference.SetValue(OverrideValue);
+            UpdateReference();
+        }
     }
 }

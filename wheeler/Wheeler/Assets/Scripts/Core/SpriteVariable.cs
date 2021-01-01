@@ -2,20 +2,34 @@
 
 using pacifist.core;
 
-[CreateAssetMenu(fileName = "New Sprite Variable", menuName = "paciFIST/SpriteVariable")]
-public class SpriteVariable : GenericVariable<Sprite>
-{
-    public SpriteVariable() { }
-    public SpriteVariable(Sprite s) { this.value = s; }
+using Sirenix.OdinInspector;
 
-    public new void SetValue(Sprite s)
+[CreateAssetMenu(fileName = "New Sprite Variable", menuName = "paciFIST/SpriteVariable")]
+public class SpriteVariable : ScriptableObject
+{
+    [TableColumnWidth(60)]
+    [PreviewField(50, ObjectFieldAlignment.Center)]
+    public Sprite Value;
+
+    [TableColumnWidth(100)]
+    [LabelWidth(100)]
+    public string DisplayName;
+
+    [TableColumnWidth(200)]
+    [MultiLineProperty]
+    public string Description;
+
+
+    public SpriteVariable() {}
+    public SpriteVariable(Sprite s) { this.Value = s; }
+
+    public void SetValue(Sprite s)
     {
-        this.value = s;
+        this.Value = s;
     }
 
     public static implicit operator Sprite(SpriteVariable s)
     {
-        return s.value;
+        return s.Value;
     }
-
 }
