@@ -4,7 +4,10 @@ using UnityEngine;
 
 using pacifist.core;
 
+using Sirenix.OdinInspector;
+
 [CreateAssetMenu(fileName = "New Float Variable", menuName = "paciFIST/FloatVariable")]
+[InlineEditor]
 public class FloatVariable : GenericVariable<float>
 {
     // ctors
