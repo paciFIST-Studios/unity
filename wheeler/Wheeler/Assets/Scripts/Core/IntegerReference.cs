@@ -38,7 +38,9 @@ public class IntegerReference : GenericVariableReference<int>
     {
         if (Reference)
         {
+#if UNITY_EDITOR
             this.GuiTitle = this.Reference.DevName;
+#endif
             this.ReferencedValue = this.Reference.value;
         }
     }

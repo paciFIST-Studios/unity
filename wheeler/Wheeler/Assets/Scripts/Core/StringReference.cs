@@ -38,7 +38,9 @@ public class StringReference : GenericVariableReference<string>
     {
         if (Reference)
         {
+#if UNITY_EDITOR
             this.GuiTitle = this.Reference.DevName;
+#endif
             this.ReferencedValue = this.Reference.value;
         }
     }
