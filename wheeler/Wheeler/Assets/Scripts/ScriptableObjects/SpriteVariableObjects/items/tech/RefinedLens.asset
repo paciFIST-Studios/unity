@@ -13,5 +13,5 @@ MonoBehaviour:
   m_Name: RefinedLens
   m_EditorClassIdentifier: 
   Value: {fileID: 21300000, guid: 899510098ec9a3c4f9a539272236043b, type: 3}
-  DisplayName: Refined Lens
+  DevName: Refined Lens
   Description: Helpful for lasers

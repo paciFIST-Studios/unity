@@ -13,5 +13,5 @@ MonoBehaviour:
   m_Name: PetrifiedPieSlice
   m_EditorClassIdentifier: 
   Value: {fileID: 21300000, guid: a018dc962a46d144aa67f2fc6cf04e8a, type: 3}
-  DisplayName: Petrified Pie Slice
+  DevName: Pie
   Description: A fossilized slice of pie

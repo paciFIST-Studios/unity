@@ -13,5 +13,5 @@ MonoBehaviour:
   m_Name: PowerGenerator
   m_EditorClassIdentifier: 
   Value: {fileID: 21300000, guid: b71799bf79f32d64383509e1464af05b, type: 3}
-  DisplayName: Power Generator
+  DevName: Power Generator
   Description: Produces electricity
