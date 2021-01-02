@@ -32,11 +32,11 @@ MonoBehaviour:
     Reference: {fileID: 11400000, guid: 5ca18030683bda843938459375aa7cde, type: 2}
   - UseOverride: 0
     OverrideValue: 
-    ReferencedValue: 
+    ReferencedValue: Research[3]  -  Name
     Reference: {fileID: 11400000, guid: 38ad2d136f0089c45942fc6d7b59a1f7, type: 2}
   - UseOverride: 0
     OverrideValue: 
-    ReferencedValue: 
+    ReferencedValue: Research[4]  -  Name
     Reference: {fileID: 11400000, guid: 357e6d45042aec24d96041cbe90d4df6, type: 2}
   ResearchableDescriptions:
   - UseOverride: 0
@@ -59,5 +59,5 @@ MonoBehaviour:
     OverrideValue: 
     ReferencedValue: 
     Reference: {fileID: 11400000, guid: ed4034398e4afe64790504fcd0a92957, type: 2}
-  ResearchLevel: 0
+  ResearchLevel: 5
   ItemExchangeValue: 0

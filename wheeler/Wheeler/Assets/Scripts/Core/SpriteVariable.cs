@@ -11,7 +11,7 @@ public class SpriteVariable : ScriptableObject
 
     [TableColumnWidth(100)]
     [LabelWidth(100)]
-    public string DisplayName;
+    public string DevName;
 
     [TableColumnWidth(200)]
     [MultiLineProperty]

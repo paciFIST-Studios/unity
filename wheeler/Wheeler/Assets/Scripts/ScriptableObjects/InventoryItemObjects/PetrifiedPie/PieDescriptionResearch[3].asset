@@ -12,6 +12,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fb3a05aff11d1ed468a2eec60a5084c4, type: 3}
   m_Name: PieDescriptionResearch[3]
   m_EditorClassIdentifier: 
-  DisplayName: Research[3]  -  Description
+  DevName: Research[3]  - Description
   Description: 
-  value: 
+  value: Research[3]  - Description

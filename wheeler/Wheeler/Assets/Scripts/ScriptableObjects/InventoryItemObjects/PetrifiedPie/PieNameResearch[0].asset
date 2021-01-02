@@ -12,6 +12,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fb3a05aff11d1ed468a2eec60a5084c4, type: 3}
   m_Name: PieNameResearch[0]
   m_EditorClassIdentifier: 
-  DisplayName: Research[0]  -  Mysterious Pie
+  DevName: Research[0]  - Mysterious Pie
   Description: The name of a Petrified Pie sample, before any research is applied
   value: Mysterious Pie

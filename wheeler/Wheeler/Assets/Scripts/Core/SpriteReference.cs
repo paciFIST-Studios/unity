@@ -45,7 +45,7 @@ public class SpriteReference : GenericVariableReference<Sprite>
     {
         if (Reference)
         {
-            this.GuiTitle = this.Reference.DisplayName;
+            this.GuiTitle = this.Reference.DevName;
             this.ReferencedValue = this.Reference.Value;
         }
     }
