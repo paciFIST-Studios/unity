@@ -30,7 +30,7 @@ public class FloatReference : GenericVariableReference<float>
         UpdateReference();
     }
 
-    public new float Value
+    public float Value
     {
         get { return UseOverride ? OverrideValue : Reference.value; }
     }
@@ -45,7 +45,7 @@ public class FloatReference : GenericVariableReference<float>
     {
         if(Reference)
         {
-            this.GuiTitle = this.Reference.DisplayName;
+            this.GuiTitle = this.Reference.DevName;
             this.ReferencedValue = this.Reference.value;
         }
     }
