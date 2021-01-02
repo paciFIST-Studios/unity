@@ -32,19 +32,6 @@ public class WheelerPlayerController : MonoBehaviour
     Transform particleSystemCarrier;
 
 
-    //[Header("Dialogue")]
-    //[SerializeField] private DialogueData currentDialogueData;
-    //private DialogueData emptyDialogue = new DialogueData()
-    //{
-    //      ID = "uninit"
-    //    , partnerID = "uninit"
-    //    , isRunning = false
-    //    , isUnseatable = true
-    //    , isInterruptible = true
-    //};
-    //
-    //private DialogueManager dm;
-
     // Particle system vars ------------------------------------------
 
     private ParticleSystem forwardScanParticleSystem;
@@ -203,11 +190,6 @@ public class WheelerPlayerController : MonoBehaviour
         SetParticleSystemElementType(sphericalScanParticleSystem, ElementType.Lime);
 
         currentScanner = ScannerType.ForwardScan;
-
-        //currentDialogueData = emptyDialogue;
-        //dm = (DialogueManager)GlobalManager.Instance.GetGlobalComponent(
-        //        GlobalManager.GlobalComponent.DialogueManager.ToString()
-        //    );
     }
 
     void FixedUpdate()
@@ -328,12 +310,6 @@ public class WheelerPlayerController : MonoBehaviour
 
     public void OnInitiateDialogue(InputAction.CallbackContext ctx)
     {
-        //if(currentDialogueData.ID == emptyDialogue.ID)
-        //{
-        //    return;
-        //}
-        //
-        //dm.StartConversation(currentDialogueData);
     }
 
     // Player Character Management fns -------------------------------
@@ -463,17 +439,10 @@ public class WheelerPlayerController : MonoBehaviour
 
     public void SetDialogueData(DialogueData data)
     {
-        //if(!currentDialogueData.isUnseatable) { return; }
-        //
-        //currentDialogueData = data;
     }
 
     public void RemoveDialogueData(DialogueData data)
     {
-        //if(currentDialogueData.ID == data.ID)
-        //{
-        //    currentDialogueData = emptyDialogue;
-        //}
     }
 
     // Utility fns ---------------------------------------------------
