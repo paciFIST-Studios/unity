@@ -1,0 +1,24 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f82cfe06dc815814eb92b2d5ca2a57fb, type: 3}
+  m_Name: DefaultGreeting
+  m_EditorClassIdentifier: 
+  waitTime:
+    UseOverride: 0
+    OverrideValue: 0
+    ReferencedValue: 1
+    Reference: {fileID: 11400000, guid: 42bc6948f08dea640a195cc8cbc31a71, type: 2}
+  displayTime:
+    UseOverride: 0
+    OverrideValue: 0
+    ReferencedValue: 5
+    Reference: {fileID: 11400000, guid: 67bbc73f188ab6644b5e00c9e871e4a4, type: 2}
