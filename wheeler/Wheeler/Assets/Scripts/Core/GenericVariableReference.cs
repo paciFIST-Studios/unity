@@ -34,6 +34,7 @@ namespace pacifist
             [HideReferenceObjectPicker]
             [HideLabel]
             [FoldoutGroup("$GuiTitle")]
+            [HorizontalGroup("$GuiTitle/Column/Bottom", marginLeft: 10)]
             [LabelWidth(100)]
             public GenericVariable<T> Reference;
 
