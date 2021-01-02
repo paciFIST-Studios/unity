@@ -45,9 +45,7 @@ public class FloatReference : GenericVariableReference<float>
     {
         if(Reference)
         {
-#if UNITY_EDITOR
             this.GuiTitle = this.Reference.DevName;
-#endif
             this.ReferencedValue = this.Reference.value;
         }
     }

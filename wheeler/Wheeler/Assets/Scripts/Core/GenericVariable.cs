@@ -10,12 +10,13 @@ namespace pacifist
 
         public abstract class GenericVariable<T> : ScriptableObject
         {
-#if UNITY_EDITOR
             private bool canEditDevName = false;
             private bool canEditDescription = false;
+            private bool canEditValue = false;
 
             private void ToggleEditDevName() { canEditDevName = !canEditDevName; }
             private void ToggleEditDescription() { canEditDescription = !canEditDescription; }
+            private void ToggleEditValue() { canEditValue = !canEditValue; }
 
             [CustomContextMenu("ToggleEdit/DevName", "ToggleEditDevName")]
             [EnableIf("canEditDevName")]
@@ -24,9 +25,6 @@ namespace pacifist
             [CustomContextMenu("ToggleEdit/Description", "ToggleEditDescription")]
             [EnableIf("canEditDescription")]
             public string Description = "";
-#endif
-            private bool canEditValue = false;
-            private void ToggleEditValue() { canEditValue = !canEditValue; }
 
             [CustomContextMenu("ToggleEdit/Value", "ToggleEditValue")]
             [EnableIf("canEditValue")]
