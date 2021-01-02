@@ -168,18 +168,18 @@ MonoBehaviour:
     Reference: {fileID: 11400000, guid: 628c323a012585c4ebd06b855aa2eec7, type: 2}
   hoverHeight:
     UseOverride: 0
-    OverrideValue: 1.5
-    ReferencedValue: 1
+    OverrideValue: 1
+    ReferencedValue: 1.1
     Reference: {fileID: 11400000, guid: 30affe34ca7b8c34a8029ef3dbb3306d, type: 2}
   moveForce:
-    UseOverride: 1
+    UseOverride: 0
     OverrideValue: 0
-    ReferencedValue: 0
-    Reference: {fileID: 0}
+    ReferencedValue: 10
+    Reference: {fileID: 11400000, guid: ba2a69c767605604cbe9111e901b1351, type: 2}
   emitCooldown:
     UseOverride: 0
     OverrideValue: 0
-    ReferencedValue: 0
+    ReferencedValue: 0.1
     Reference: {fileID: 11400000, guid: 3d2a051c51e12c54289d34d5774b464f, type: 2}
   forwardScanParticleSystemPrefab: {fileID: 510880570107978573, guid: 19795a735010c78408965e79c8e1dc5e,
     type: 3}
