@@ -12,6 +12,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a20698866b042a4419acc999d73080f6, type: 3}
   m_Name: BatterySpriteBoost
   m_EditorClassIdentifier: 
-  Description: Represents a boost of battery power
+  Value: {fileID: 21300000, guid: 412369ea4ade7a146affc419d823c7ca, type: 3}
   DisplayName: Battery Boost
-  value: {fileID: 21300000, guid: 412369ea4ade7a146affc419d823c7ca, type: 3}
+  Description: Represents a boost of battery power

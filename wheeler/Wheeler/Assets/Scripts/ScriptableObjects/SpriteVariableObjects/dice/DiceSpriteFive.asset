@@ -12,6 +12,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a20698866b042a4419acc999d73080f6, type: 3}
   m_Name: DiceSpriteFive
   m_EditorClassIdentifier: 
-  Description: 'A single die, showing the value: Five'
+  Value: {fileID: 21300000, guid: 6acc4d0c476019847a8641f9a0a11fe6, type: 3}
   DisplayName: Dice Five
-  value: {fileID: 21300000, guid: 6acc4d0c476019847a8641f9a0a11fe6, type: 3}
+  Description: 'A single die, showing the value: Five'

@@ -12,6 +12,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a20698866b042a4419acc999d73080f6, type: 3}
   m_Name: BatterySpriteMinus
   m_EditorClassIdentifier: 
-  Description: Represents a loss of battery power
+  Value: {fileID: 21300000, guid: 69ee0292397eee54e8c0532f9f492579, type: 3}
   DisplayName: Battery Minus
-  value: {fileID: 21300000, guid: 69ee0292397eee54e8c0532f9f492579, type: 3}
+  Description: Represents a loss of battery power

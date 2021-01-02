@@ -12,6 +12,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a20698866b042a4419acc999d73080f6, type: 3}
   m_Name: DiceSpriteThree
   m_EditorClassIdentifier: 
-  Description: 'A single die, showing the value: Three'
+  Value: {fileID: 21300000, guid: 6541352221e592e47ae7e57a2c8e9ca7, type: 3}
   DisplayName: Dice Three
-  value: {fileID: 21300000, guid: 6541352221e592e47ae7e57a2c8e9ca7, type: 3}
+  Description: 'A single die, showing the value: Three'
