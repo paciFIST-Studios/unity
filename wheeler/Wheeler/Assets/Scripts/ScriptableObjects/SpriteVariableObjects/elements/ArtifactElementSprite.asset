@@ -13,5 +13,5 @@ MonoBehaviour:
   m_Name: ArtifactElementSprite
   m_EditorClassIdentifier: 
   Value: {fileID: 21300000, guid: 6a90c778b8cd084428c46495b64e933f, type: 3}
-  DisplayName: Artifact
+  DevName: Artifact
   Description: An artifact from ancient humanity

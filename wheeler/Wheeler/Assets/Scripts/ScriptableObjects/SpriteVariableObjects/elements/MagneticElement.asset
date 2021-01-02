@@ -13,5 +13,5 @@ MonoBehaviour:
   m_Name: MagneticElement
   m_EditorClassIdentifier: 
   Value: {fileID: 21300000, guid: 0489971072e626e41a4bff1e55a6197a, type: 3}
-  DisplayName: Magnetic
+  DevName: Magnetic
   Description: Relating to magnetic power

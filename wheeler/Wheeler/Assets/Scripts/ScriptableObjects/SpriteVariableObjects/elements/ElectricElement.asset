@@ -13,5 +13,5 @@ MonoBehaviour:
   m_Name: ElectricElement
   m_EditorClassIdentifier: 
   Value: {fileID: 21300000, guid: a4be90b6b83ebfa429b4ce5d5df9b290, type: 3}
-  DisplayName: Electric
+  DevName: Electrical
   Description: Relating to elctricity and power

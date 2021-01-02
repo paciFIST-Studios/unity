@@ -13,6 +13,6 @@ MonoBehaviour:
   m_Name: CrystalElementSprite
   m_EditorClassIdentifier: 
   Value: {fileID: 21300000, guid: 5f3f5120fc70f784baa86accb126654b, type: 3}
-  DisplayName: Crystal
+  DevName: Crystal
   Description: 'Mineral Crystals: { computronium,  hardtofindium, handwavium, cavorite,
     upsidasium, orichalcum  }'

@@ -13,6 +13,6 @@ MonoBehaviour:
   m_Name: RadiationElementSprite
   m_EditorClassIdentifier: 
   Value: {fileID: 21300000, guid: 4cff0f85bd1e0e547914d5553bbc42ae, type: 3}
-  DisplayName: Radiation
+  DevName: Nuclear Radiation
   Description: Radioactive material, useful for producing additional simple batteries,
     deadly to humans

@@ -13,5 +13,5 @@ MonoBehaviour:
   m_Name: ComputeElementSprite
   m_EditorClassIdentifier: 
   Value: {fileID: 21300000, guid: df3af76e0febb6a46b0071daca69d241, type: 3}
-  DisplayName: Compute
+  DevName: Compute
   Description: Information Computation, and processing power, in a measurable abstract

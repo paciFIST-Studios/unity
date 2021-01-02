@@ -13,5 +13,5 @@ MonoBehaviour:
   m_Name: DataElementSprite
   m_EditorClassIdentifier: 
   Value: {fileID: 21300000, guid: 7a34dd2a98e96f440ad74a40f5334f6b, type: 3}
-  DisplayName: Data
+  DevName: Data
   Description: Information, in a tangible, measurable form

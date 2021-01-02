@@ -13,5 +13,5 @@ MonoBehaviour:
   m_Name: OxidizingElement
   m_EditorClassIdentifier: 
   Value: {fileID: 21300000, guid: 81d1928eca9ab574caf7e294068437b5, type: 3}
-  DisplayName: Oxidization
+  DevName: Oxidation
   Description: Relating to fire and acid oxidation
