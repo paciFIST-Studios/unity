@@ -194,9 +194,10 @@ public class WheelerPlayerController : MonoBehaviour
 
     void FixedUpdate()
     {
-        float currentAltitude = transform.position.y;
+        RaycastHit hitInfo;
+        Physics.Raycast(new Ray(transform.position, Vector3.down), out hitInfo, hoverHeight);
+        float error = (hitInfo.point.y + hoverHeight) - transform.position.y;
 
-        float error = hoverHeight - currentAltitude;
         var hoverCorrection = Vector3.up;
         hoverCorrection *= pid.Update(error);
         hoverCorrection *= hoverForce;

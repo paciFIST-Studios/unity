@@ -31,7 +31,11 @@ public class IntegerReference : GenericVariableReference<int>
     }
 
     public int Value { get { return UseOverride ? OverrideValue : Reference.value; } }
-    public static implicit operator int(IntegerReference ir) { return ir.Value; }
+    public static implicit operator int(IntegerReference ir)
+    {
+        if (ir == null) { return 0; }
+        return ir.Value;
+    }
 
 
     public override void UpdateReference()

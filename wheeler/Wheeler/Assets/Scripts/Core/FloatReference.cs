@@ -1,4 +1,5 @@
 ﻿using System;
+using UnityEngine;
 
 using pacifist.core;
 
@@ -32,11 +33,29 @@ public class FloatReference : GenericVariableReference<float>
 
     public float Value
     {
-        get { return UseOverride ? OverrideValue : Reference.value; }
+        get
+        {
+            if(UseOverride)
+            {
+                return OverrideValue;
+            }
+            else
+            {
+                if(!Reference)
+                {
+                    Debug.LogWarning(string.Format($"WARNING, missing reference!\n\tUseOverride: {0}, OverrideValue: {1}, ReferenceValue: {2}, Reference: {3}", this.UseOverride, this.OverrideValue, this.ReferencedValue, this.Reference));
+                }
+
+                // sometimes reference is null
+                return (Reference) ? Reference.value : 0.0f;
+            }
+        }
     }
 
     public static implicit operator float(FloatReference fr)
     {
+        if(fr == null) { return 0.0f; }
+
         return fr.Value;
     }
 
