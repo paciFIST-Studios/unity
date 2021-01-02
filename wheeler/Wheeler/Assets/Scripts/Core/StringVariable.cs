@@ -2,7 +2,11 @@
 
 using pacifist.core;
 
+using Sirenix.OdinInspector;
+
+
 [CreateAssetMenu(fileName = "New String Variable", menuName = "paciFIST/StringVariable")]
+[InlineEditor]
 public class StringVariable : GenericVariable<string>
 {
     public StringVariable() { this.value = string.Empty; }
