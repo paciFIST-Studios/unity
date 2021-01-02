@@ -198,11 +198,15 @@ public class WheelerPlayerController : MonoBehaviour
         Physics.Raycast(new Ray(transform.position, Vector3.down), out hitInfo, hoverHeight);
         float error = (hitInfo.point.y + hoverHeight) - transform.position.y;
 
+        // Clamp negative error values to zero.  A negative error would snap Wheeler downwards,
+        // that that would feel like a sudden gravity spike, which isn't as pleasant as freefall
+        error = (error < 0) ? 0.0f : error;
+
         var hoverCorrection = Vector3.up;
         hoverCorrection *= pid.Update(error);
         hoverCorrection *= hoverForce;
-        //correction *= Time.deltaTime;
-        
+        //correction *= Time.deltaTime;        
+
         rb.AddForce(hoverCorrection);
 
         if(isMoving)
