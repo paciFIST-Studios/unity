@@ -29,7 +29,7 @@ public class StringReference : GenericVariableReference<string>
         UpdateReference();
     }
 
-    public string Value
+    public string value
     {
         get { return UseOverride ? OverrideValue : Reference.value; }
     }
@@ -38,7 +38,7 @@ public class StringReference : GenericVariableReference<string>
     {
         if (Reference)
         {
-            this.GuiTitle = this.Reference.DisplayName;
+            this.GuiTitle = this.Reference.DevName;
             this.ReferencedValue = this.Reference.value;
         }
     }

@@ -38,7 +38,7 @@ public class IntegerReference : GenericVariableReference<int>
     {
         if (Reference)
         {
-            this.GuiTitle = this.Reference.DisplayName;
+            this.GuiTitle = this.Reference.DevName;
             this.ReferencedValue = this.Reference.value;
         }
     }
