@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 649528f45566e0f4487d9ed6ac3a23b6, type: 3}
   m_Name: DefaultStatementWaitTime
   m_EditorClassIdentifier: 
+  DevName: Wait Time
   Description: Default amount of time to wait, before displaying a statement in a
     speech bubble
-  DisplayName: Wait Time
   value: 1
