@@ -482,20 +482,22 @@ public class WheelerPlayerController : MonoBehaviour
     {
         var data = new PlayerData
         {
-              WheelerHoverForce     = this.hoverForce
+              WheelerPIDController  = this.pid
+            , WheelerHoverForce     = this.hoverForce
             , WheelerHoverHeight    = this.hoverHeight
             , WheelerMoveForce      = this.moveForce
             , WheelerPosition       = this.transform.position
             , WheelerCurrentScanner = this.currentScanner
-            , WheelerForwardScan    = this.forwardScanParticleSystem
-            , WheelerRadialScan     = this.radialScanParticleSystem
-            , WheelerSphericalScan  = this.sphericalScanParticleSystem
+            //, WheelerForwardScan    = this.forwardScanParticleSystem
+            //, WheelerRadialScan     = this.radialScanParticleSystem
+            //, WheelerSphericalScan  = this.sphericalScanParticleSystem
         };
         return data;
     }
 
     public void ApplySaveData(PlayerData data)
     {
+        this.pid = data.WheelerPIDController;
         this.hoverForce  = data.WheelerHoverForce;
         this.hoverHeight = data.WheelerHoverHeight;
         this.moveForce   = data.WheelerMoveForce;

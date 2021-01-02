@@ -8,6 +8,7 @@ public class PlayerData : SerializedScriptableObject
     public FloatReference WheelerHoverForce;
     public FloatReference WheelerHoverHeight;
     public FloatReference WheelerMoveForce;
+    public PIDController WheelerPIDController;
 
     public Vector3 WheelerPosition;
 
