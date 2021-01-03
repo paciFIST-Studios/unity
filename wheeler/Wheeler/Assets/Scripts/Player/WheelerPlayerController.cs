@@ -7,35 +7,42 @@ public class WheelerPlayerController : MonoBehaviour
 {
     // Editor facing vars --------------------------------------------
     [FoldoutGroup("Movement")][HideLabel][SerializeField]
-    PIDController pid;
+    private PIDController pid;
 
-    [FoldoutGroup("Movement")][HideLabel][SerializeField]
-    FloatReference hoverForce;
-    [FoldoutGroup("Movement")][HideLabel][SerializeField]
-    FloatReference hoverHeight;
-    [FoldoutGroup("Movement")][HideLabel][SerializeField]
-    FloatReference moveForce;
+    [FoldoutGroup("Movement/Stats")][HideLabel][SerializeField]
+    private FloatReference hoverForce;
+    [FoldoutGroup("Movement/Stats")][HideLabel][SerializeField]
+    private FloatReference hoverHeight;
+    [FoldoutGroup("Movement/Stats")][HideLabel][SerializeField]
+    private FloatReference moveForce;
+    [FoldoutGroup("Movement/Stats")][HideLabel][SerializeField]
+    private FloatReference jumpForce;
+    [FoldoutGroup("Movement/Stats")][HideLabel][SerializeField]
+    private FloatReference jumpChargeRate;
+    [FoldoutGroup("Movement/Stats")][SerializeField][Range(0, 1)]
+    private float jumpChargePercent;
+
 
 
     [FoldoutGroup("Scanner")][HideLabel][SerializeField]
-    FloatReference emitCooldown;
+    private FloatReference emitCooldown;
     private float lastShotFiredAt;
 
     [FoldoutGroup("Scanner/Particle System Prefabs")][SerializeField]
-    ParticleSystem forwardScanParticleSystemPrefab;
+    private ParticleSystem forwardScanParticleSystemPrefab;
     [FoldoutGroup("Scanner/Particle System Prefabs")][SerializeField]
-    ParticleSystem radialScanParticleSystemPrefab;
+    private ParticleSystem radialScanParticleSystemPrefab;
     [FoldoutGroup("Scanner/Particle System Prefabs")][SerializeField]
-    ParticleSystem sphericalScanParticleSystemPrefab;
+    private ParticleSystem sphericalScanParticleSystemPrefab;
     [FoldoutGroup("Scanner/Particle System Prefabs")][SerializeField]
-    ParticleSystem chargeUpParticleSystemPrefab;
+    private ParticleSystem chargeUpParticleSystemPrefab;
     [FoldoutGroup("Scanner/Particle System Prefabs")][SerializeField]
-    ParticleSystem jumpBlastParticleSystemPrefab;
+    private ParticleSystem jumpBlastParticleSystemPrefab;
 
 
 
     [FoldoutGroup("Scanner")][SerializeField]
-    GameObject particleSystemCarrierPrefab;
+    private GameObject particleSystemCarrierPrefab;
     private Transform particleSystemCarrier;
 
 
@@ -47,9 +54,7 @@ public class WheelerPlayerController : MonoBehaviour
     private ParticleSystem chargeUpParticleSystem;
     private ParticleSystem jumpBlastParticleSystem;
     
-
-
-    bool particleSystemRotationIsLocked;
+    private bool particleSystemRotationIsLocked;
 
     public enum ScannerType
     {
@@ -183,7 +188,7 @@ public class WheelerPlayerController : MonoBehaviour
 
     // Unity Engine fns ----------------------------------------------
 
-    void Start()
+    private void Start()
     {
         rb = this.GetComponent<Rigidbody>();
 
@@ -217,13 +222,13 @@ public class WheelerPlayerController : MonoBehaviour
         currentScanner = ScannerType.ForwardScan;
     }
 
-    void FixedUpdate()
+    private void FixedUpdate()
     {
         HandlePlayerLevitationUpdate();
         HandlePlayerPhysicsStateUpdate();
     }
 
-    void Update()
+    private void Update()
     {
         HandlePlayerSocialStateUpdate();
     }
@@ -264,13 +269,15 @@ public class WheelerPlayerController : MonoBehaviour
         {
             if(isChargingJump)
             {
-                isChargingJump = false;
                 isJumping = true;
+                print("jumping");
             }
 
             isChargingJump = false;
+            return;
         }
 
+        print("charging");
         isChargingJump = true;
     }
 
@@ -332,7 +339,7 @@ public class WheelerPlayerController : MonoBehaviour
 
     // Player Character Management fns -------------------------------
 
-    void HandlePlayerLevitationUpdate()
+    private void HandlePlayerLevitationUpdate()
     {
         RaycastHit hitInfo;
         Physics.Raycast(new Ray(transform.position, Vector3.down), out hitInfo, hoverHeight);
@@ -350,7 +357,7 @@ public class WheelerPlayerController : MonoBehaviour
         rb.AddForce(hoverCorrection);
     }
 
-    void HandlePlayerPhysicsStateUpdate()
+    private void HandlePlayerPhysicsStateUpdate()
     {
         // lateral, rotation, jump
         UpdatePlayerMovementState();
@@ -358,12 +365,12 @@ public class WheelerPlayerController : MonoBehaviour
         UpdatePlayerInteractionState();
     }
 
-    void HandlePlayerSocialStateUpdate()
+    private void HandlePlayerSocialStateUpdate()
     {
         // talk, hologram,
     }
 
-    void UpdatePlayerMovementState()
+    private void UpdatePlayerMovementState()
     {
         if (isMoving)
         {
@@ -377,20 +384,20 @@ public class WheelerPlayerController : MonoBehaviour
 
         if (isChargingJump)
         {
-            // ChargeJump();
+            ChargeJump();
         }
 
         if (isJumping)
         {
-            // JumpPlayerCharacter()
+            JumpPlayerCharacter();
         }
     }
 
-    void UpdatePlayerInteractionState()
+    private void UpdatePlayerInteractionState()
     {
         if (isFiring)
         {
-            FireProjectile();
+            performScan();
         }
 
         if (!particleSystemRotationIsLocked)
@@ -401,14 +408,14 @@ public class WheelerPlayerController : MonoBehaviour
         }
     }
 
-    void MovePlayerCharacter(Vector2 input)
+    private void MovePlayerCharacter(Vector2 input)
     {
         var movement = Vector3.right;
         movement.x *= input.x * moveForce;
         rb.AddForce(movement);
     }
 
-    void RotatePlayerCharacter(Vector2 input)
+    private void RotatePlayerCharacter(Vector2 input)
     {
         if (inputSource == InputSource.Unknown)
         {
@@ -429,7 +436,24 @@ public class WheelerPlayerController : MonoBehaviour
         zAxisRotation = angle; // cache value
     }
 
-    private void FireProjectile()
+    private void ChargeJump()
+    {
+        print("ChargeJump()");
+        jumpChargePercent += jumpChargeRate * Time.deltaTime;
+    }
+
+    private void JumpPlayerCharacter()
+    {
+
+        var jumpVec = transform.right * -jumpForce;
+        print("JumpPlayerCharacter() : " + jumpVec.ToString());
+
+        rb.AddForce(jumpVec, ForceMode.Impulse);
+        jumpChargePercent = 0f;
+        isJumping = false;
+    }
+
+    private void performScan()
     {
         if(isScannerActivationLocked) { return; }
 
@@ -483,6 +507,7 @@ public class WheelerPlayerController : MonoBehaviour
         forwardScanParticleSystem.transform.localRotation   = rotation;
         radialScanParticleSystem.transform.localRotation    = rotation;
         sphericalScanParticleSystem.transform.localRotation = rotation;
+        jumpBlastParticleSystem.transform.localRotation     = rotation;
     }
 
     private void LockParticleSystemRotation()
@@ -494,7 +519,6 @@ public class WheelerPlayerController : MonoBehaviour
     {
         particleSystemRotationIsLocked = false;
     }
-
 
     private void LockPlayerRotation()
     {
@@ -523,7 +547,6 @@ public class WheelerPlayerController : MonoBehaviour
         }
     }
 
-
     public void SetDialogueData(DialogueData data)
     {
     }
@@ -534,7 +557,7 @@ public class WheelerPlayerController : MonoBehaviour
 
     // Utility fns ---------------------------------------------------
 
-    InputSource DetermineInputStyle(InputAction.CallbackContext ctx)
+    private InputSource DetermineInputStyle(InputAction.CallbackContext ctx)
     {
         // ellie:todo: someday, change this, it's fragile
         var str = ctx.action.GetBindingDisplayString();
@@ -556,14 +579,15 @@ public class WheelerPlayerController : MonoBehaviour
             return InputSource.Unknown;
         }
     }
-    
-    void SetParticleSystemElementType(ParticleSystem ps, ElementType type)
+
+    private void SetParticleSystemElementType(ParticleSystem ps, ElementType type)
     {       
         var data = ps.customData;
         data.SetMode(ParticleSystemCustomData.Custom1, ParticleSystemCustomDataMode.Vector);
         data.SetVector(ParticleSystemCustomData.Custom1, 0, new ParticleSystem.MinMaxCurve((float)type));
     }
 
+    // Save State ----------------------------------------------------
 
     public PlayerData BuildSaveData()
     {
@@ -595,7 +619,6 @@ public class WheelerPlayerController : MonoBehaviour
         //this.sphericalScanParticleSystem = data.WheelerSphericalScan;
     }
 
-    // ---------------------------------------------------------------
     // ---------------------------------------------------------------
 
 

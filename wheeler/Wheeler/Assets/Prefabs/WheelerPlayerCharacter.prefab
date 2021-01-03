@@ -176,6 +176,17 @@ MonoBehaviour:
     OverrideValue: 0
     ReferencedValue: 20
     Reference: {fileID: 11400000, guid: ba2a69c767605604cbe9111e901b1351, type: 2}
+  jumpForce:
+    UseOverride: 1
+    OverrideValue: 0
+    ReferencedValue: 0
+    Reference: {fileID: 0}
+  jumpChargeRate:
+    UseOverride: 1
+    OverrideValue: 0
+    ReferencedValue: 0
+    Reference: {fileID: 0}
+  jumpChargePercent: 0
   emitCooldown:
     UseOverride: 0
     OverrideValue: 0.1
