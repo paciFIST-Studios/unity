@@ -1,4 +1,6 @@
-﻿using UnityEngine;
+﻿using System.Collections;
+
+using UnityEngine;
 using UnityEngine.InputSystem;
 
 using Sirenix.OdinInspector;
@@ -41,7 +43,7 @@ public class WheelerPlayerController : MonoBehaviour
 
 
 
-    [FoldoutGroup("Scanner")][SerializeField]
+    [FoldoutGroup("Scanner/Particle System Prefabs")][SerializeField]
     private GameObject particleSystemCarrierPrefab;
     private Transform particleSystemCarrier;
 
@@ -273,6 +275,8 @@ public class WheelerPlayerController : MonoBehaviour
             }
 
             isChargingJump = false;
+
+
             chargeUpParticleSystem.Clear();
             chargeUpParticleSystem.Stop();
             return;
@@ -444,12 +448,12 @@ public class WheelerPlayerController : MonoBehaviour
 
     private void JumpPlayerCharacter()
     {
-        var jumpVec = transform.right * -jumpForce;
+        var jumpVec = transform.right * -jumpForce * jumpChargePercent;
         rb.AddForce(jumpVec, ForceMode.Impulse);
+        jumpBlastParticleSystem.Play();
+
         jumpChargePercent = 0f;
         isJumping = false;
-        chargeUpParticleSystem.Stop();
-        jumpBlastParticleSystem.Play();
     }
 
     private void performScan()
@@ -585,6 +589,7 @@ public class WheelerPlayerController : MonoBehaviour
         data.SetMode(ParticleSystemCustomData.Custom1, ParticleSystemCustomDataMode.Vector);
         data.SetVector(ParticleSystemCustomData.Custom1, 0, new ParticleSystem.MinMaxCurve((float)type));
     }
+
 
     // Save State ----------------------------------------------------
 
