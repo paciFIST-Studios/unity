@@ -276,7 +276,8 @@ public class WheelerPlayerController : MonoBehaviour
 
             isChargingJump = false;
 
-
+            // this kills all particles at once, and it doesn't look
+            // great, but it's just kinda what we've got to work with
             chargeUpParticleSystem.Clear();
             chargeUpParticleSystem.Stop();
             return;
@@ -439,6 +440,8 @@ public class WheelerPlayerController : MonoBehaviour
         rotation.z = angle;
         rb.rotation = Quaternion.Euler(rotation);
         zAxisRotation = angle; // cache value
+
+        jumpBlastParticleSystem.transform.rotation = rb.rotation;
     }
 
     private void ChargeJump()

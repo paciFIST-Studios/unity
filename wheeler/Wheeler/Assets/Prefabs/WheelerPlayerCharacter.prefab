@@ -177,15 +177,15 @@ MonoBehaviour:
     ReferencedValue: 20
     Reference: {fileID: 11400000, guid: ba2a69c767605604cbe9111e901b1351, type: 2}
   jumpForce:
-    UseOverride: 1
-    OverrideValue: 0
-    ReferencedValue: 0
-    Reference: {fileID: 0}
+    UseOverride: 0
+    OverrideValue: 70
+    ReferencedValue: 70
+    Reference: {fileID: 11400000, guid: 9051c8750f87708438372fba5c67a954, type: 2}
   jumpChargeRate:
-    UseOverride: 1
+    UseOverride: 0
     OverrideValue: 0
-    ReferencedValue: 0
-    Reference: {fileID: 0}
+    ReferencedValue: 0.2
+    Reference: {fileID: 11400000, guid: b496e4660e407ec48b85cf4fbf2d4a31, type: 2}
   jumpChargePercent: 0
   emitCooldown:
     UseOverride: 0
@@ -198,8 +198,10 @@ MonoBehaviour:
     type: 3}
   sphericalScanParticleSystemPrefab: {fileID: 510880570107978573, guid: 9cd008b91035cef4b9097cfb8e38f5e1,
     type: 3}
-  chargeUpParticleSystemPrefab: {fileID: 0}
-  jumpBlastParticleSystemPrefab: {fileID: 0}
+  chargeUpParticleSystemPrefab: {fileID: 960812892863228895, guid: 59e7432b20ff8ac4887205e0433c0348,
+    type: 3}
+  jumpBlastParticleSystemPrefab: {fileID: 510880570107978573, guid: 58a2f277f48105f40a49b71e43cab843,
+    type: 3}
   particleSystemCarrierPrefab: {fileID: 2964426555854510790, guid: 87e5c70988dcac546827bb2d696d24af,
     type: 3}
 --- !u!135 &1374496718783798543
@@ -290,7 +292,7 @@ MonoBehaviour:
   - m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 1374496718783798542}
-        m_MethodName: OnFire
+        m_MethodName: OnScan
         m_Mode: 0
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -421,6 +423,21 @@ MonoBehaviour:
       m_Calls: []
     m_ActionId: 850dafc0-8e18-4d0d-bd8d-a7a423dc2949
     m_ActionName: Conversation/Initiate/Advance[/Mouse/leftButton,/XInputControllerWindows/buttonSouth,/XInputControllerWindows/buttonSouth]
+  - m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 1374496718783798542}
+        m_MethodName: OnJump
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+    m_ActionId: 1d6f4a42-b41a-46a0-b4bc-5addbdbe544d
+    m_ActionName: Player/Jump[/Keyboard/space,/XInputControllerWindows/buttonSouth,/XInputControllerWindows/buttonSouth]
   m_NeverAutoSwitchControlSchemes: 0
   m_DefaultControlScheme: 
   m_DefaultActionMap: Player
