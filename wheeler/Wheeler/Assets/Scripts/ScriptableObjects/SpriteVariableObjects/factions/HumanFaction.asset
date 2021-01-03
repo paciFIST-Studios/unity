@@ -13,5 +13,5 @@ MonoBehaviour:
   m_Name: HumanFaction
   m_EditorClassIdentifier: 
   Value: {fileID: 21300000, guid: 12a6ad9decdb9644ba80c70107876400, type: 3}
-  DisplayName: Human Faction
+  DevName: Humans
   Description: The Humans live in nature-preserve-captivity on Earth

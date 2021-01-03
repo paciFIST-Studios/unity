@@ -13,5 +13,5 @@ MonoBehaviour:
   m_Name: AlienFaction
   m_EditorClassIdentifier: 
   Value: {fileID: 21300000, guid: 42c8f35fe19eab54dbcddc685c1313ed, type: 3}
-  DisplayName: Alien Faction
+  DevName: Aliens
   Description: The aliens sent Wheeler to the Earth

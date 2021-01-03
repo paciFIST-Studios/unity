@@ -13,5 +13,5 @@ MonoBehaviour:
   m_Name: RobotFaction
   m_EditorClassIdentifier: 
   Value: {fileID: 21300000, guid: 65c88dd3533a0b145b50bbf5d235645c, type: 3}
-  DisplayName: RobotFaction
+  DevName: Robots
   Description: The Robots are the current caretakers of Earth
