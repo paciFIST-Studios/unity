@@ -274,7 +274,7 @@ public class WheelerPlayerController : MonoBehaviour
         isChargingJump = true;
     }
 
-    public void OnFire(InputAction.CallbackContext ctx)
+    public void OnScan(InputAction.CallbackContext ctx)
     {
         if(ctx.canceled)
         {

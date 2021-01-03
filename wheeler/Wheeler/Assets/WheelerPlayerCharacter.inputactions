@@ -22,7 +22,7 @@
                     "interactions": ""
                 },
                 {
-                    "name": "Fire",
+                    "name": "Scan",
                     "type": "Button",
                     "id": "73a7a73c-8fcf-4ef5-9fe5-dbc1807d422d",
                     "expectedControlType": "Button",
@@ -251,7 +251,7 @@
                     "interactions": "",
                     "processors": "",
                     "groups": ";Gamepad",
-                    "action": "Fire",
+                    "action": "Scan",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
@@ -262,7 +262,7 @@
                     "interactions": "",
                     "processors": "",
                     "groups": ";Keyboard&Mouse",
-                    "action": "Fire",
+                    "action": "Scan",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
@@ -273,7 +273,7 @@
                     "interactions": "",
                     "processors": "",
                     "groups": ";Touch",
-                    "action": "Fire",
+                    "action": "Scan",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
@@ -284,7 +284,7 @@
                     "interactions": "",
                     "processors": "",
                     "groups": "Joystick",
-                    "action": "Fire",
+                    "action": "Scan",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
@@ -295,7 +295,7 @@
                     "interactions": "",
                     "processors": "",
                     "groups": "XR",
-                    "action": "Fire",
+                    "action": "Scan",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
