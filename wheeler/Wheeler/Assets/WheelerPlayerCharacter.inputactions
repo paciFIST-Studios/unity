@@ -444,8 +444,8 @@
                 },
                 {
                     "name": "",
-                    "id": "95dce66d-696c-4e62-8eab-eb12f906f782",
-                    "path": "<XInputController>/buttonSouth",
+                    "id": "f9e574f5-8710-4c50-93e6-56a3d7b856e3",
+                    "path": "<XInputController>/leftShoulder",
                     "interactions": "",
                     "processors": "",
                     "groups": "Gamepad",
@@ -455,8 +455,8 @@
                 },
                 {
                     "name": "",
-                    "id": "8e596b1e-afa9-4fcf-978c-9f21401ca2dd",
-                    "path": "<Gamepad>/buttonSouth",
+                    "id": "ca6946bb-560f-4db2-8092-6413d025e6a9",
+                    "path": "<Gamepad>/leftShoulder",
                     "interactions": "",
                     "processors": "",
                     "groups": "Gamepad",

@@ -270,15 +270,16 @@ public class WheelerPlayerController : MonoBehaviour
             if(isChargingJump)
             {
                 isJumping = true;
-                print("jumping");
             }
 
             isChargingJump = false;
+            chargeUpParticleSystem.Clear();
+            chargeUpParticleSystem.Stop();
             return;
         }
 
-        print("charging");
         isChargingJump = true;
+        chargeUpParticleSystem.Play();
     }
 
     public void OnScan(InputAction.CallbackContext ctx)
@@ -438,19 +439,17 @@ public class WheelerPlayerController : MonoBehaviour
 
     private void ChargeJump()
     {
-        print("ChargeJump()");
         jumpChargePercent += jumpChargeRate * Time.deltaTime;
     }
 
     private void JumpPlayerCharacter()
     {
-
         var jumpVec = transform.right * -jumpForce;
-        print("JumpPlayerCharacter() : " + jumpVec.ToString());
-
         rb.AddForce(jumpVec, ForceMode.Impulse);
         jumpChargePercent = 0f;
         isJumping = false;
+        chargeUpParticleSystem.Stop();
+        jumpBlastParticleSystem.Play();
     }
 
     private void performScan()
