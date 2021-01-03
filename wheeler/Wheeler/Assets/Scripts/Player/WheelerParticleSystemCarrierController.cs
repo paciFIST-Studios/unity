@@ -4,8 +4,18 @@ using UnityEngine;
 
 public class WheelerParticleSystemCarrierController : MonoBehaviour
 {
-    [SerializeField] private Vector3 offset;
-    [SerializeField] private Transform target;
+    private Vector3 offset;
+    private Transform target;
+
+    public void SetTarget(Transform target)
+    {
+        this.target = target;
+    }
+
+    public void SetOffset(Vector3 offset)
+    {
+        this.offset = offset;
+    }
 
     private void Update()
     {

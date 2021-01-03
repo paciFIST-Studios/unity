@@ -21,15 +21,22 @@ public class WheelerPlayerController : MonoBehaviour
     FloatReference emitCooldown;
     private float lastShotFiredAt;
 
-    [FoldoutGroup("Scanner")][SerializeField]
+    [FoldoutGroup("Scanner/Particle System Prefabs")][SerializeField]
     ParticleSystem forwardScanParticleSystemPrefab;
-    [FoldoutGroup("Scanner")][SerializeField]
+    [FoldoutGroup("Scanner/Particle System Prefabs")][SerializeField]
     ParticleSystem radialScanParticleSystemPrefab;
-    [FoldoutGroup("Scanner")][SerializeField]
+    [FoldoutGroup("Scanner/Particle System Prefabs")][SerializeField]
     ParticleSystem sphericalScanParticleSystemPrefab;
+    [FoldoutGroup("Scanner/Particle System Prefabs")][SerializeField]
+    ParticleSystem chargeUpParticleSystemPrefab;
+    [FoldoutGroup("Scanner/Particle System Prefabs")][SerializeField]
+    ParticleSystem jumpBlastParticleSystemPrefab;
+
+
 
     [FoldoutGroup("Scanner")][SerializeField]
-    Transform particleSystemCarrier;
+    GameObject particleSystemCarrierPrefab;
+    private Transform particleSystemCarrier;
 
 
     // Particle system vars ------------------------------------------
@@ -37,6 +44,10 @@ public class WheelerPlayerController : MonoBehaviour
     private ParticleSystem forwardScanParticleSystem;
     private ParticleSystem radialScanParticleSystem;
     private ParticleSystem sphericalScanParticleSystem;
+    private ParticleSystem chargeUpParticleSystem;
+    private ParticleSystem jumpBlastParticleSystem;
+    
+
 
     bool particleSystemRotationIsLocked;
 
@@ -78,6 +89,8 @@ public class WheelerPlayerController : MonoBehaviour
     private bool isMoving   = false;
     private bool isRotating = false;
     private bool isFiring   = false;
+    private bool isJumping  = false;
+    private bool isChargingJump  = false;
 
     private bool isScannerActivationLocked = false;
     private bool isRotationLocked = false;
@@ -174,6 +187,10 @@ public class WheelerPlayerController : MonoBehaviour
     {
         rb = this.GetComponent<Rigidbody>();
 
+        particleSystemCarrier = Instantiate(particleSystemCarrierPrefab).transform;
+        var cc = particleSystemCarrier.GetComponent<WheelerParticleSystemCarrierController>();
+        cc.SetTarget(this.transform);
+
         // Forward system, Berry
         forwardScanParticleSystem = Instantiate(forwardScanParticleSystemPrefab, particleSystemCarrier);
         forwardScanParticleSystem.Stop();
@@ -189,49 +206,27 @@ public class WheelerPlayerController : MonoBehaviour
         sphericalScanParticleSystem.Stop();
         SetParticleSystemElementType(sphericalScanParticleSystem, ElementType.Lime);
 
+        // charge up particle system
+        chargeUpParticleSystem = Instantiate(chargeUpParticleSystemPrefab, particleSystemCarrier);
+        chargeUpParticleSystem.Stop();
+                
+        // jump effect system
+        jumpBlastParticleSystem = Instantiate(jumpBlastParticleSystemPrefab, particleSystemCarrier);
+        jumpBlastParticleSystem.Stop();
+
         currentScanner = ScannerType.ForwardScan;
     }
 
     void FixedUpdate()
     {
-        RaycastHit hitInfo;
-        Physics.Raycast(new Ray(transform.position, Vector3.down), out hitInfo, hoverHeight);
-        float error = (hitInfo.point.y + hoverHeight) - transform.position.y;
-
-        // Clamp negative error values to zero.  A negative error would snap Wheeler downwards,
-        // that that would feel like a sudden gravity spike, which isn't as pleasant as freefall
-        error = (error < 0) ? 0.0f : error;
-
-        var hoverCorrection = Vector3.up;
-        hoverCorrection *= pid.Update(error);
-        hoverCorrection *= hoverForce;
-        //correction *= Time.deltaTime;        
-
-        rb.AddForce(hoverCorrection);
-
-        if(isMoving)
-        {
-            MovePlayerCharacter(movementInputThisTick);
-        }
-
-        if(isRotating && !isRotationLocked)
-        {
-            RotatePlayerCharacter(rotateInputThisTick);
-        }
-
-        if (isFiring)
-        {
-            FireProjectile();
-        }
-
-        if(!particleSystemRotationIsLocked)
-        {
-            var euler = transform.localEulerAngles;
-            euler.z = zAxisRotation;
-            SetParticleSystemRotation(Quaternion.Euler(euler));
-        }
+        HandlePlayerLevitationUpdate();
+        HandlePlayerPhysicsStateUpdate();
     }
 
+    void Update()
+    {
+        HandlePlayerSocialStateUpdate();
+    }
 
     // Input System Callbacks ----------------------------------------
 
@@ -261,6 +256,22 @@ public class WheelerPlayerController : MonoBehaviour
         movementInputThisTick = ctx.ReadValue<Vector2>();
 
         UpdateInputSource(ctx);
+    }
+
+    public void OnJump(InputAction.CallbackContext ctx)
+    {
+        if(ctx.canceled)
+        {
+            if(isChargingJump)
+            {
+                isChargingJump = false;
+                isJumping = true;
+            }
+
+            isChargingJump = false;
+        }
+
+        isChargingJump = true;
     }
 
     public void OnFire(InputAction.CallbackContext ctx)
@@ -317,7 +328,78 @@ public class WheelerPlayerController : MonoBehaviour
     {
     }
 
+
+
     // Player Character Management fns -------------------------------
+
+    void HandlePlayerLevitationUpdate()
+    {
+        RaycastHit hitInfo;
+        Physics.Raycast(new Ray(transform.position, Vector3.down), out hitInfo, hoverHeight);
+        float error = (hitInfo.point.y + hoverHeight) - transform.position.y;
+
+        // Clamp negative error values to zero.  A negative error would snap Wheeler downwards,
+        // that that would feel like a sudden gravity spike, which isn't as pleasant as freefall
+        error = (error < 0) ? 0.0f : error;
+
+        var hoverCorrection = Vector3.up;
+        hoverCorrection *= pid.Update(error);
+        hoverCorrection *= hoverForce;
+        //correction *= Time.deltaTime;        
+
+        rb.AddForce(hoverCorrection);
+    }
+
+    void HandlePlayerPhysicsStateUpdate()
+    {
+        // lateral, rotation, jump
+        UpdatePlayerMovementState();
+        // scan, carry
+        UpdatePlayerInteractionState();
+    }
+
+    void HandlePlayerSocialStateUpdate()
+    {
+        // talk, hologram,
+    }
+
+    void UpdatePlayerMovementState()
+    {
+        if (isMoving)
+        {
+            MovePlayerCharacter(movementInputThisTick);
+        }
+
+        if (isRotating && !isRotationLocked)
+        {
+            RotatePlayerCharacter(rotateInputThisTick);
+        }
+
+        if (isChargingJump)
+        {
+            // ChargeJump();
+        }
+
+        if (isJumping)
+        {
+            // JumpPlayerCharacter()
+        }
+    }
+
+    void UpdatePlayerInteractionState()
+    {
+        if (isFiring)
+        {
+            FireProjectile();
+        }
+
+        if (!particleSystemRotationIsLocked)
+        {
+            var euler = transform.localEulerAngles;
+            euler.z = zAxisRotation;
+            SetParticleSystemRotation(Quaternion.Euler(euler));
+        }
+    }
 
     void MovePlayerCharacter(Vector2 input)
     {
