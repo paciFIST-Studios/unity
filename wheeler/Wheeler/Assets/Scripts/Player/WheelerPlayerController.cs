@@ -31,15 +31,15 @@ public class WheelerPlayerController : MonoBehaviour
     private float lastShotFiredAt;
 
     [FoldoutGroup("Scanner/Particle System Prefabs")][SerializeField]
-    private ParticleSystem forwardScanParticleSystemPrefab;
+    private ParticleSystem forwardScanPrefab;
     [FoldoutGroup("Scanner/Particle System Prefabs")][SerializeField]
-    private ParticleSystem radialScanParticleSystemPrefab;
+    private ParticleSystem radialScanPrefab;
     [FoldoutGroup("Scanner/Particle System Prefabs")][SerializeField]
-    private ParticleSystem sphericalScanParticleSystemPrefab;
+    private ParticleSystem sphericalScanPrefab;
     [FoldoutGroup("Scanner/Particle System Prefabs")][SerializeField]
-    private ParticleSystem chargeUpParticleSystemPrefab;
+    private ParticleSystem jumpChargePrefab;
     [FoldoutGroup("Scanner/Particle System Prefabs")][SerializeField]
-    private ParticleSystem jumpBlastParticleSystemPrefab;
+    private ParticleSystem jumpBlastPrefab;
 
 
 
@@ -50,11 +50,11 @@ public class WheelerPlayerController : MonoBehaviour
 
     // Particle system vars ------------------------------------------
 
-    private ParticleSystem forwardScanParticleSystem;
-    private ParticleSystem radialScanParticleSystem;
-    private ParticleSystem sphericalScanParticleSystem;
-    private ParticleSystem chargeUpParticleSystem;
-    private ParticleSystem jumpBlastParticleSystem;
+    private ParticleSystem forwardScan;
+    private ParticleSystem radialScan;
+    private ParticleSystem sphericalScan;
+    private ParticleSystem jumpCharge;
+    private ParticleSystem jumpBlast;
     
     private bool particleSystemRotationIsLocked;
 
@@ -199,27 +199,27 @@ public class WheelerPlayerController : MonoBehaviour
         cc.SetTarget(this.transform);
 
         // Forward system, Berry
-        forwardScanParticleSystem = Instantiate(forwardScanParticleSystemPrefab, particleSystemCarrier);
-        forwardScanParticleSystem.Stop();
-        SetParticleSystemElementType(forwardScanParticleSystem, ElementType.Berry);
+        forwardScan = Instantiate(forwardScanPrefab, particleSystemCarrier);
+        forwardScan.Stop();
+        SetParticleSystemElementType(forwardScan, ElementType.Berry);
 
         // Radial system, Orange
-        radialScanParticleSystem = Instantiate(radialScanParticleSystemPrefab, particleSystemCarrier);
-        radialScanParticleSystem.Stop();
-        SetParticleSystemElementType(radialScanParticleSystem, ElementType.Orange);
+        radialScan = Instantiate(radialScanPrefab, particleSystemCarrier);
+        radialScan.Stop();
+        SetParticleSystemElementType(radialScan, ElementType.Orange);
 
         // spherical system, Lime
-        sphericalScanParticleSystem = Instantiate(sphericalScanParticleSystemPrefab, particleSystemCarrier);
-        sphericalScanParticleSystem.Stop();
-        SetParticleSystemElementType(sphericalScanParticleSystem, ElementType.Lime);
+        sphericalScan = Instantiate(sphericalScanPrefab, particleSystemCarrier);
+        sphericalScan.Stop();
+        SetParticleSystemElementType(sphericalScan, ElementType.Lime);
 
         // charge up particle system
-        chargeUpParticleSystem = Instantiate(chargeUpParticleSystemPrefab, particleSystemCarrier);
-        chargeUpParticleSystem.Stop();
+        jumpCharge = Instantiate(jumpChargePrefab, particleSystemCarrier);
+        jumpCharge.Stop();
                 
         // jump effect system
-        jumpBlastParticleSystem = Instantiate(jumpBlastParticleSystemPrefab, particleSystemCarrier);
-        jumpBlastParticleSystem.Stop();
+        jumpBlast = Instantiate(jumpBlastPrefab, particleSystemCarrier);
+        jumpBlast.Stop();
 
         currentScanner = ScannerType.ForwardScan;
     }
@@ -278,13 +278,13 @@ public class WheelerPlayerController : MonoBehaviour
 
             // this kills all particles at once, and it doesn't look
             // great, but it's just kinda what we've got to work with
-            chargeUpParticleSystem.Clear();
-            chargeUpParticleSystem.Stop();
+            jumpCharge.Clear();
+            jumpCharge.Stop();
             return;
         }
 
         isChargingJump = true;
-        chargeUpParticleSystem.Play();
+        jumpCharge.Play();
     }
 
     public void OnScan(InputAction.CallbackContext ctx)
@@ -441,19 +441,20 @@ public class WheelerPlayerController : MonoBehaviour
         rb.rotation = Quaternion.Euler(rotation);
         zAxisRotation = angle; // cache value
 
-        jumpBlastParticleSystem.transform.rotation = rb.rotation;
+        jumpBlast.transform.rotation = rb.rotation;
     }
 
     private void ChargeJump()
     {
         jumpChargePercent += jumpChargeRate * Time.deltaTime;
+        jumpChargePercent = Mathf.Clamp01(jumpChargePercent);
     }
 
     private void JumpPlayerCharacter()
     {
         var jumpVec = transform.right * -jumpForce * jumpChargePercent;
         rb.AddForce(jumpVec, ForceMode.Impulse);
-        jumpBlastParticleSystem.Play();
+        jumpBlast.Play();
 
         jumpChargePercent = 0f;
         isJumping = false;
@@ -465,15 +466,15 @@ public class WheelerPlayerController : MonoBehaviour
 
         if(currentScanner == ScannerType.ForwardScan)
         {
-            forwardScanParticleSystem.Play();
+            forwardScan.Play();
         }
         else if (currentScanner == ScannerType.RadialScan)
         {
-            radialScanParticleSystem.Play();
+            radialScan.Play();
         }
         else if (currentScanner == ScannerType.SphericalScan)
         {
-            sphericalScanParticleSystem.Play();
+            sphericalScan.Play();
         }
     }
 
@@ -481,18 +482,18 @@ public class WheelerPlayerController : MonoBehaviour
     {
         if (scanner == ScannerType.ForwardScan)
         {
-            radialScanParticleSystem.Stop();
-            sphericalScanParticleSystem.Stop();
+            radialScan.Stop();
+            sphericalScan.Stop();
         }
         else if (scanner == ScannerType.RadialScan)
         {
-            forwardScanParticleSystem.Stop();            
-            sphericalScanParticleSystem.Stop();
+            forwardScan.Stop();            
+            sphericalScan.Stop();
         }
         else if (scanner == ScannerType.SphericalScan)
         {
-            forwardScanParticleSystem.Stop();
-            radialScanParticleSystem.Stop();
+            forwardScan.Stop();
+            radialScan.Stop();
         }
 
         currentScanner = scanner;
@@ -510,10 +511,10 @@ public class WheelerPlayerController : MonoBehaviour
 
     private void SetParticleSystemRotation(Quaternion rotation)
     {
-        forwardScanParticleSystem.transform.localRotation   = rotation;
-        radialScanParticleSystem.transform.localRotation    = rotation;
-        sphericalScanParticleSystem.transform.localRotation = rotation;
-        jumpBlastParticleSystem.transform.localRotation     = rotation;
+        forwardScan.transform.localRotation   = rotation;
+        radialScan.transform.localRotation    = rotation;
+        sphericalScan.transform.localRotation = rotation;
+        jumpBlast.transform.localRotation     = rotation;
     }
 
     private void LockParticleSystemRotation()

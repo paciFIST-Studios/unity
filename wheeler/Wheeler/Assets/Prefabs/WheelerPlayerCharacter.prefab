@@ -192,15 +192,15 @@ MonoBehaviour:
     OverrideValue: 0.1
     ReferencedValue: 0.1
     Reference: {fileID: 11400000, guid: 3d2a051c51e12c54289d34d5774b464f, type: 2}
-  forwardScanParticleSystemPrefab: {fileID: 510880570107978573, guid: 19795a735010c78408965e79c8e1dc5e,
+  forwardScanPrefab: {fileID: 510880570107978573, guid: 19795a735010c78408965e79c8e1dc5e,
     type: 3}
-  radialScanParticleSystemPrefab: {fileID: 510880570107978573, guid: 0ca6b0698d72dd14a9d33a8183cb92be,
+  radialScanPrefab: {fileID: 510880570107978573, guid: 0ca6b0698d72dd14a9d33a8183cb92be,
     type: 3}
-  sphericalScanParticleSystemPrefab: {fileID: 510880570107978573, guid: 9cd008b91035cef4b9097cfb8e38f5e1,
+  sphericalScanPrefab: {fileID: 510880570107978573, guid: 9cd008b91035cef4b9097cfb8e38f5e1,
     type: 3}
-  chargeUpParticleSystemPrefab: {fileID: 960812892863228895, guid: 59e7432b20ff8ac4887205e0433c0348,
+  jumpChargePrefab: {fileID: 960812892863228895, guid: 59e7432b20ff8ac4887205e0433c0348,
     type: 3}
-  jumpBlastParticleSystemPrefab: {fileID: 510880570107978573, guid: 58a2f277f48105f40a49b71e43cab843,
+  jumpBlastPrefab: {fileID: 510880570107978573, guid: 58a2f277f48105f40a49b71e43cab843,
     type: 3}
   particleSystemCarrierPrefab: {fileID: 2964426555854510790, guid: 87e5c70988dcac546827bb2d696d24af,
     type: 3}
