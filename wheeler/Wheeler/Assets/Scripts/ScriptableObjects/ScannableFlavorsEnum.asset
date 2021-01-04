@@ -1,0 +1,18 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e623c4273f0c2e34786bd8610ec7cc02, type: 3}
+  m_Name: ScannableFlavorsEnum
+  m_EditorClassIdentifier: 
+  materials:
+  - {fileID: 11400000, guid: 9d24209014b7d434ba055905cb727a38, type: 2}
+  - {fileID: 11400000, guid: 8c9b79cfccde1464eaee5f6019a2fff5, type: 2}
+  - {fileID: 11400000, guid: 393110f623a3aaa4bb0a81b2f4cebf36, type: 2}
