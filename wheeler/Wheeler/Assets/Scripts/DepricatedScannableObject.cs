@@ -22,7 +22,7 @@ public enum ElementType
 }
 
 
-public class ScannableObject : MonoBehaviour
+public class DepricatedScannableObject : MonoBehaviour
 {
     [SerializeField] private MaterialCollection materials;
     [SerializeField] private bool isScanned = false;
