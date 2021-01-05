@@ -4,6 +4,7 @@ using UnityEditor;
 
 using Sirenix.OdinInspector;
 
+[System.Serializable]
 [CreateAssetMenu(fileName = "New Material Variable", menuName = "paciFIST/MaterialVariable")]
 public class MaterialVariable : ScriptableObject
 {
