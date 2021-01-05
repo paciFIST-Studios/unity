@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using UnityEditor;
 
 using Sirenix.OdinInspector;
 
@@ -31,7 +32,14 @@ namespace pacifist
             public T value;
             
             public T GetValue() { return value; }
-            public void SetValue(T val) { value = val; }
+
+            public void SetValue(T val)
+            {
+                AssetDatabase.Refresh();
+                value = val;
+                EditorUtility.SetDirty(this);
+                AssetDatabase.SaveAssets();
+            }
         }
 
     }  // core
