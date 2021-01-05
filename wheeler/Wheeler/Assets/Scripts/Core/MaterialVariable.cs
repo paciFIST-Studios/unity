@@ -1,5 +1,6 @@
 ﻿
 using UnityEngine;
+using UnityEditor;
 
 using Sirenix.OdinInspector;
 
@@ -21,9 +22,31 @@ public class MaterialVariable : ScriptableObject
     public MaterialVariable() { }
     public MaterialVariable(Material m) { this.Value = m; }
 
+    public string GetDevName() { return this.DevName; }
+    public void SetDevName(string name)
+    {
+        AssetDatabase.Refresh();
+        this.DevName = name;
+        EditorUtility.SetDirty(this);
+        AssetDatabase.SaveAssets();
+    }
+
+    public string GetDescription() { return this.Description; }
+    public void SetDescription(string description)
+    {
+        AssetDatabase.Refresh();
+        this.Description = description;
+        EditorUtility.SetDirty(this);
+        AssetDatabase.SaveAssets();
+    }
+
+    public Material GetValue() { return this.Value; }
     public void SetValue(Material m)
     {
+        AssetDatabase.Refresh();
         this.Value = m;
+        EditorUtility.SetDirty(this);
+        AssetDatabase.SaveAssets();
     }
 
     public static implicit operator Material(MaterialVariable m)

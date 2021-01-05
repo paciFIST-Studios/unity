@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using UnityEditor;
 
 using Sirenix.OdinInspector;
 
@@ -21,6 +22,25 @@ public class SpriteVariable : ScriptableObject
     public SpriteVariable() {}
     public SpriteVariable(Sprite s) { this.Value = s; }
 
+    public string GetDevName() { return this.DevName; }
+    public void SetDevName(string name)
+    {
+        AssetDatabase.Refresh();
+        this.DevName = name;
+        EditorUtility.SetDirty(this);
+        AssetDatabase.SaveAssets();
+    }
+
+    public string GetDescription() { return this.Description; }
+    public void SetDescription(string description)
+    {
+        AssetDatabase.Refresh();
+        this.Description = description;
+        EditorUtility.SetDirty(this);
+        AssetDatabase.SaveAssets();
+    }
+
+    public Sprite GetValue() { return this.Value; }
     public void SetValue(Sprite s)
     {
         this.Value = s;
