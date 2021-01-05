@@ -14,4 +14,4 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Value: {fileID: 2100000, guid: eb3dd3908d9bdf14ca265ca65d7ed530, type: 2}
   DevName: Berry
-  Description: 
+  Description: Berry flavored minerals
