@@ -164,7 +164,12 @@ wheeler/Wheeler/Build/*
 wheeler/Wheeler/Builds/*
 wheeler/Wheeler/UserSettings/*
 wheeler/Wheeler/Logs/*
-wheeler/Wheeler/Assets/Images/*
+wheeler/Wheeler/Assets/Images/icons/_full_set_game_icons_dot_net/*
+wheeler/Wheeler/Assets/Images/fractal city/*
+wheeler/Wheeler/Assets/Images/icons/animals/*
+wheeler/Wheeler/Assets/Images/icons/unused/*
+
+
 wheeler/Wheeler/Assets/Scenes/Test/LightingData.asset
 wheeler/Wheeler/Assets/Scenes/Test/LightingData.asset.meta
 wheeler/Wheeler/Assets/Scenes/Test/ReflectionProbe-0.exr
