@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using UnityEditor;
 
 using Sirenix.OdinInspector;
 
@@ -30,8 +31,32 @@ namespace pacifist
             [EnableIf("canEditValue")]
             public T value;
             
+            public string GetDevName() { return this.DevName; }
+            public void SetDevName(string name)
+            {
+                AssetDatabase.Refresh();
+                this.DevName = name;
+                EditorUtility.SetDirty(this);
+                AssetDatabase.SaveAssets();
+            }
+
+            public string GetDescription() { return this.Description; }
+            public void SetDescription(string description)
+            {
+                AssetDatabase.Refresh();
+                this.Description = description;
+                EditorUtility.SetDirty(this);
+                AssetDatabase.SaveAssets();
+            }
+
             public T GetValue() { return value; }
-            public void SetValue(T val) { value = val; }
+            public void SetValue(T val)
+            {
+                AssetDatabase.Refresh();
+                value = val;
+                EditorUtility.SetDirty(this);
+                AssetDatabase.SaveAssets();
+            }
         }
 
     }  // core

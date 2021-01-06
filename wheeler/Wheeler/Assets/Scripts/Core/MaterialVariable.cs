@@ -1,14 +1,16 @@
-﻿using UnityEngine;
+﻿
+using UnityEngine;
 using UnityEditor;
 
 using Sirenix.OdinInspector;
 
-[CreateAssetMenu(fileName = "New Sprite Variable", menuName = "paciFIST/SpriteVariable")]
-public class SpriteVariable : ScriptableObject
+[System.Serializable]
+[CreateAssetMenu(fileName = "New Material Variable", menuName = "paciFIST/MaterialVariable")]
+public class MaterialVariable : ScriptableObject
 {
     [TableColumnWidth(60)]
     [PreviewField(50, ObjectFieldAlignment.Center)]
-    public Sprite Value;
+    public Material Value;
 
     [TableColumnWidth(100)]
     [LabelWidth(100)]
@@ -18,9 +20,8 @@ public class SpriteVariable : ScriptableObject
     [MultiLineProperty]
     public string Description;
 
-
-    public SpriteVariable() {}
-    public SpriteVariable(Sprite s) { this.Value = s; }
+    public MaterialVariable() { }
+    public MaterialVariable(Material m) { this.Value = m; }
 
     public string GetDevName() { return this.DevName; }
     public void SetDevName(string name)
@@ -40,14 +41,18 @@ public class SpriteVariable : ScriptableObject
         AssetDatabase.SaveAssets();
     }
 
-    public Sprite GetValue() { return this.Value; }
-    public void SetValue(Sprite s)
+    public Material GetValue() { return this.Value; }
+    public void SetValue(Material m)
     {
-        this.Value = s;
+        AssetDatabase.Refresh();
+        this.Value = m;
+        EditorUtility.SetDirty(this);
+        AssetDatabase.SaveAssets();
     }
 
-    public static implicit operator Sprite(SpriteVariable s)
+    public static implicit operator Material(MaterialVariable m)
     {
-        return s.Value;
+        return m.Value;
     }
+
 }

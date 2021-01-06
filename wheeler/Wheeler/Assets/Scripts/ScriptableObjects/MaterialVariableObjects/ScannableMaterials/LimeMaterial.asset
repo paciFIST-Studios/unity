@@ -9,9 +9,9 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 649528f45566e0f4487d9ed6ac3a23b6, type: 3}
-  m_Name: WheelerHoverHeight
+  m_Script: {fileID: 11500000, guid: 045db1fa7a548424d89924b8195171c9, type: 3}
+  m_Name: LimeMaterial
   m_EditorClassIdentifier: 
-  DevName: Hover Height
-  Description: How high Wheeler will hover off the ground
-  value: 1.1
+  Value: {fileID: 2100000, guid: a245c874f2ea85747837163d12574030, type: 2}
+  DevName: Lime
+  Description: Lime flavored minerals
