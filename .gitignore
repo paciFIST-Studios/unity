@@ -168,6 +168,13 @@ wheeler/Wheeler/Assets/Images/icons/_full_set_game_icons_dot_net/*
 wheeler/Wheeler/Assets/Images/fractal city/*
 wheeler/Wheeler/Assets/Images/icons/animals/*
 wheeler/Wheeler/Assets/Images/icons/unused/*
+wheeler/Wheeler/Assets/Images/icons/dialogue/care/unused/*
+wheeler/Wheeler/Assets/Images/icons/dialogue/fear/unused/*
+wheeler/Wheeler/Assets/Images/icons/dialogue/lust/unused/*
+wheeler/Wheeler/Assets/Images/icons/dialogue/panic/unused/*
+wheeler/Wheeler/Assets/Images/icons/dialogue/play/unused/*
+wheeler/Wheeler/Assets/Images/icons/dialogue/seeking/unused/*
+wheeler/Wheeler/Assets/Images/icons/dialogue/rage/unused/*
 
 
 wheeler/Wheeler/Assets/Scenes/Test/LightingData.asset
@@ -197,10 +204,3 @@ dialogue/dialogue/Builds/*
 dialogue/dialogue/UserSettings/*
 dialogue/dialogue/Logs/*
 wheeler/Wheeler/Assets/Beats_01.meta
-wheeler/Wheeler/Assets/Images/icons/dialogue/care/unused/*
-wheeler/Wheeler/Assets/Images/icons/dialogue/fear/unused/*
-wheeler/Wheeler/Assets/Images/icons/dialogue/lust/unused/*
-wheeler/Wheeler/Assets/Images/icons/dialogue/panic/unused/*
-wheeler/Wheeler/Assets/Images/icons/dialogue/play/unused/*
-wheeler/Wheeler/Assets/Images/icons/dialogue/seeking/unused/*
-wheeler/Wheeler/Assets/Images/icons/dialogue/rage/unused/*
