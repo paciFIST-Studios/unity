@@ -149,7 +149,17 @@ fall_in/fall_in/Assets/Scenes/canyon/Lightmap-1_comp_shadowmask.png
 fall_in/fall_in/Assets/Scenes/canyon/Lightmap-1_comp_shadowmask.png.meta
 
 
-
+# dialogue demonstration
+dialogue2/*
+dialogue/dialogue/Assets/Shop/*
+dialogue/dialogue/Assets/Plugins/*
+dialogue/dialogue/Library/*
+dialogue/dialogue/Temp/*
+dialogue/dialogue/Obj/*
+dialogue/dialogue/Build/*
+dialogue/dialogue/Builds/*
+dialogue/dialogue/UserSettings/*
+dialogue/dialogue/Logs/*
 
 
 #wheeler project
@@ -164,6 +174,9 @@ wheeler/Wheeler/Build/*
 wheeler/Wheeler/Builds/*
 wheeler/Wheeler/UserSettings/*
 wheeler/Wheeler/Logs/*
+
+# icons & images
+wheeler/Wheeler/Assets/Images/title screen/unused/*
 wheeler/Wheeler/Assets/Images/icons/_full_set_game_icons_dot_net/*
 wheeler/Wheeler/Assets/Images/fractal city/*
 wheeler/Wheeler/Assets/Images/icons/animals/*
@@ -182,6 +195,9 @@ wheeler/Wheeler/Assets/Images/icons/items/unused/*
 wheeler/Wheeler/Assets/Images/icons/plants/unused/*
 wheeler/Wheeler/Assets/Images/icons/dice/*
 
+# music
+wheeler/Wheeler/Assets/music/*
+
 
 wheeler/Wheeler/Assets/Scenes/Test/LightingData.asset
 wheeler/Wheeler/Assets/Scenes/Test/LightingData.asset.meta
@@ -195,18 +211,3 @@ wheeler/Wheeler/Assets/Plugins/Sirenix/Demos/*
 
 wheeler/Wheeler/Assets/TextMesh Pro/*
 wheeler/Wheeler/Assets/Beats_01/*
-
-
-
-# dialogue demonstration
-dialogue2/*
-dialogue/dialogue/Assets/Shop/*
-dialogue/dialogue/Assets/Plugins/*
-dialogue/dialogue/Library/*
-dialogue/dialogue/Temp/*
-dialogue/dialogue/Obj/*
-dialogue/dialogue/Build/*
-dialogue/dialogue/Builds/*
-dialogue/dialogue/UserSettings/*
-dialogue/dialogue/Logs/*
-wheeler/Wheeler/Assets/Beats_01.meta
