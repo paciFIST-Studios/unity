@@ -1,0 +1,79 @@
+
+
+// what is the plot of Wheeler?
+
+A space probe from {Aliens} descends on the planet Earth, and crash lands in the desert.
+
+On the way down, there are no lights visible from the night side of the planet
+, but it is definitely Earth.
+
+The lander is clearly alien, but also familiar.  It was created by a people who had
+similar ideas about how to reenter an atmosphere.  The lander looks overbuilt--as
+though it where capable of landing in much harsher conditions.
+
+There is a crash, and a plume of dust flies into the early morning light. The wind
+blows lonelyly across the ground.  There is a tiny plinking sound of dust, against
+the metalic landing craft.  The craft itself is like an egg.  It is charred and
+blackened on the bottom.
+
+A lizard, crawls along the nearby rocks, and looks at the lander, when suddenly
+there is a loud <CRACK>, as the lander itself falls to pieces.  From the rubble,
+emerges a floating space probe.  A serial number is carved into the side.
+
+It is an alien script, but also bears a passing visual similarity to WHlr.
+This probe, will be called Wheeler, in the future, but for now it has not been
+given a name--only an existence.
+
+The probe lifts up from the rubble of the lander and drifts silently on.
+The lander itself is a fractured shell, and clearly won't be doing anything else
+in the future.
+
+WHlr begins performing initialization checks of itself and its operating capacity.
+Check: movement....success
+Check: basic scan....success
+Check: manipulator....success
+Check: data transmit....retrying....failure
+Check: one-time-transmission-a....success
+Check: one-time-transmission-b....success
+
+As the initialization checks are performed, a few things become clear.
+1. WHlr is operational enough to perform its transmission
+2. WHlr cannot transmit data back to the relay satellite using the two-way-antenna
+3. WHlr can send this information to the relay satellite, by using a one-time-transmit
+4. WHlr can then perform its scanning mission
+5. WHlr can then send a summary of its collected data, rather than the data itself
+
+WHlr contacts the relay, and is instructed to continue on its mission.  WHlr is to
+scan the planet for {reasons}, and when the result is clearly known, WHlr is to
+send the data summary to the relay.  The relay, will continue updating WHlr for
+twice the estimated mission complete time.  If WHlr does not submit the data in
+that amount of time, the relay satellite will switch into standby mode, waiting for
+WHlr's data summary.  While in standby mode, no updates will be sent to WHlr.
+
+WHlr's first destination is a city of robots.  Relay, is attempting to contact
+them, to let them know WHlr is coming.  WHlr is to make contact, and ask permission
+to perform surface scans of the planet.
+
+WHlr travels along this route, and begins cataloguing flora and fauna, found in
+the desert.  { fauna { lizards, bugs, etc }, flora { cactus, tumbleweed, etc } }
+
+Along the way, WHlr enters a sunken cave, which contains a spring.  Inside the
+spring, are a species of eyeless fish.  There are two kinds of algae growing
+inside the spring: one keeps the spring livable for the fish, and the other attracts
+insects, which the fish can eat.
+
+WHlr leaves the cave, and continues on to the robot city.
+
+The Robot City, called City Zero, is claimed to be the only city left on the planet.
+The robots do not expect WHlr to arrive, but (after a discussion) accept that WHlr
+is a robitic life form of some kind, and hold a welcoming ceremony for them.  They
+are the first to transliterate WHlr's serial number as "Wheeler", which they
+describe as "Naming", a practice that had been given to them by their progenitor
+species.
+
+Wheeler is ask what they're doing on Earth, and Wheeler describes their mission
+as they understand it--to perform a survey of the surface.  The robots accept this
+explanation, and offer Wheeler a job.
+
+Wheeler doesn't understand what a job is, and after an brief explanation, accepts
+the position.
