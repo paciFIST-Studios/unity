@@ -13,10 +13,10 @@ MonoBehaviour:
   m_Name: MetaMaterial
   m_EditorClassIdentifier: 
   sprite:
-    UseOverride: 1
+    UseOverride: 0
     OverrideValue: {fileID: 0}
-    ReferencedValue: {fileID: 0}
-    Reference: {fileID: 0}
+    ReferencedValue: {fileID: 21300000, guid: 1310a15373a3dc540b9577fae76f850d, type: 3}
+    Reference: {fileID: 11400000, guid: 84ac589eec7bc39499bec1150d25b4a9, type: 2}
   ResearchableNames: []
   ResearchableDescriptions: []
   ResearchLevel: 0
