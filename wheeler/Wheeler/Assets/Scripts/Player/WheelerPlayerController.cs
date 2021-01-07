@@ -1,4 +1,4 @@
-﻿using System.Collections;
+﻿using System.Collections.Generic;
 
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -73,6 +73,11 @@ public class WheelerPlayerController : MonoBehaviour
         , Lime      = 2
         , Grape     = 3
     }
+
+
+    // Inventory System ----------------------------------------------
+
+    List<InventoryItem> inventory = new List<InventoryItem>();
 
 
     // Input vars ----------------------------------------------------
@@ -184,6 +189,15 @@ public class WheelerPlayerController : MonoBehaviour
             GUI.Label(new Rect(30, 300, 180, 30), string.Format("Source: {0}", InputSourceString));
             GUI.Label(new Rect(30, 320, 180, 30), string.Format("Look: {0}", rotateInputThisTick.ToString()));
             GUI.Label(new Rect(30, 340, 180, 30), string.Format("Move: {0}", movementInputThisTick.ToString()));
+        }
+
+        // inventory
+        {
+            GUI.Box(new Rect(10, 380, 200, 100), "Inventory");
+            if(inventory.Count > 0) GUI.Label(new Rect(30, 400, 100, 30),  inventory[0].name);
+            if(inventory.Count > 1) GUI.Label(new Rect(30, 420, 100, 60),  inventory[1].name);
+            if(inventory.Count > 2) GUI.Label(new Rect(30, 440, 100, 90),  inventory[2].name);
+            if(inventory.Count > 3) GUI.Label(new Rect(30, 460, 100, 120), inventory[3].name);
         }
     }
 
@@ -560,6 +574,19 @@ public class WheelerPlayerController : MonoBehaviour
 
     public void RemoveDialogueData(DialogueData data)
     {
+    }
+
+    public void AddInventoryItem(InventoryItem item)
+    {
+        inventory.Add(item);
+    }
+
+    public void RemoveInventoryItem(InventoryItem item)
+    {
+        if(inventory.Contains(item))
+        {
+            inventory.Remove(item);
+        }
     }
 
     // Utility fns ---------------------------------------------------
