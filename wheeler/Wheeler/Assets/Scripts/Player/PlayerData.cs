@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿
+using UnityEngine;
 
 using Sirenix.OdinInspector;
 
@@ -17,4 +18,6 @@ public class PlayerData : SerializedScriptableObject
     public ParticleSystem WheelerForwardScan;
     public ParticleSystem WheelerRadialScan;
     public ParticleSystem WheelerSphericalScan;
+
+    public InventoryItem[] WheelerInventory;
 }

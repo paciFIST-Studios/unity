@@ -138,6 +138,7 @@ public class WheelerPlayerController : MonoBehaviour
             }
         }
 
+        #region IMGUI for scanner type
         // scanner switcher
         //{
         //    GUI.Box(new Rect(10, 10, 200, 60), "Scanner Equipped:");
@@ -164,6 +165,7 @@ public class WheelerPlayerController : MonoBehaviour
         //        }
         //    }
         //}
+        #endregion
 
         // player stats
         {
@@ -349,13 +351,10 @@ public class WheelerPlayerController : MonoBehaviour
             SetActiveScanner(ScannerType.ForwardScan);
         }
     }
-
-
+    
     public void OnInitiateDialogue(InputAction.CallbackContext ctx)
     {
     }
-
-
 
     // Player Character Management fns -------------------------------
 
@@ -634,6 +633,7 @@ public class WheelerPlayerController : MonoBehaviour
             , WheelerMoveForce      = this.moveForce
             , WheelerPosition       = this.transform.position
             , WheelerCurrentScanner = this.currentScanner
+            , WheelerInventory      = this.inventory.ToArray()
             //, WheelerForwardScan    = this.forwardScanParticleSystem
             //, WheelerRadialScan     = this.radialScanParticleSystem
             //, WheelerSphericalScan  = this.sphericalScanParticleSystem
@@ -652,6 +652,8 @@ public class WheelerPlayerController : MonoBehaviour
         //this.forwardScanParticleSystem   = data.WheelerForwardScan;
         //this.radialScanParticleSystem    = data.WheelerRadialScan;
         //this.sphericalScanParticleSystem = data.WheelerSphericalScan;
+
+        this.inventory = new List<InventoryItem>(data.WheelerInventory);
     }
 
     // ---------------------------------------------------------------
