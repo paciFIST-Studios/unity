@@ -1,6 +1,9 @@
 ﻿
 using UnityEngine;
+
+#if UNITY_EDITOR
 using UnityEditor;
+#endif
 
 using Sirenix.OdinInspector;
 
@@ -26,33 +29,36 @@ public class MaterialVariable : ScriptableObject
     public string GetDevName() { return this.DevName; }
     public void SetDevName(string name)
     {
-        AssetDatabase.Refresh();
         this.DevName = name;
-        EditorUtility.SetDirty(this);
-        AssetDatabase.SaveAssets();
+        RefreshAsset();
     }
 
     public string GetDescription() { return this.Description; }
     public void SetDescription(string description)
     {
-        AssetDatabase.Refresh();
         this.Description = description;
-        EditorUtility.SetDirty(this);
-        AssetDatabase.SaveAssets();
+        RefreshAsset();
     }
 
     public Material GetValue() { return this.Value; }
     public void SetValue(Material m)
     {
-        AssetDatabase.Refresh();
         this.Value = m;
-        EditorUtility.SetDirty(this);
-        AssetDatabase.SaveAssets();
+        RefreshAsset();
     }
 
     public static implicit operator Material(MaterialVariable m)
     {
         return m.Value;
+    }
+
+    private void RefreshAsset()
+    {
+#if UNITY_EDITOR
+        AssetDatabase.Refresh();
+        EditorUtility.SetDirty(this);
+        AssetDatabase.SaveAssets();
+#endif
     }
 
 }

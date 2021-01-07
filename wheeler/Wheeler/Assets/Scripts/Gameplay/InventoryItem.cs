@@ -1,5 +1,8 @@
 ﻿using UnityEngine;
+
+#if UNITY_EDITOR
 using UnityEditor;
+#endif
 
 using Sirenix.OdinInspector;
 
@@ -20,11 +23,13 @@ public class InventoryItem : ScriptableObject
 
     public float ItemExchangeValue;
 
-    private void UpdateAsset()
+    private void RefreshAsset()
     {
+#if UNITY_EDITOR
         AssetDatabase.Refresh();
         EditorUtility.SetDirty(this);
         AssetDatabase.SaveAssets();
+#endif
     }
 
     public string GetCurrentResearchLevelDisplayName()
