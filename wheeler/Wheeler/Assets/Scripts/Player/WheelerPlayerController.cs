@@ -24,8 +24,6 @@ public class WheelerPlayerController : MonoBehaviour
     [FoldoutGroup("Movement/Stats")][SerializeField][Range(0, 1)]
     private float jumpChargePercent;
 
-
-
     [FoldoutGroup("Scanner")][HideLabel][SerializeField]
     private FloatReference emitCooldown;
     private float lastShotFiredAt;
@@ -40,8 +38,6 @@ public class WheelerPlayerController : MonoBehaviour
     private ParticleSystem jumpChargePrefab;
     [FoldoutGroup("Scanner/Particle System Prefabs")][SerializeField]
     private ParticleSystem jumpBlastPrefab;
-
-
 
     [FoldoutGroup("Scanner/Particle System Prefabs")][SerializeField]
     private GameObject particleSystemCarrierPrefab;
@@ -79,6 +75,8 @@ public class WheelerPlayerController : MonoBehaviour
 
     List<InventoryItem> inventory = new List<InventoryItem>();
 
+    float pieResearch = 0.0f;
+    float cannisterResearch = 0.0f;
 
     // Input vars ----------------------------------------------------
 
@@ -200,6 +198,14 @@ public class WheelerPlayerController : MonoBehaviour
             if(inventory.Count > 1) GUI.Label(new Rect(30, 420, 100, 60),  inventory[1].name);
             if(inventory.Count > 2) GUI.Label(new Rect(30, 440, 100, 90),  inventory[2].name);
             if(inventory.Count > 3) GUI.Label(new Rect(30, 460, 100, 120), inventory[3].name);
+        }
+
+        // data store
+        {
+            GUI.Box(new Rect(10, 480, 200, 100), "Data");
+            GUI.Label(new Rect(30, 500, 100, 30), string.Format($"Pie: {0}", pieResearch));
+            GUI.Label(new Rect(30, 520, 100, 30), string.Format($"Cannister: {0}", cannisterResearch));
+            //GUI.Label(new Rect(30, 560, 100, 30), string.Format($"Pie: {0}"));
         }
     }
 
@@ -578,6 +584,7 @@ public class WheelerPlayerController : MonoBehaviour
     public void AddInventoryItem(InventoryItem item)
     {
         inventory.Add(item);
+        AddResearch(item);
     }
 
     public void RemoveInventoryItem(InventoryItem item)
@@ -585,6 +592,20 @@ public class WheelerPlayerController : MonoBehaviour
         if(inventory.Contains(item))
         {
             inventory.Remove(item);
+        }
+    }
+
+    public void AddResearch(InventoryItem item)
+    {
+        if(item.name == "PetrifiedPie")
+        {
+            pieResearch += 1.0f;
+            print("pie research:" + pieResearch);
+        }
+        else if (item.name == "EmptyCannister")
+        {
+            cannisterResearch += 1.0f;
+            print("cannister research: " + cannisterResearch);
         }
     }
 
