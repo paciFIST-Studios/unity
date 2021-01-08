@@ -29,6 +29,11 @@ public class WheelerPlayerCharacterMenu : MonoBehaviour
     private RectTransform Selector;
     private RectTransform SelectorStartPosition;
 
+    [FoldoutGroup("References")][SerializeField]
+    private GameObject contentHolder;
+
+    private ResearchListController researchListController;
+
     private int currentSelectorIdx;
     private Vector3[] selectorPositions;
 
@@ -40,6 +45,10 @@ public class WheelerPlayerCharacterMenu : MonoBehaviour
         selectorPositions[0] = MissionHeader.position;
         selectorPositions[1] = ResearchHeader.position;
         selectorPositions[2] = SocialHeader.position;
+
+        researchListController = this.GetComponentInChildren<ResearchListController>();
+
+        SetMenuVisibility(false);
     }
 
     public void ToggleSelectorPosition(bool goForwards)
@@ -57,9 +66,25 @@ public class WheelerPlayerCharacterMenu : MonoBehaviour
         SetSelectorPosition(pos);
     }
 
+
+    //public void UpdateResearchInventory(InventoryItem[] inventory)
+    //{
+    //    researchListController.SetInventory(inventory);
+    //}
+
+    public void AddInventoryItem(InventoryItem item)
+    {
+        researchListController.AddInventoryItem(item);
+    }
+    
     public void SetSelectorPosition(Vector3 pos)
     {
         Selector.position = pos;
+    }
+
+    public void SetMenuVisibility(bool isVisible)
+    {
+        BasePanel.gameObject.SetActive(isVisible);
     }
 
 }

@@ -204,6 +204,7 @@ MonoBehaviour:
     type: 3}
   particleSystemCarrierPrefab: {fileID: 2964426555854510790, guid: 87e5c70988dcac546827bb2d696d24af,
     type: 3}
+  menu: {fileID: 0}
 --- !u!135 &1374496718783798543
 SphereCollider:
   m_ObjectHideFlags: 0
