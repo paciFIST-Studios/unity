@@ -71,9 +71,20 @@ public class WheelerPlayerController : MonoBehaviour
     }
 
 
+    // Menu System ---------------------------------------------------
+
+    [FoldoutGroup("MenuGUI")][SerializeField]
+    private WheelerPlayerCharacterMenu menu;
+
+    private bool menuIsActive = false;
+
+
     // Inventory System ----------------------------------------------
 
     List<InventoryItem> inventory = new List<InventoryItem>();
+
+
+    // Research system -----------------------------------------------
 
     float pieResearch = 0.0f;
     float cannisterResearch = 0.0f;
@@ -121,6 +132,8 @@ public class WheelerPlayerController : MonoBehaviour
 
     private void OnGUI()
     {
+        return;
+
         // save load
         {
             GUI.Box(new Rect(10, 10, 200, 60), "State Management");
@@ -244,6 +257,10 @@ public class WheelerPlayerController : MonoBehaviour
         jumpBlast.Stop();
 
         currentScanner = ScannerType.ForwardScan;
+
+
+
+
     }
 
     private void FixedUpdate()
@@ -360,6 +377,15 @@ public class WheelerPlayerController : MonoBehaviour
     
     public void OnInitiateDialogue(InputAction.CallbackContext ctx)
     {
+    }
+
+    public void OnToggleMenu(InputAction.CallbackContext ctx)
+    {
+        menuIsActive = !menuIsActive;
+        print(string.Format($"menuIsActive: {0}", menuIsActive));
+
+        menu.SetMenuVisibility(menuIsActive);
+
     }
 
     // Player Character Management fns -------------------------------
@@ -583,7 +609,12 @@ public class WheelerPlayerController : MonoBehaviour
 
     public void AddInventoryItem(InventoryItem item)
     {
-        inventory.Add(item);
+        if(!ItemExistsInInventory(item))
+        {
+            inventory.Add(item);
+            menu.AddInventoryItem(item);
+        }
+
         AddResearch(item);
     }
 
@@ -641,6 +672,18 @@ public class WheelerPlayerController : MonoBehaviour
         data.SetVector(ParticleSystemCustomData.Custom1, 0, new ParticleSystem.MinMaxCurve((float)type));
     }
 
+    private bool ItemExistsInInventory(InventoryItem item)
+    {
+        for (int i = 0; i < inventory.Count; i++)
+        {
+            if (inventory[i].name == item.name)
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
 
     // Save State ----------------------------------------------------
 
