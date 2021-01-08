@@ -10,7 +10,7 @@ public class ItemPickupController : MonoBehaviour
     
     private void LoadData(InventoryItem data)
     {
-        print("ItemLoaded: " + data.name);
+        this.GetComponentInChildren<SpriteRenderer>().sprite = data.sprite;
     }
  
     private void OnTriggerEnter(Collider other)
