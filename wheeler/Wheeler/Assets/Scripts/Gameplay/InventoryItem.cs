@@ -9,13 +9,13 @@ using Sirenix.OdinInspector;
 [CreateAssetMenu(fileName = "New Inventory Item", menuName = "paciFIST/InventoryItem")]
 public class InventoryItem : ScriptableObject
 {
-    [BoxGroup][HideLabel][OnValueChanged("UpdateAsset")]
+    [BoxGroup][HideLabel][OnValueChanged("RefreshAsset")]
     public SpriteReference sprite;
 
     // increasing research level increments the display name
-    [OnValueChanged("UpdateAsset")]
+    [OnValueChanged("RefreshAsset")]
     public StringReference[] ResearchableNames;
-    [OnValueChanged("UpdateAsset")]
+    [OnValueChanged("RefreshAsset")]
     public StringReference[] ResearchableDescriptions;
 
     [Range(0, 5)]
