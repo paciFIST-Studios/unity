@@ -6,7 +6,7 @@ public class ResearchListController : MonoBehaviour
 {
     [SerializeField] private GameObject buttonPrefab;
 
-    private List<string> inventory = new List<string>();
+    private List<InventoryItem> researchTopics = new List<InventoryItem>();
 
     private void CreateButton(string name)
     {
@@ -16,44 +16,25 @@ public class ResearchListController : MonoBehaviour
         button.transform.SetParent(buttonPrefab.transform.parent, false);
     }
 
-    public void AddInventoryItem(InventoryItem item)
+    public void AddResearchTopic(InventoryItem item)
     {
-        inventory.Add(item.name);
+        researchTopics.Add(item);
         CreateButton(item.name);
     }
 
-    public void SetInventory(InventoryItem[] inventory)
+    public void SetResearchTopics(InventoryItem[] inventory)
     {
-        this.inventory = new List<string>(inventory.Length);
-
-        for(int i = 0; i < inventory.Length; i++)
-        {
-            this.inventory.Add(inventory[i].name);
-        }
-
-        //StartCoroutine(RebuildInventoryAsync());
+        researchTopics.Clear();
+        researchTopics.AddRange(inventory);
 
         RebuildInventory();
     }
 
-    IEnumerator RebuildInventoryAsync()
-    {
-        print("Rebuild Inventory Async");
-        for(int i = 0; i < this.inventory.Count; i++)
-        {
-            CreateButton(inventory[i]);
-            yield return new WaitForEndOfFrame();
-        }
-
-        yield return null;
-    }
-
     public void RebuildInventory()
     {
-        print("Rebuild Inventory Sync");
-        for(int i = 0; i < this.inventory.Count; i++)
+        for(int i = 0; i < this.researchTopics.Count; i++)
         {
-            CreateButton(inventory[i]);
+            CreateButton(researchTopics[i].name);
         }
     }
 

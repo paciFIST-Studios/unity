@@ -74,7 +74,7 @@ public class WheelerPlayerCharacterMenu : MonoBehaviour
 
     public void AddInventoryItem(InventoryItem item)
     {
-        researchListController.AddInventoryItem(item);
+        researchListController.AddResearchTopic(item);
     }
     
     public void SetSelectorPosition(Vector3 pos)
