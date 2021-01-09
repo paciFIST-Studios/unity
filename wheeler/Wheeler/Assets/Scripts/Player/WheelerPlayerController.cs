@@ -8,38 +8,41 @@ using Sirenix.OdinInspector;
 public class WheelerPlayerController : MonoBehaviour
 {
     // Editor facing vars --------------------------------------------
-    [FoldoutGroup("Movement")][HideLabel][SerializeField]
+    [ColoredFoldoutGroup("Movement", 1, 0, 0)][HideLabel][SerializeField]
     private PIDController pid;
 
-    [FoldoutGroup("Movement/Stats")][HideLabel][SerializeField]
+
+
+    [ColoredFoldoutGroup("Movement/Stats", 1, 0, 0)][HideLabel][SerializeField]
     private FloatReference hoverForce;
-    [FoldoutGroup("Movement/Stats")][HideLabel][SerializeField]
+    [ColoredFoldoutGroup("Movement/Stats", 1, 0, 0)][HideLabel][SerializeField]
     private FloatReference hoverHeight;
-    [FoldoutGroup("Movement/Stats")][HideLabel][SerializeField]
+    [ColoredFoldoutGroup("Movement/Stats", 1, 0, 0)][HideLabel][SerializeField]
     private FloatReference moveForce;
-    [FoldoutGroup("Movement/Stats")][HideLabel][SerializeField]
+    [ColoredFoldoutGroup("Movement/Stats", 1, 0, 0)][HideLabel][SerializeField]
     private FloatReference jumpForce;
-    [FoldoutGroup("Movement/Stats")][HideLabel][SerializeField]
+    [ColoredFoldoutGroup("Movement/Stats", 1, 0, 0)][HideLabel][SerializeField]
     private FloatReference jumpChargeRate;
-    [FoldoutGroup("Movement/Stats")][SerializeField][Range(0, 1)]
+    [ColoredFoldoutGroup("Movement/Stats", 1, 0, 0)][SerializeField][Range(0, 1)]
     private float jumpChargePercent;
 
-    [FoldoutGroup("Scanner")][HideLabel][SerializeField]
+    
+    [ColoredFoldoutGroup("Scanner", 0, 1, 1)][HideLabel][SerializeField]
     private FloatReference emitCooldown;
     private float lastShotFiredAt;
 
-    [FoldoutGroup("Scanner/Particle System Prefabs")][SerializeField]
-    private ParticleSystem forwardScanPrefab;
-    [FoldoutGroup("Scanner/Particle System Prefabs")][SerializeField]
-    private ParticleSystem radialScanPrefab;
-    [FoldoutGroup("Scanner/Particle System Prefabs")][SerializeField]
-    private ParticleSystem sphericalScanPrefab;
-    [FoldoutGroup("Scanner/Particle System Prefabs")][SerializeField]
-    private ParticleSystem jumpChargePrefab;
-    [FoldoutGroup("Scanner/Particle System Prefabs")][SerializeField]
-    private ParticleSystem jumpBlastPrefab;
+    [ColoredFoldoutGroup("Scanner/Particle System Prefabs", 0, 1, 1)][SerializeField] 
+    private ParticleSystem forwardScanPrefab;                  
+    [ColoredFoldoutGroup("Scanner/Particle System Prefabs", 0, 1, 1)][SerializeField] 
+    private ParticleSystem radialScanPrefab;                   
+    [ColoredFoldoutGroup("Scanner/Particle System Prefabs", 0, 1, 1)][SerializeField] 
+    private ParticleSystem sphericalScanPrefab;                
+    [ColoredFoldoutGroup("Scanner/Particle System Prefabs", 0, 1, 1)][SerializeField] 
+    private ParticleSystem jumpChargePrefab;                   
+    [ColoredFoldoutGroup("Scanner/Particle System Prefabs", 0, 1, 1)][SerializeField] 
+    private ParticleSystem jumpBlastPrefab;                    
 
-    [FoldoutGroup("Scanner/Particle System Prefabs")][SerializeField]
+    [ColoredFoldoutGroup("Scanner/Particle System Prefabs", 0, 1, 1)][SerializeField]
     private GameObject particleSystemCarrierPrefab;
     private Transform particleSystemCarrier;
 
@@ -85,6 +88,9 @@ public class WheelerPlayerController : MonoBehaviour
 
 
     // Research system -----------------------------------------------
+
+    [FoldoutGroup("ResearchManager")][SerializeField]
+    private InventoryManager researchManager;
 
     float pieResearch = 0.0f;
     float cannisterResearch = 0.0f;
