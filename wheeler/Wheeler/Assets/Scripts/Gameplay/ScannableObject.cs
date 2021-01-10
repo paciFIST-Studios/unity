@@ -20,11 +20,6 @@ public class ScannableObject : MonoBehaviour
         defaultMaterial = meshRenderer.material;
     }
 
-
-    private void OnParticleTrigger()
-    {
-    }
-
     public void OnParticleCollision(GameObject other)
     {
         if (IsScanned) { return; }
