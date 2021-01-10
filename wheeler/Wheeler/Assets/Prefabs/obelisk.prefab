@@ -27,7 +27,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2025550519}
   m_LocalRotation: {x: -0, y: 0.25765392, z: -0, w: 0.9662373}
-  m_LocalPosition: {x: 0.036, y: 0.908, z: 0.035}
+  m_LocalPosition: {x: 0.035, y: 0.908, z: 0.035}
   m_LocalScale: {x: 0.41770583, y: 0.35016, z: 0.37935674}
   m_Children: []
   m_Father: {fileID: 7657481293018612008}
@@ -518,8 +518,8 @@ MonoBehaviour:
   - {x: 0.13, y: 0.683, z: 0.229}
   topLightTopPosition: {x: -0.016, y: 1.2, z: -0.028}
   topLightBottomPosition: {x: -0.016, y: 1, z: -0.028}
-  topOuterLightTopPosition: {x: 0, y: 0, z: 0}
-  topOuterLightBottomPosition: {x: 0, y: 0, z: 0}
+  topOuterLightTopPosition: {x: 0.035, y: 1.253, z: 0.035}
+  topOuterLightBottomPosition: {x: 0.035, y: 0.908, z: 0.035}
   fillPercent: 0
   fillSpeed: 0.01
   isTriggered: 0
