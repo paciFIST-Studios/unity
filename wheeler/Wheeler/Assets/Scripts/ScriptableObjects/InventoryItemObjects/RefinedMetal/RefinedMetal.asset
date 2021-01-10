@@ -10,13 +10,13 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: d92f2a646e85de149916bd9c5242794c, type: 3}
-  m_Name: RefinedMetalCopper
+  m_Name: RefinedMetal
   m_EditorClassIdentifier: 
   sprite:
-    UseOverride: 1
+    UseOverride: 0
     OverrideValue: {fileID: 0}
-    ReferencedValue: {fileID: 0}
-    Reference: {fileID: 0}
+    ReferencedValue: {fileID: 21300000, guid: 8e255e29a70c0bb48bc44cd3f849c33d, type: 3}
+    Reference: {fileID: 11400000, guid: 0c6823d767ae3ee4b8594922dc5ae416, type: 2}
   ResearchableNames: []
   ResearchableDescriptions: []
   ResearchLevel: 0

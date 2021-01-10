@@ -1,15 +1,21 @@
 ﻿using UnityEngine;
 
+#if UNITY_EDITOR
+using UnityEditor;
+#endif
+
 using Sirenix.OdinInspector;
 
 [CreateAssetMenu(fileName = "New Inventory Item", menuName = "paciFIST/InventoryItem")]
 public class InventoryItem : ScriptableObject
 {
-    [BoxGroup] [HideLabel]
+    [BoxGroup][HideLabel][OnValueChanged("RefreshAsset")]
     public SpriteReference sprite;
 
     // increasing research level increments the display name
+    [OnValueChanged("RefreshAsset")]
     public StringReference[] ResearchableNames;
+    [OnValueChanged("RefreshAsset")]
     public StringReference[] ResearchableDescriptions;
 
     [Range(0, 5)]
@@ -17,6 +23,14 @@ public class InventoryItem : ScriptableObject
 
     public float ItemExchangeValue;
 
+    private void RefreshAsset()
+    {
+#if UNITY_EDITOR
+        AssetDatabase.Refresh();
+        EditorUtility.SetDirty(this);
+        AssetDatabase.SaveAssets();
+#endif
+    }
 
     public string GetCurrentResearchLevelDisplayName()
     {

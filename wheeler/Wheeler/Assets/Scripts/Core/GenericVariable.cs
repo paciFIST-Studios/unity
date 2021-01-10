@@ -1,5 +1,8 @@
 ﻿using UnityEngine;
+
+#if UNITY_EDITOR
 using UnityEditor;
+#endif
 
 using Sirenix.OdinInspector;
 
@@ -34,28 +37,32 @@ namespace pacifist
             public string GetDevName() { return this.DevName; }
             public void SetDevName(string name)
             {
-                AssetDatabase.Refresh();
                 this.DevName = name;
-                EditorUtility.SetDirty(this);
-                AssetDatabase.SaveAssets();
+                RefreshAsset();
             }
 
             public string GetDescription() { return this.Description; }
             public void SetDescription(string description)
             {
-                AssetDatabase.Refresh();
                 this.Description = description;
-                EditorUtility.SetDirty(this);
-                AssetDatabase.SaveAssets();
+                RefreshAsset();
             }
 
             public T GetValue() { return value; }
             public void SetValue(T val)
             {
-                AssetDatabase.Refresh();
                 value = val;
+                RefreshAsset();
+            }
+
+
+            private void RefreshAsset()
+            {
+#if UNITY_EDITOR
+                AssetDatabase.Refresh();
                 EditorUtility.SetDirty(this);
                 AssetDatabase.SaveAssets();
+#endif
             }
         }
 

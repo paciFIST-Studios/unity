@@ -1,0 +1,36 @@
+
+// narrative design
+https://www.youtube.com/watch?v=TEa9aSDHawA
+
+// choice per 90 sec
+// where to find choices:
+//    Character reactions
+//    Character-defining traits (player designed)
+//    Unavoidable Consequences
+
+// making choices matter
+//    change character scoring or comparisons
+//
+//    game immediately reacts to choice after it's made
+//
+//    clear consequences up front
+//        what will be gained/lost
+//        eg: split allegiances, different events, conflicting goals
+//
+//    each option of a choice has equal weight
+//        avoid right vs wrong (ie: the choice the player wanted, is the one they believe is right)
+//        have ~3 options, engineer it so each players choose each one about the same %
+//        NOTE: DO NOT use {yes, no, maybe} as your choices
+//
+//    Examples:
+//        BAD
+//            Player makes a choice, but their character immediately negates it.
+//                the WORLD, is allowed to negate your choice, but the PlayerCharacter is NOT
+//
+//            Choice has opposing interpretation, and it's easy for the player to
+//                read it as: having a different meaning
+//
+//            Choice is unclear, and it's easy for the player to not understand
+//
+//
+//

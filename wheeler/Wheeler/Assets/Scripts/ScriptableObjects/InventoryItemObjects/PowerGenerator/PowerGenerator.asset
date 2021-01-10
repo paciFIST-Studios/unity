@@ -13,10 +13,10 @@ MonoBehaviour:
   m_Name: PowerGenerator
   m_EditorClassIdentifier: 
   sprite:
-    UseOverride: 1
+    UseOverride: 0
     OverrideValue: {fileID: 0}
-    ReferencedValue: {fileID: 0}
-    Reference: {fileID: 0}
+    ReferencedValue: {fileID: 21300000, guid: b71799bf79f32d64383509e1464af05b, type: 3}
+    Reference: {fileID: 11400000, guid: 83be9de58461d8b4a9f1514eee2cba83, type: 2}
   ResearchableNames: []
   ResearchableDescriptions: []
   ResearchLevel: 0

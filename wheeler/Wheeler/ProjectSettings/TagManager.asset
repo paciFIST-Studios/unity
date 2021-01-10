@@ -6,6 +6,7 @@ TagManager:
   tags:
   - Reflection
   - Modification
+  - ResearchContentObject
   layers:
   - Default
   - TransparentFX

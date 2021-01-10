@@ -10,18 +10,18 @@ public class ItemPickupController : MonoBehaviour
     
     private void LoadData(InventoryItem data)
     {
-        print("ItemLoaded: " + data.name);
+        this.GetComponentInChildren<SpriteRenderer>().sprite = data.sprite;
     }
  
     private void OnTriggerEnter(Collider other)
     {
-        if(other.gameObject.GetComponent<WheelerPlayerController>() == null) { return; }
+        var wheeler = other.gameObject.GetComponent<WheelerPlayerController>();
+        if(wheeler == null) { return; }
+        if(data == null) { return; }
 
-        if(data)
-        {
-            print("Pickup: " + data.GetCurrentResearchLevelDisplayName());
-            data = null;
-            Destroy(this.gameObject);
-        }       
+        wheeler.AddInventoryItem(data);
+
+        data = null;
+        Destroy(this.gameObject);        
     }
 }

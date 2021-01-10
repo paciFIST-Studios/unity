@@ -24,6 +24,7 @@ public class ScannableObject : MonoBehaviour
     private void OnParticleTrigger()
     {
     }
+
     public void OnParticleCollision(GameObject other)
     {
         if (IsScanned) { return; }

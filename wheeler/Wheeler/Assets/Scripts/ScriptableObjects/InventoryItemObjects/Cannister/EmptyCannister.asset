@@ -20,12 +20,12 @@ MonoBehaviour:
   ResearchableNames:
   - UseOverride: 0
     OverrideValue: 
-    ReferencedValue: 
+    ReferencedValue: Research[0]  - Name
     Reference: {fileID: 11400000, guid: 982efe8238bcfd046aad47a18ad7d0cb, type: 2}
   ResearchableDescriptions:
   - UseOverride: 0
     OverrideValue: 
-    ReferencedValue: 
+    ReferencedValue: Research[0]  - Description
     Reference: {fileID: 11400000, guid: 836be64f13d5cb8468b0774b7266abf3, type: 2}
   ResearchLevel: 0
   ItemExchangeValue: 0

@@ -1,4 +1,4 @@
-﻿using System.Collections;
+﻿using System.Collections.Generic;
 
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -8,42 +8,41 @@ using Sirenix.OdinInspector;
 public class WheelerPlayerController : MonoBehaviour
 {
     // Editor facing vars --------------------------------------------
-    [FoldoutGroup("Movement")][HideLabel][SerializeField]
+    [ColoredFoldoutGroup("Movement", 1, 0, 0)][HideLabel][SerializeField]
     private PIDController pid;
 
-    [FoldoutGroup("Movement/Stats")][HideLabel][SerializeField]
+
+
+    [ColoredFoldoutGroup("Movement/Stats", 1, 0, 0)][HideLabel][SerializeField]
     private FloatReference hoverForce;
-    [FoldoutGroup("Movement/Stats")][HideLabel][SerializeField]
+    [ColoredFoldoutGroup("Movement/Stats", 1, 0, 0)][HideLabel][SerializeField]
     private FloatReference hoverHeight;
-    [FoldoutGroup("Movement/Stats")][HideLabel][SerializeField]
+    [ColoredFoldoutGroup("Movement/Stats", 1, 0, 0)][HideLabel][SerializeField]
     private FloatReference moveForce;
-    [FoldoutGroup("Movement/Stats")][HideLabel][SerializeField]
+    [ColoredFoldoutGroup("Movement/Stats", 1, 0, 0)][HideLabel][SerializeField]
     private FloatReference jumpForce;
-    [FoldoutGroup("Movement/Stats")][HideLabel][SerializeField]
+    [ColoredFoldoutGroup("Movement/Stats", 1, 0, 0)][HideLabel][SerializeField]
     private FloatReference jumpChargeRate;
-    [FoldoutGroup("Movement/Stats")][SerializeField][Range(0, 1)]
+    [ColoredFoldoutGroup("Movement/Stats", 1, 0, 0)][SerializeField][Range(0, 1)]
     private float jumpChargePercent;
 
-
-
-    [FoldoutGroup("Scanner")][HideLabel][SerializeField]
+    
+    [ColoredFoldoutGroup("Scanner", 0, 1, 1)][HideLabel][SerializeField]
     private FloatReference emitCooldown;
     private float lastShotFiredAt;
 
-    [FoldoutGroup("Scanner/Particle System Prefabs")][SerializeField]
-    private ParticleSystem forwardScanPrefab;
-    [FoldoutGroup("Scanner/Particle System Prefabs")][SerializeField]
-    private ParticleSystem radialScanPrefab;
-    [FoldoutGroup("Scanner/Particle System Prefabs")][SerializeField]
-    private ParticleSystem sphericalScanPrefab;
-    [FoldoutGroup("Scanner/Particle System Prefabs")][SerializeField]
-    private ParticleSystem jumpChargePrefab;
-    [FoldoutGroup("Scanner/Particle System Prefabs")][SerializeField]
-    private ParticleSystem jumpBlastPrefab;
+    [ColoredFoldoutGroup("Scanner/Particle System Prefabs", 0, 1, 1)][SerializeField] 
+    private ParticleSystem forwardScanPrefab;                  
+    [ColoredFoldoutGroup("Scanner/Particle System Prefabs", 0, 1, 1)][SerializeField] 
+    private ParticleSystem radialScanPrefab;                   
+    [ColoredFoldoutGroup("Scanner/Particle System Prefabs", 0, 1, 1)][SerializeField] 
+    private ParticleSystem sphericalScanPrefab;                
+    [ColoredFoldoutGroup("Scanner/Particle System Prefabs", 0, 1, 1)][SerializeField] 
+    private ParticleSystem jumpChargePrefab;                   
+    [ColoredFoldoutGroup("Scanner/Particle System Prefabs", 0, 1, 1)][SerializeField] 
+    private ParticleSystem jumpBlastPrefab;                    
 
-
-
-    [FoldoutGroup("Scanner/Particle System Prefabs")][SerializeField]
+    [ColoredFoldoutGroup("Scanner/Particle System Prefabs", 0, 1, 1)][SerializeField]
     private GameObject particleSystemCarrierPrefab;
     private Transform particleSystemCarrier;
 
@@ -74,6 +73,27 @@ public class WheelerPlayerController : MonoBehaviour
         , Grape     = 3
     }
 
+
+    // Menu System ---------------------------------------------------
+
+    [FoldoutGroup("MenuGUI")][SerializeField]
+    private WheelerPlayerCharacterMenu menu;
+
+    private bool menuIsActive = false;
+
+
+    // Inventory System ----------------------------------------------
+
+    List<InventoryItem> inventory = new List<InventoryItem>();
+
+
+    // Research system -----------------------------------------------
+
+    [FoldoutGroup("ResearchManager")][SerializeField]
+    private InventoryManager researchManager;
+
+    float pieResearch = 0.0f;
+    float cannisterResearch = 0.0f;
 
     // Input vars ----------------------------------------------------
 
@@ -118,6 +138,8 @@ public class WheelerPlayerController : MonoBehaviour
 
     private void OnGUI()
     {
+        return;
+
         // save load
         {
             GUI.Box(new Rect(10, 10, 200, 60), "State Management");
@@ -133,6 +155,7 @@ public class WheelerPlayerController : MonoBehaviour
             }
         }
 
+        #region IMGUI for scanner type
         // scanner switcher
         //{
         //    GUI.Box(new Rect(10, 10, 200, 60), "Scanner Equipped:");
@@ -159,6 +182,7 @@ public class WheelerPlayerController : MonoBehaviour
         //        }
         //    }
         //}
+        #endregion
 
         // player stats
         {
@@ -184,6 +208,23 @@ public class WheelerPlayerController : MonoBehaviour
             GUI.Label(new Rect(30, 300, 180, 30), string.Format("Source: {0}", InputSourceString));
             GUI.Label(new Rect(30, 320, 180, 30), string.Format("Look: {0}", rotateInputThisTick.ToString()));
             GUI.Label(new Rect(30, 340, 180, 30), string.Format("Move: {0}", movementInputThisTick.ToString()));
+        }
+
+        // inventory
+        {
+            GUI.Box(new Rect(10, 380, 200, 100), "Inventory");
+            if(inventory.Count > 0) GUI.Label(new Rect(30, 400, 100, 30),  inventory[0].name);
+            if(inventory.Count > 1) GUI.Label(new Rect(30, 420, 100, 60),  inventory[1].name);
+            if(inventory.Count > 2) GUI.Label(new Rect(30, 440, 100, 90),  inventory[2].name);
+            if(inventory.Count > 3) GUI.Label(new Rect(30, 460, 100, 120), inventory[3].name);
+        }
+
+        // data store
+        {
+            GUI.Box(new Rect(10, 480, 200, 100), "Data");
+            GUI.Label(new Rect(30, 500, 100, 30), string.Format($"Pie: {0}", pieResearch));
+            GUI.Label(new Rect(30, 520, 100, 30), string.Format($"Cannister: {0}", cannisterResearch));
+            //GUI.Label(new Rect(30, 560, 100, 30), string.Format($"Pie: {0}"));
         }
     }
 
@@ -222,6 +263,10 @@ public class WheelerPlayerController : MonoBehaviour
         jumpBlast.Stop();
 
         currentScanner = ScannerType.ForwardScan;
+
+
+
+
     }
 
     private void FixedUpdate()
@@ -335,13 +380,19 @@ public class WheelerPlayerController : MonoBehaviour
             SetActiveScanner(ScannerType.ForwardScan);
         }
     }
-
-
+    
     public void OnInitiateDialogue(InputAction.CallbackContext ctx)
     {
     }
 
+    public void OnToggleMenu(InputAction.CallbackContext ctx)
+    {
+        menuIsActive = !menuIsActive;
+        print(string.Format($"menuIsActive: {0}", menuIsActive));
 
+        menu.SetMenuVisibility(menuIsActive);
+
+    }
 
     // Player Character Management fns -------------------------------
 
@@ -562,6 +613,39 @@ public class WheelerPlayerController : MonoBehaviour
     {
     }
 
+    public void AddInventoryItem(InventoryItem item)
+    {
+        if(!ItemExistsInInventory(item))
+        {
+            inventory.Add(item);
+            menu.AddInventoryItem(item);
+        }
+
+        AddResearch(item);
+    }
+
+    public void RemoveInventoryItem(InventoryItem item)
+    {
+        if(inventory.Contains(item))
+        {
+            inventory.Remove(item);
+        }
+    }
+
+    public void AddResearch(InventoryItem item)
+    {
+        if(item.name == "PetrifiedPie")
+        {
+            pieResearch += 1.0f;
+            print("pie research:" + pieResearch);
+        }
+        else if (item.name == "EmptyCannister")
+        {
+            cannisterResearch += 1.0f;
+            print("cannister research: " + cannisterResearch);
+        }
+    }
+
     // Utility fns ---------------------------------------------------
 
     private InputSource DetermineInputStyle(InputAction.CallbackContext ctx)
@@ -594,6 +678,18 @@ public class WheelerPlayerController : MonoBehaviour
         data.SetVector(ParticleSystemCustomData.Custom1, 0, new ParticleSystem.MinMaxCurve((float)type));
     }
 
+    private bool ItemExistsInInventory(InventoryItem item)
+    {
+        for (int i = 0; i < inventory.Count; i++)
+        {
+            if (inventory[i].name == item.name)
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
 
     // Save State ----------------------------------------------------
 
@@ -607,6 +703,7 @@ public class WheelerPlayerController : MonoBehaviour
             , WheelerMoveForce      = this.moveForce
             , WheelerPosition       = this.transform.position
             , WheelerCurrentScanner = this.currentScanner
+            , WheelerInventory      = this.inventory.ToArray()
             //, WheelerForwardScan    = this.forwardScanParticleSystem
             //, WheelerRadialScan     = this.radialScanParticleSystem
             //, WheelerSphericalScan  = this.sphericalScanParticleSystem
@@ -625,6 +722,8 @@ public class WheelerPlayerController : MonoBehaviour
         //this.forwardScanParticleSystem   = data.WheelerForwardScan;
         //this.radialScanParticleSystem    = data.WheelerRadialScan;
         //this.sphericalScanParticleSystem = data.WheelerSphericalScan;
+
+        this.inventory = new List<InventoryItem>(data.WheelerInventory);
     }
 
     // ---------------------------------------------------------------
