@@ -1,10 +1,13 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+
 using UnityEngine;
+
+using Sirenix.OdinInspector;
 
 public class ResearchListController : MonoBehaviour
 {
-    [SerializeField] private GameObject buttonPrefab;
+    [SerializeField][Required] private GameObject buttonPrefab;
 
     private List<InventoryItem> researchTopics = new List<InventoryItem>();
 
