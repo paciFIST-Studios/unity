@@ -4,8 +4,7 @@ using Sirenix.OdinInspector;
 
 public class ItemPickupController : MonoBehaviour
 {
-    [OnValueChanged("LoadData")]
-    [InlineEditor]
+    [OnValueChanged("LoadData")][InlineEditor]
     public InventoryItem data;
     
     private void LoadData(InventoryItem data)
