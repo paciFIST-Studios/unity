@@ -8,41 +8,41 @@ using Sirenix.OdinInspector;
 public class WheelerPlayerController : MonoBehaviour
 {
     // Editor facing vars --------------------------------------------
-    [ColoredFoldoutGroup("Movement", 1, 0, 0)][HideLabel][SerializeField]
+    [ColoredFoldoutGroup("Movement", 1, 0, 0)][HideLabel][SerializeField][Required]
     private PIDController pid;
 
 
 
-    [ColoredFoldoutGroup("Movement/Stats", 1, 0, 0)][HideLabel][SerializeField]
+    [ColoredFoldoutGroup("Movement/Stats", 1, 0, 0)][HideLabel][SerializeField][Required]
     private FloatReference hoverForce;
-    [ColoredFoldoutGroup("Movement/Stats", 1, 0, 0)][HideLabel][SerializeField]
+    [ColoredFoldoutGroup("Movement/Stats", 1, 0, 0)][HideLabel][SerializeField][Required]
     private FloatReference hoverHeight;
-    [ColoredFoldoutGroup("Movement/Stats", 1, 0, 0)][HideLabel][SerializeField]
+    [ColoredFoldoutGroup("Movement/Stats", 1, 0, 0)][HideLabel][SerializeField][Required]
     private FloatReference moveForce;
-    [ColoredFoldoutGroup("Movement/Stats", 1, 0, 0)][HideLabel][SerializeField]
+    [ColoredFoldoutGroup("Movement/Stats", 1, 0, 0)][HideLabel][SerializeField][Required]
     private FloatReference jumpForce;
-    [ColoredFoldoutGroup("Movement/Stats", 1, 0, 0)][HideLabel][SerializeField]
+    [ColoredFoldoutGroup("Movement/Stats", 1, 0, 0)][HideLabel][SerializeField][Required]
     private FloatReference jumpChargeRate;
-    [ColoredFoldoutGroup("Movement/Stats", 1, 0, 0)][SerializeField][Range(0, 1)]
+    [ColoredFoldoutGroup("Movement/Stats", 1, 0, 0)][Range(0, 1)][SerializeField][Required]
     private float jumpChargePercent;
 
     
-    [ColoredFoldoutGroup("Scanner", 0, 1, 1)][HideLabel][SerializeField]
+    [ColoredFoldoutGroup("Scanner", 0, 1, 1)][HideLabel][SerializeField][Required]
     private FloatReference emitCooldown;
     private float lastShotFiredAt;
 
-    [ColoredFoldoutGroup("Scanner/Particle System Prefabs", 0, 1, 1)][SerializeField] 
+    [ColoredFoldoutGroup("Scanner/Particle System Prefabs", 0, 1, 1)][SerializeField][Required]
     private ParticleSystem forwardScanPrefab;                  
-    [ColoredFoldoutGroup("Scanner/Particle System Prefabs", 0, 1, 1)][SerializeField] 
+    [ColoredFoldoutGroup("Scanner/Particle System Prefabs", 0, 1, 1)][SerializeField][Required]
     private ParticleSystem radialScanPrefab;                   
-    [ColoredFoldoutGroup("Scanner/Particle System Prefabs", 0, 1, 1)][SerializeField] 
+    [ColoredFoldoutGroup("Scanner/Particle System Prefabs", 0, 1, 1)][SerializeField][Required]
     private ParticleSystem sphericalScanPrefab;                
-    [ColoredFoldoutGroup("Scanner/Particle System Prefabs", 0, 1, 1)][SerializeField] 
+    [ColoredFoldoutGroup("Scanner/Particle System Prefabs", 0, 1, 1)][SerializeField][Required]
     private ParticleSystem jumpChargePrefab;                   
-    [ColoredFoldoutGroup("Scanner/Particle System Prefabs", 0, 1, 1)][SerializeField] 
+    [ColoredFoldoutGroup("Scanner/Particle System Prefabs", 0, 1, 1)][SerializeField][Required]
     private ParticleSystem jumpBlastPrefab;                    
 
-    [ColoredFoldoutGroup("Scanner/Particle System Prefabs", 0, 1, 1)][SerializeField]
+    [ColoredFoldoutGroup("Scanner/Particle System Prefabs", 0, 1, 1)][SerializeField][Required]
     private GameObject particleSystemCarrierPrefab;
     private Transform particleSystemCarrier;
 
@@ -76,7 +76,7 @@ public class WheelerPlayerController : MonoBehaviour
 
     // Menu System ---------------------------------------------------
 
-    [FoldoutGroup("MenuGUI")][SerializeField]
+    [FoldoutGroup("MenuGUI")][SerializeField][Required]
     private WheelerPlayerCharacterMenu menu;
 
     private bool menuIsActive = false;
@@ -89,7 +89,7 @@ public class WheelerPlayerController : MonoBehaviour
 
     // Research system -----------------------------------------------
 
-    [FoldoutGroup("ResearchManager")][SerializeField]
+    [FoldoutGroup("ResearchManager")][SerializeField][Required]
     private InventoryManager researchManager;
 
     float pieResearch = 0.0f;
@@ -391,7 +391,6 @@ public class WheelerPlayerController : MonoBehaviour
         print(string.Format($"menuIsActive: {0}", menuIsActive));
 
         menu.SetMenuVisibility(menuIsActive);
-
     }
 
     // Player Character Management fns -------------------------------
@@ -405,6 +404,10 @@ public class WheelerPlayerController : MonoBehaviour
         // Clamp negative error values to zero.  A negative error would snap Wheeler downwards,
         // that that would feel like a sudden gravity spike, which isn't as pleasant as freefall
         error = (error < 0) ? 0.0f : error;
+
+        // if we haven't struck something with a collider, than we're just in the air
+        // if we provide an error value while we're just in the air, then the probe won't fall
+        if(hitInfo.collider == null) { error = 0.0f; }
 
         var hoverCorrection = Vector3.up;
         hoverCorrection *= pid.Update(error);
@@ -727,9 +730,5 @@ public class WheelerPlayerController : MonoBehaviour
     }
 
     // ---------------------------------------------------------------
-
-
-
-
 
 }

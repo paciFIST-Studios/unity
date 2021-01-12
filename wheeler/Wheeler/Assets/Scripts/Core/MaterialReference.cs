@@ -4,6 +4,9 @@ using UnityEditor;
 
 using Sirenix.OdinInspector;
 
+// A lof of the "unused" values are used in editor,
+// but only during value modification
+#pragma warning disable CS0414
 
 [Serializable]
 public class MaterialReference

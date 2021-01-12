@@ -1,14 +1,22 @@
 ﻿using System.Collections;
-using System.Collections.Generic;
+
 using UnityEngine;
+using UnityEngine.Events;
 
 using Sirenix.OdinInspector;
+
+// A lof of the "unused" values are used in editor,
+// but only during value modification
+#pragma warning disable CS0414
+
 
 public class ObeliskManager : MonoBehaviour
 {
     // Lights -----
     [ColoredFoldoutGroup("Lights/References", 0, 0, 1)][SerializeField][LabelWidth(100)]
     private Transform topLight;
+    [ColoredFoldoutGroup("Lights/References", 0, 0, 1)][SerializeField][LabelWidth(100)]
+    private Transform topOuterLight;
     [ColoredFoldoutGroup("Lights/References", 0, 0, 1)][SerializeField][LabelWidth(100)]
     private Transform[] sideLights;
     [ColoredFoldoutGroup("Lights", 0, 0, 1)][SerializeField][LabelWidth(100)]
@@ -36,6 +44,11 @@ public class ObeliskManager : MonoBehaviour
     private Vector3 topLightTopPosition;
     [ColoredFoldoutGroup("Positions/Side Light Positions", 1, 0, 0)][SerializeField]
     private Vector3 topLightBottomPosition;
+    [ColoredFoldoutGroup("Positions/Side Light Positions", 1, 0, 0)][SerializeField]
+    private Vector3 topOuterLightTopPosition;
+    [ColoredFoldoutGroup("Positions/Side Light Positions", 1, 0, 0)][SerializeField]
+    private Vector3 topOuterLightBottomPosition;
+
 
     // Gameplay mechanics ----
     [ColoredFoldoutGroup("Gameplay", 0, 1, 0)][SerializeField][LabelWidth(100)]
@@ -46,8 +59,22 @@ public class ObeliskManager : MonoBehaviour
     private float fillSpeed;
 
     [ColoredFoldoutGroup("Gameplay", 0, 1, 0)][SerializeField][LabelWidth(100)]
-    [OnValueChanged("Trigger")]
+    [OnValueChanged("TriggerObeliskAnimation")]
     private bool isTriggered;
+
+
+    private void Start()
+    {
+        var cb = new UnityAction(TriggerObeliskAnimation);
+
+        var model = this.transform.Find("model");
+        for(int i = 0; i < model.childCount; i++)
+        {
+            var child = model.GetChild(i).gameObject;
+            child.GetComponent<NotifyMeOfCollision>().Register(cb);
+        }
+    }
+
 
     [Button("Update Light Materials", ButtonSizes.Large)]
     private void UpdateLightMaterial()
@@ -58,6 +85,7 @@ public class ObeliskManager : MonoBehaviour
         }
 
         topLight.GetComponent<MeshRenderer>().material = lightMaterial;
+        topOuterLight.GetComponent<MeshRenderer>().material = lightMaterial;
     }
 
     [Button("Update Body Materials", ButtonSizes.Large)]
@@ -97,14 +125,29 @@ public class ObeliskManager : MonoBehaviour
 
             sideLights[i].localPosition = pos;
         }
-        
-        var topPos = Vector3Lerp(
-              topLightBottomPosition
-            , topLightTopPosition
+
+        // center light
+        //var topPos = Vector3Lerp(
+        //      topLightBottomPosition
+        //    , topLightTopPosition
+        //    , percent
+        //    );
+        //
+        //topLight.localPosition = topPos;
+
+        // sink in after activation
+        //var topOuterPos = Vector3Lerp(
+        //      topOuterLightTopPosition
+        //    , topOuterLightBottomPosition
+        //    , percent
+        //    );
+
+        var topOuterPos = Vector3Lerp(
+              topOuterLightBottomPosition
+            , topOuterLightTopPosition
             , percent
             );
-
-        topLight.localPosition = topPos;
+        topOuterLight.localPosition = topOuterPos;
     }
 
     private void ResetLights()
@@ -113,20 +156,15 @@ public class ObeliskManager : MonoBehaviour
         SetLightFillPercent(0.0f);
     }
 
-    private void Trigger()
+    private void TriggerObeliskAnimation()
     {
-        if(isTriggered)
-        {
-            StartCoroutine(AnimateSideLightsOn());
-        }
-        else
-        {
-            ResetLights();
-        }
+        StartCoroutine(AnimateSideLightsOn());
     }
 
     IEnumerator AnimateSideLightsOn()
     {
+        yield return new WaitForSeconds(0.65f);
+
         while(fillPercent < 1f)
         {
             fillPercent += fillSpeed;
@@ -137,4 +175,5 @@ public class ObeliskManager : MonoBehaviour
 
         yield return null;
     }
+
 }

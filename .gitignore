@@ -211,3 +211,9 @@ wheeler/Wheeler/Assets/Plugins/Sirenix/Demos/*
 
 wheeler/Wheeler/Assets/TextMesh Pro/*
 wheeler/Wheeler/Assets/Beats_01/*
+wheeler/Wheeler/Assets/Rewired/*
+wheeler/Wheeler/Assets/Scenes/tutorial/Lightmap*.png
+wheeler/Wheeler/Assets/Scenes/tutorial/Lightmap*.meta
+wheeler/Wheeler/Assets/Scenes/tutorial/Lightmap*.exr
+wheeler/Wheeler/Assets/Scenes/tutorial/ReflectionProbe*.meta
+wheeler/Wheeler/Assets/Scenes/tutorial/ReflectionProbe*.exr
