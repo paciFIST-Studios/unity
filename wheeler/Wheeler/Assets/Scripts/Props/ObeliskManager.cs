@@ -5,6 +5,11 @@ using UnityEngine.Events;
 
 using Sirenix.OdinInspector;
 
+// A lof of the "unused" values are used in editor,
+// but only during value modification
+#pragma warning disable CS0414
+
+
 public class ObeliskManager : MonoBehaviour
 {
     // Lights -----
