@@ -405,6 +405,10 @@ public class WheelerPlayerController : MonoBehaviour
         // that that would feel like a sudden gravity spike, which isn't as pleasant as freefall
         error = (error < 0) ? 0.0f : error;
 
+        // if we haven't struck something with a collider, than we're just in the air
+        // if we provide an error value while we're just in the air, then the probe won't fall
+        if(hitInfo.collider == null) { error = 0.0f; }
+
         var hoverCorrection = Vector3.up;
         hoverCorrection *= pid.Update(error);
         hoverCorrection *= hoverForce;
