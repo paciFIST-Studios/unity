@@ -412,7 +412,7 @@ public class WheelerPlayerController : MonoBehaviour
         var hoverCorrection = Vector3.up;
         hoverCorrection *= pid.Update(error);
         hoverCorrection *= hoverForce;
-        //correction *= Time.deltaTime;        
+        //hoverCorrection *= Time.deltaTime;        
 
         rb.AddForce(hoverCorrection);
     }
