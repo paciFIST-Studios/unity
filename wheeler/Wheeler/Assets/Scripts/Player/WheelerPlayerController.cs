@@ -3,10 +3,19 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
 
+using Rewired;
+
 using Sirenix.OdinInspector;
 
 public class WheelerPlayerController : MonoBehaviour
 {
+    // Rewired Input ------------------------------------------------
+    [System.NonSerialized]
+    public int playerID;
+    // Rewired Player is the input-container
+    private Rewired.Player player;
+
+
     // Editor facing vars --------------------------------------------
     [ColoredFoldoutGroup("Movement", 1, 0, 0)][HideLabel][SerializeField][Required]
     private PIDController pid;
@@ -231,6 +240,19 @@ public class WheelerPlayerController : MonoBehaviour
 
     // Unity Engine fns ----------------------------------------------
 
+    private void Awake()
+    {
+        //player =  ReInput.players.GetPlayer(playerID);
+
+        //player.AddInputEventDelegate(OnLook, UpdateLoopType.FixedUpdate);
+        //player.AddInputEventDelegate(OnMove, UpdateLoopType.FixedUpdate);
+        //player.AddInputEventDelegate(OnJump, UpdateLoopType.FixedUpdate, InputActionEventType.ButtonJustReleased, "Jump");
+
+        //player.AddInputEventDelegate(OnSetScanner1, UpdateLoopType.Update, InputActionEventType.ButtonJustPressed, "Scanner1");
+        //player.AddInputEventDelegate(OnSetScanner2, UpdateLoopType.Update, InputActionEventType.ButtonJustPressed, "Scanner2");
+        //player.AddInputEventDelegate(OnSetScanner3, UpdateLoopType.Update, InputActionEventType.ButtonJustPressed, "Scanner3");
+    }
+
     private void Start()
     {
         rb = this.GetComponent<Rigidbody>();
@@ -280,9 +302,19 @@ public class WheelerPlayerController : MonoBehaviour
         HandlePlayerSocialStateUpdate();
     }
 
+    private void OnDestroy()
+    {
+        //player.RemoveInputEventDelegate(OnLook);
+        //player.RemoveInputEventDelegate(OnMove);
+        //player.RemoveInputEventDelegate(OnJump);
+        //player.RemoveInputEventDelegate(OnSetScanner1);
+        //player.RemoveInputEventDelegate(OnSetScanner2);
+        //player.RemoveInputEventDelegate(OnSetScanner3);
+    }
+
     // Input System Callbacks ----------------------------------------
 
-    public void OnLook(InputAction.CallbackContext ctx)
+    public void OnLook(UnityEngine.InputSystem.InputAction.CallbackContext ctx)
     {
         if(ctx.canceled)
         {
@@ -296,7 +328,7 @@ public class WheelerPlayerController : MonoBehaviour
         UpdateInputSource(ctx);
     }
 
-    public void OnMove(InputAction.CallbackContext ctx)
+    public void OnMove(UnityEngine.InputSystem.InputAction.CallbackContext ctx)
     {
         if(ctx.canceled)
         {
@@ -310,7 +342,7 @@ public class WheelerPlayerController : MonoBehaviour
         UpdateInputSource(ctx);
     }
 
-    public void OnJump(InputAction.CallbackContext ctx)
+    public void OnJump(UnityEngine.InputSystem.InputAction.CallbackContext ctx)
     {
         if(ctx.canceled)
         {
@@ -332,7 +364,7 @@ public class WheelerPlayerController : MonoBehaviour
         jumpCharge.Play();
     }
 
-    public void OnScan(InputAction.CallbackContext ctx)
+    public void OnScan(UnityEngine.InputSystem.InputAction.CallbackContext ctx)
     {
         if(ctx.canceled)
         {
@@ -350,22 +382,22 @@ public class WheelerPlayerController : MonoBehaviour
         }
     }
 
-    public void OnSetScanner1(InputAction.CallbackContext ctx)
+    public void OnSetScanner1(UnityEngine.InputSystem.InputAction.CallbackContext ctx)
     {
         SetActiveScanner(ScannerType.ForwardScan);
     }
 
-    public void OnSetScanner2(InputAction.CallbackContext ctx)
+    public void OnSetScanner2(UnityEngine.InputSystem.InputAction.CallbackContext ctx)
     {
         SetActiveScanner(ScannerType.RadialScan);
     }
 
-    public void OnSetScanner3(InputAction.CallbackContext ctx)
+    public void OnSetScanner3(UnityEngine.InputSystem.InputAction.CallbackContext ctx)
     {
         SetActiveScanner(ScannerType.SphericalScan);
     }
 
-    public void OnToggleScanner(InputAction.CallbackContext ctx)
+    public void OnToggleScanner(UnityEngine.InputSystem.InputAction.CallbackContext ctx)
     {
         if(currentScanner == ScannerType.ForwardScan)
         {
@@ -381,11 +413,11 @@ public class WheelerPlayerController : MonoBehaviour
         }
     }
     
-    public void OnInitiateDialogue(InputAction.CallbackContext ctx)
+    public void OnInitiateDialogue(UnityEngine.InputSystem.InputAction.CallbackContext ctx)
     {
     }
 
-    public void OnToggleMenu(InputAction.CallbackContext ctx)
+    public void OnToggleMenu(UnityEngine.InputSystem.InputAction.CallbackContext ctx)
     {
         menuIsActive = !menuIsActive;
         print(string.Format($"menuIsActive: {0}", menuIsActive));
@@ -591,7 +623,7 @@ public class WheelerPlayerController : MonoBehaviour
         isRotationLocked = false;
     }
 
-    private void UpdateInputSource(InputAction.CallbackContext ctx)
+    private void UpdateInputSource(UnityEngine.InputSystem.InputAction.CallbackContext ctx)
     {
         inputSource = DetermineInputStyle(ctx);
         if (inputSource == InputSource.MouseAndKeyboard)
@@ -651,7 +683,7 @@ public class WheelerPlayerController : MonoBehaviour
 
     // Utility fns ---------------------------------------------------
 
-    private InputSource DetermineInputStyle(InputAction.CallbackContext ctx)
+    private InputSource DetermineInputStyle(UnityEngine.InputSystem.InputAction.CallbackContext ctx)
     {
         // ellie:todo: someday, change this, it's fragile
         var str = ctx.action.GetBindingDisplayString();
