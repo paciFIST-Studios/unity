@@ -14,4 +14,4 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   DevName: Emission Cooldown
   Description: How long Wheeler has to wait, before emitting another signal scan
-  value: 0.1
+  value: 0.015
