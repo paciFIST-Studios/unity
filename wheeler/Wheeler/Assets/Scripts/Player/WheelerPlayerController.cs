@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 
 using UnityEngine;
-using UnityEngine.InputSystem;
 
 using Rewired;
 
@@ -11,7 +10,7 @@ public class WheelerPlayerController : MonoBehaviour
 {
     // Rewired Input ------------------------------------------------
     [System.NonSerialized]
-    public int playerID;
+    public int playerID = 0;
     // Rewired Player is the input-container
     private Rewired.Player player;
 
@@ -86,9 +85,9 @@ public class WheelerPlayerController : MonoBehaviour
     // Menu System ---------------------------------------------------
 
     [FoldoutGroup("MenuGUI")][SerializeField][Required]
-    private WheelerPlayerCharacterMenu menu;
+    private WheelerPlayerCharacterMenu playerMenu;
 
-    private bool menuIsActive = false;
+    private bool playerMenuIsActive = false;
 
 
     // Inventory System ----------------------------------------------
@@ -103,20 +102,7 @@ public class WheelerPlayerController : MonoBehaviour
 
     float pieResearch = 0.0f;
     float cannisterResearch = 0.0f;
-
-    // Input vars ----------------------------------------------------
-
-    public enum InputSource
-    {
-          Unknown
-        , MouseAndKeyboard
-        , XboxController
-    }
-    private InputSource inputSource;
-    private string InputSourceString = "Mouse+Keyboard";
-    private string MKInput = "Mouse+Keyboard";
-    private string XBInput = "Xbox Controller";
-
+    
 
     // Movement vars -------------------------------------------------
 
@@ -212,12 +198,12 @@ public class WheelerPlayerController : MonoBehaviour
         }
 
         // input system
-        {
-            GUI.Box(new Rect(10, 280, 200, 100), "Input system");
-            GUI.Label(new Rect(30, 300, 180, 30), string.Format("Source: {0}", InputSourceString));
-            GUI.Label(new Rect(30, 320, 180, 30), string.Format("Look: {0}", rotateInputThisTick.ToString()));
-            GUI.Label(new Rect(30, 340, 180, 30), string.Format("Move: {0}", movementInputThisTick.ToString()));
-        }
+        //{
+        //    GUI.Box(new Rect(10, 280, 200, 100), "Input system");
+        //    GUI.Label(new Rect(30, 300, 180, 30), string.Format("Source: {0}", InputSourceString));
+        //    GUI.Label(new Rect(30, 320, 180, 30), string.Format("Look: {0}", rotateInputThisTick.ToString()));
+        //    GUI.Label(new Rect(30, 340, 180, 30), string.Format("Move: {0}", movementInputThisTick.ToString()));
+        //}
 
         // inventory
         {
@@ -240,17 +226,14 @@ public class WheelerPlayerController : MonoBehaviour
 
     // Unity Engine fns ----------------------------------------------
 
-    private void Awake()
+    public void Awake()
     {
-        //player =  ReInput.players.GetPlayer(playerID);
+        player =  ReInput.players.GetPlayer(playerID);
+        player.AddInputEventDelegate(OnInputFixedUpdate, UpdateLoopType.FixedUpdate);
+        //player.AddInputEventDelegate(OnInputUpdate, UpdateLoopType.Update);
 
-        //player.AddInputEventDelegate(OnLook, UpdateLoopType.FixedUpdate);
-        //player.AddInputEventDelegate(OnMove, UpdateLoopType.FixedUpdate);
-        //player.AddInputEventDelegate(OnJump, UpdateLoopType.FixedUpdate, InputActionEventType.ButtonJustReleased, "Jump");
 
-        //player.AddInputEventDelegate(OnSetScanner1, UpdateLoopType.Update, InputActionEventType.ButtonJustPressed, "Scanner1");
-        //player.AddInputEventDelegate(OnSetScanner2, UpdateLoopType.Update, InputActionEventType.ButtonJustPressed, "Scanner2");
-        //player.AddInputEventDelegate(OnSetScanner3, UpdateLoopType.Update, InputActionEventType.ButtonJustPressed, "Scanner3");
+        player.AddInputEventDelegate(OnScan, UpdateLoopType.Update, RewiredConsts.Action.Scan);
     }
 
     private void Start()
@@ -285,10 +268,6 @@ public class WheelerPlayerController : MonoBehaviour
         jumpBlast.Stop();
 
         currentScanner = ScannerType.ForwardScan;
-
-
-
-
     }
 
     private void FixedUpdate()
@@ -304,47 +283,94 @@ public class WheelerPlayerController : MonoBehaviour
 
     private void OnDestroy()
     {
-        //player.RemoveInputEventDelegate(OnLook);
-        //player.RemoveInputEventDelegate(OnMove);
-        //player.RemoveInputEventDelegate(OnJump);
-        //player.RemoveInputEventDelegate(OnSetScanner1);
-        //player.RemoveInputEventDelegate(OnSetScanner2);
-        //player.RemoveInputEventDelegate(OnSetScanner3);
+        player.RemoveInputEventDelegate(OnInputFixedUpdate);
+        //player.RemoveInputEventDelegate(OnInputUpdate);
+
+        player.RemoveInputEventDelegate(OnScan);
     }
 
     // Input System Callbacks ----------------------------------------
 
-    public void OnLook(UnityEngine.InputSystem.InputAction.CallbackContext ctx)
+    private void OnInputFixedUpdate(InputActionEventData data)
     {
-        if(ctx.canceled)
+        var move = new Vector2(0, 0);
+        var look = new Vector2(0, 0);
+        var scan = false;
+        var jump = false;
+
+        switch(data.actionId)
         {
-            isRotating = false;
-            return;
+            case RewiredConsts.Action.Move_Horizontal:
+                if(data.GetAxis() != 0) { move.x = data.GetAxis(); }
+                break;
+
+            //case RewiredConsts.Action.Move_Vertical:
+            //    if(data.GetAxis() != 0) { move.y = data.GetAxis(); }
+            //    break;
+            //
+            //case RewiredConsts.Action.Look_Horizontal:
+            //    if(data.GetAxis() != 0) { look.x = data.GetAxis(); }
+            //    break;
+            //
+            //case RewiredConsts.Action.Look_Vertical:
+            //    if(data.GetAxis() != 0) { look.y = data.GetAxis(); }
+            //    break;
+            //
+            //case RewiredConsts.Action.Scan:
+            //    if (data.GetButtonDown()) { scan = true; }
+            //    break;
+            //
+            //case RewiredConsts.Action.Jump:
+            //    if (data.GetButtonSinglePressHold()) { jump = true; }
+            //    break;
         }
 
-        isRotating = true;
-        rotateInputThisTick = ctx.ReadValue<Vector2>();
-
-        UpdateInputSource(ctx);
+        ProcessFixedUpdateInput(move, look, scan, jump);
     }
 
-    public void OnMove(UnityEngine.InputSystem.InputAction.CallbackContext ctx)
+    private void OnInputUpdate(InputActionEventData data)
     {
-        if(ctx.canceled)
+        switch(data.actionId)
         {
-            isMoving = false;
-            return;
+            //case RewiredConsts.Action.Scanner1:
+            //    if(data.GetButtonDown()) { SetScanner(1); }                
+            //    break;
+            //case RewiredConsts.Action.Scanner2:
+            //    if (data.GetButtonDown()) { SetScanner(2); }
+            //    break;
+            //case RewiredConsts.Action.Scanner3:
+            //    if (data.GetButtonDown()) { SetScanner(3); }
+            //    break;
+            //case RewiredConsts.Action.NextScanner:
+            //    if (data.GetButtonDown()) { SetNextScanner(); }
+            //    break;
+            //case RewiredConsts.Action.PlayerMenu:
+            //    if (data.GetButtonDown()) { TogglePlayerMenu(); }
+            //    break;
+            //case RewiredConsts.Action.StartMenu:
+            //    // todo
+            //    break;
+            //case RewiredConsts.Action.Talk:
+            //    if (data.GetButtonDown()) { InitiateDialogue(); }
+            //    break;
+        }
+    }
+
+    private void ProcessFixedUpdateInput(Vector2 move, Vector2 look, bool scan, bool jump)
+    {
+        if (move != Vector2.zero)
+        {
+            isMoving = true;
+            movementInputThisTick = move;
         }
 
-        isMoving = true;
-        movementInputThisTick = ctx.ReadValue<Vector2>();
+        if (look != Vector2.zero)
+        {
+            isRotating = true;
+            rotateInputThisTick = look;
+        }
 
-        UpdateInputSource(ctx);
-    }
-
-    public void OnJump(UnityEngine.InputSystem.InputAction.CallbackContext ctx)
-    {
-        if(ctx.canceled)
+        if(!jump)
         {
             if(isChargingJump)
             {
@@ -352,52 +378,71 @@ public class WheelerPlayerController : MonoBehaviour
             }
 
             isChargingJump = false;
-
-            // this kills all particles at once, and it doesn't look
-            // great, but it's just kinda what we've got to work with
             jumpCharge.Clear();
             jumpCharge.Stop();
-            return;
+        }
+        else
+        {
+            isChargingJump = true;
+            jumpCharge.Play();
         }
 
-        isChargingJump = true;
-        jumpCharge.Play();
-    }
-
-    public void OnScan(UnityEngine.InputSystem.InputAction.CallbackContext ctx)
-    {
-        if(ctx.canceled)
+        if (!scan)
         {
             isFiring = false;
             LockParticleSystemRotation();
-            //UnlockPlayerRotation();
-            return;
+            // UnlockPlayerRotation();
         }
-
-        if(lastShotFiredAt + emitCooldown < Time.time)
+        else
         {
-            isFiring = true;
-            UnlockParticleSystemRotation();
-            //LockPlayerRotation();
+            if (lastShotFiredAt + emitCooldown < Time.time)
+            {
+                isFiring = true;
+                UnlockParticleSystemRotation();
+                //LockPlayerRotation();
+            }
         }
     }
 
-    public void OnSetScanner1(UnityEngine.InputSystem.InputAction.CallbackContext ctx)
-    {
-        SetActiveScanner(ScannerType.ForwardScan);
-    }
 
-    public void OnSetScanner2(UnityEngine.InputSystem.InputAction.CallbackContext ctx)
+    public void OnScan(InputActionEventData data)
     {
-        SetActiveScanner(ScannerType.RadialScan);
+        if(data.GetButton())
+        {
+            if(lastShotFiredAt + emitCooldown < Time.time)
+            {
+                UnlockParticleSystemRotation();
+                //LockPlayerRotation();
+                performScan();
+            }
+        }
+        else
+        {
+            LockParticleSystemRotation();
+            //UnlockPlayerRotation();
+        }
     }
+    
 
-    public void OnSetScanner3(UnityEngine.InputSystem.InputAction.CallbackContext ctx)
+    private void SetScanner(int id)
     {
-        SetActiveScanner(ScannerType.SphericalScan);
-    }
+        if(id == 1)
+        {
+            SetActiveScanner(ScannerType.ForwardScan);
+        }
+        else if (id == 2)
+        {
+            SetActiveScanner(ScannerType.RadialScan);   
 
-    public void OnToggleScanner(UnityEngine.InputSystem.InputAction.CallbackContext ctx)
+        }
+        else if (id == 3)
+        {
+           SetActiveScanner(ScannerType.SphericalScan);
+
+        }
+    }
+    
+    public void SetNextScanner()
     {
         if(currentScanner == ScannerType.ForwardScan)
         {
@@ -413,16 +458,16 @@ public class WheelerPlayerController : MonoBehaviour
         }
     }
     
-    public void OnInitiateDialogue(UnityEngine.InputSystem.InputAction.CallbackContext ctx)
+    private void InitiateDialogue()
     {
     }
-
-    public void OnToggleMenu(UnityEngine.InputSystem.InputAction.CallbackContext ctx)
+    
+    private void TogglePlayerMenu()
     {
-        menuIsActive = !menuIsActive;
-        print(string.Format($"menuIsActive: {0}", menuIsActive));
-
-        menu.SetMenuVisibility(menuIsActive);
+        playerMenuIsActive = !playerMenuIsActive;
+        print(string.Format($"menuIsActive: {0}", playerMenuIsActive));
+    
+        playerMenu.SetMenuVisibility(playerMenuIsActive);
     }
 
     // Player Character Management fns -------------------------------
@@ -487,10 +532,10 @@ public class WheelerPlayerController : MonoBehaviour
 
     private void UpdatePlayerInteractionState()
     {
-        if (isFiring)
-        {
-            performScan();
-        }
+        //if (isFiring)
+        //{
+        //    performScan();
+        //}
 
         if (!particleSystemRotationIsLocked)
         {
@@ -509,16 +554,16 @@ public class WheelerPlayerController : MonoBehaviour
 
     private void RotatePlayerCharacter(Vector2 input)
     {
-        if (inputSource == InputSource.Unknown)
-        {
-            return;
-        }
-        else if (inputSource == InputSource.MouseAndKeyboard)
-        {
-            // recenter to middle of screen
-            input.x -= screenHalfWidth;
-            input.y -= screenHalfHeight;
-        }
+        //if (inputSource == InputSource.Unknown)
+        //{
+        //    return;
+        //}
+        //else if (inputSource == InputSource.MouseAndKeyboard)
+        //{
+        //    // recenter to middle of screen
+        //    input.x -= screenHalfWidth;
+        //    input.y -= screenHalfHeight;
+        //}
         
         float angle = Mathf.Atan2(input.y, input.x) * Mathf.Rad2Deg;
 
@@ -562,6 +607,8 @@ public class WheelerPlayerController : MonoBehaviour
         {
             sphericalScan.Play();
         }
+
+        lastShotFiredAt = Time.time;
     }
 
     private void SetActiveScanner(ScannerType scanner)
@@ -622,24 +669,7 @@ public class WheelerPlayerController : MonoBehaviour
     {
         isRotationLocked = false;
     }
-
-    private void UpdateInputSource(UnityEngine.InputSystem.InputAction.CallbackContext ctx)
-    {
-        inputSource = DetermineInputStyle(ctx);
-        if (inputSource == InputSource.MouseAndKeyboard)
-        {
-            InputSourceString = MKInput;
-        }
-        else if (inputSource == InputSource.XboxController)
-        {
-            InputSourceString = XBInput;
-        }
-        else
-        {
-            InputSourceString = "";
-        }
-    }
-
+    
     public void SetDialogueData(DialogueData data)
     {
     }
@@ -653,7 +683,7 @@ public class WheelerPlayerController : MonoBehaviour
         if(!ItemExistsInInventory(item))
         {
             inventory.Add(item);
-            menu.AddInventoryItem(item);
+            playerMenu.AddInventoryItem(item);
         }
 
         AddResearch(item);
@@ -682,29 +712,6 @@ public class WheelerPlayerController : MonoBehaviour
     }
 
     // Utility fns ---------------------------------------------------
-
-    private InputSource DetermineInputStyle(UnityEngine.InputSystem.InputAction.CallbackContext ctx)
-    {
-        // ellie:todo: someday, change this, it's fragile
-        var str = ctx.action.GetBindingDisplayString();
-
-        if(str.Contains("LS") || str.Contains("RS"))
-        {
-            return InputSource.XboxController;
-        }
-        else if (str.Contains("Position"))
-        {
-            return InputSource.MouseAndKeyboard;
-        }
-        else if (str.Contains("W | Up | S | Down | A | Left | D | Right"))
-        {
-            return InputSource.MouseAndKeyboard;
-        }
-        else
-        {
-            return InputSource.Unknown;
-        }
-    }
 
     private void SetParticleSystemElementType(ParticleSystem ps, ElementType type)
     {       
