@@ -43,7 +43,7 @@ public class DialogueTriggerVolumeController : MonoBehaviour
         var player = collider.gameObject.GetComponent<WheelerPlayerController>();
         if(player)
         {
-            player.SetDialogueData(data);
+            //player.SetDialogueData(data);
         }
     }
 
@@ -52,7 +52,7 @@ public class DialogueTriggerVolumeController : MonoBehaviour
         var player = collider.gameObject.GetComponent<WheelerPlayerController>();
         if(player)
         {
-            player.RemoveDialogueData(data);
+            //player.RemoveDialogueData(data);
         }
     }
 }
