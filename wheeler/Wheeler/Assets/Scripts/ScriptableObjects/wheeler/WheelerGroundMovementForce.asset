@@ -14,4 +14,4 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   DevName: Movement Force
   Description: Wheeler's lateral acceleration across the ground
-  value: 20
+  value: 1000

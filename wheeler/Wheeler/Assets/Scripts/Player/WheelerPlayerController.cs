@@ -6,6 +6,7 @@ using Rewired;
 
 using Sirenix.OdinInspector;
 
+
 public class WheelerPlayerController : MonoBehaviour
 {
     // Rewired Input ------------------------------------------------
@@ -73,6 +74,7 @@ public class WheelerPlayerController : MonoBehaviour
     }
     private ScannerType currentScanner;
 
+
     public enum ElementType
     {
           Berry     = 0
@@ -117,9 +119,20 @@ public class WheelerPlayerController : MonoBehaviour
     private bool isScannerActivationLocked = false;
     private bool isRotationLocked = false;
 
-    private Vector2 movementInputThisTick;
-    private Vector2 rotateInputThisTick;
+    public struct FrameInput
+    {
+        public Vector2 move;
+        public Vector2 look;
+        public ScannerType currentScanner;
+        public bool jump;
+        public bool scan;
+        public bool togglePlayerMenu;
+        public bool toggleStartMenu;
+        public bool beingDialogue;
+    }
 
+    private FrameInput inputThisTick;
+    
     private float zAxisRotation = 0f;
 
 
@@ -223,7 +236,6 @@ public class WheelerPlayerController : MonoBehaviour
         }
     }
 
-
     // Unity Engine fns ----------------------------------------------
 
     public void Awake()
@@ -231,7 +243,6 @@ public class WheelerPlayerController : MonoBehaviour
         player =  ReInput.players.GetPlayer(playerID);
         player.AddInputEventDelegate(OnInputFixedUpdate, UpdateLoopType.FixedUpdate);
         //player.AddInputEventDelegate(OnInputUpdate, UpdateLoopType.Update);
-
 
         player.AddInputEventDelegate(OnScan, UpdateLoopType.Update, RewiredConsts.Action.Scan);
     }
@@ -270,16 +281,17 @@ public class WheelerPlayerController : MonoBehaviour
         currentScanner = ScannerType.ForwardScan;
     }
 
-    private void FixedUpdate()
-    {
-        HandlePlayerLevitationUpdate();
-        HandlePlayerPhysicsStateUpdate();
-    }
+    //private void FixedUpdate()
+    //{
+    //    HandlePlayerLevitationUpdate();
+    //    HandlePlayerPhysicsStateUpdate();
+    //}
 
-    private void Update()
-    {
-        HandlePlayerSocialStateUpdate();
-    }
+    //private void Update()
+    //{
+    //    HandlePlayerSocialStateUpdate();
+    //}
+
 
     private void OnDestroy()
     {
@@ -293,39 +305,37 @@ public class WheelerPlayerController : MonoBehaviour
 
     private void OnInputFixedUpdate(InputActionEventData data)
     {
-        var move = new Vector2(0, 0);
-        var look = new Vector2(0, 0);
-        var scan = false;
-        var jump = false;
+        inputThisTick = new FrameInput();
 
         switch(data.actionId)
         {
             case RewiredConsts.Action.Move_Horizontal:
-                if(data.GetAxis() != 0) { move.x = data.GetAxis(); }
+                inputThisTick.move.x = data.GetAxis();
                 break;
 
-            //case RewiredConsts.Action.Move_Vertical:
-            //    if(data.GetAxis() != 0) { move.y = data.GetAxis(); }
-            //    break;
-            //
-            //case RewiredConsts.Action.Look_Horizontal:
-            //    if(data.GetAxis() != 0) { look.x = data.GetAxis(); }
-            //    break;
-            //
-            //case RewiredConsts.Action.Look_Vertical:
-            //    if(data.GetAxis() != 0) { look.y = data.GetAxis(); }
-            //    break;
-            //
-            //case RewiredConsts.Action.Scan:
-            //    if (data.GetButtonDown()) { scan = true; }
-            //    break;
-            //
-            //case RewiredConsts.Action.Jump:
-            //    if (data.GetButtonSinglePressHold()) { jump = true; }
-            //    break;
+            case RewiredConsts.Action.Move_Vertical:
+                inputThisTick.move.y = data.GetAxis();
+                break;
+            
+            case RewiredConsts.Action.Look_Horizontal:
+                inputThisTick.look.x = data.GetAxis();
+                break;
+            
+            case RewiredConsts.Action.Look_Vertical:
+                inputThisTick.look.y = data.GetAxis();
+                break;
+            
+            case RewiredConsts.Action.Scan:
+                if (data.GetButtonDown()) { inputThisTick.scan = true; }
+                break;
+            
+            case RewiredConsts.Action.Jump:
+                if (data.GetButtonSinglePressHold()) { inputThisTick.jump = true; }
+                break;
         }
 
-        ProcessFixedUpdateInput(move, look, scan, jump);
+        HandlePlayerLevitationUpdate();
+        HandlePlayerPhysicsStateUpdate();
     }
 
     private void OnInputUpdate(InputActionEventData data)
@@ -341,9 +351,9 @@ public class WheelerPlayerController : MonoBehaviour
             //case RewiredConsts.Action.Scanner3:
             //    if (data.GetButtonDown()) { SetScanner(3); }
             //    break;
-            //case RewiredConsts.Action.NextScanner:
-            //    if (data.GetButtonDown()) { SetNextScanner(); }
-            //    break;
+            case RewiredConsts.Action.NextScanner:
+                if (data.GetButtonDown()) { SetNextScanner(); }
+                break;
             //case RewiredConsts.Action.PlayerMenu:
             //    if (data.GetButtonDown()) { TogglePlayerMenu(); }
             //    break;
@@ -354,56 +364,63 @@ public class WheelerPlayerController : MonoBehaviour
             //    if (data.GetButtonDown()) { InitiateDialogue(); }
             //    break;
         }
+
+        HandlePlayerSocialStateUpdate();
     }
 
-    private void ProcessFixedUpdateInput(Vector2 move, Vector2 look, bool scan, bool jump)
-    {
-        if (move != Vector2.zero)
-        {
-            isMoving = true;
-            movementInputThisTick = move;
-        }
-
-        if (look != Vector2.zero)
-        {
-            isRotating = true;
-            rotateInputThisTick = look;
-        }
-
-        if(!jump)
-        {
-            if(isChargingJump)
-            {
-                isJumping = true;
-            }
-
-            isChargingJump = false;
-            jumpCharge.Clear();
-            jumpCharge.Stop();
-        }
-        else
-        {
-            isChargingJump = true;
-            jumpCharge.Play();
-        }
-
-        if (!scan)
-        {
-            isFiring = false;
-            LockParticleSystemRotation();
-            // UnlockPlayerRotation();
-        }
-        else
-        {
-            if (lastShotFiredAt + emitCooldown < Time.time)
-            {
-                isFiring = true;
-                UnlockParticleSystemRotation();
-                //LockPlayerRotation();
-            }
-        }
-    }
-
+    //private void ProcessFixedUpdateInput(Vector2 move, Vector2 look, bool scan, bool jump)
+    //{
+    //
+    //    //if (move != Vector2.zero)
+    //    //{
+    //    //    isMoving = true;
+    //    //    movementInputThisTick = move;
+    //    //}
+    //    ////else
+    //    ////{
+    //    ////    isMoving = false;
+    //    ////    movementInputThisTick = Vector2.zero;
+    //    ////}
+    //    //
+    //    //if (look != Vector2.zero)
+    //    //{
+    //    //    isRotating = true;
+    //    //    rotateInputThisTick = look;
+    //    //}
+    //
+    //    //if(!jump)
+    //    //{
+    //    //    if(isChargingJump)
+    //    //    {
+    //    //        isJumping = true;
+    //    //    }
+    //    //
+    //    //    isChargingJump = false;
+    //    //    jumpCharge.Clear();
+    //    //    jumpCharge.Stop();
+    //    //}
+    //    //else
+    //    //{
+    //    //    isChargingJump = true;
+    //    //    jumpCharge.Play();
+    //    //}
+    //
+    //    //if (!scan)
+    //    //{
+    //    //    isFiring = false;
+    //    //    LockParticleSystemRotation();
+    //    //    // UnlockPlayerRotation();
+    //    //}
+    //    //else
+    //    //{
+    //    //    if (lastShotFiredAt + emitCooldown < Time.time)
+    //    //    {
+    //    //        isFiring = true;
+    //    //        UnlockParticleSystemRotation();
+    //    //        //LockPlayerRotation();
+    //    //    }
+    //    //}
+    //}
 
     public void OnScan(InputActionEventData data)
     {
@@ -423,7 +440,6 @@ public class WheelerPlayerController : MonoBehaviour
         }
     }
     
-
     private void SetScanner(int id)
     {
         if(id == 1)
@@ -456,11 +472,7 @@ public class WheelerPlayerController : MonoBehaviour
         {
             SetActiveScanner(ScannerType.ForwardScan);
         }
-    }
-    
-    private void InitiateDialogue()
-    {
-    }
+    }   
     
     private void TogglePlayerMenu()
     {
@@ -509,14 +521,16 @@ public class WheelerPlayerController : MonoBehaviour
 
     private void UpdatePlayerMovementState()
     {
-        if (isMoving)
-        {
-            MovePlayerCharacter(movementInputThisTick);
-        }
+        MovePlayerCharacter(inputThisTick.move);
+
+        //if (isMoving)
+        //{
+        //    MovePlayerCharacter(inputThisTick.move);
+        //}
 
         if (isRotating && !isRotationLocked)
         {
-            RotatePlayerCharacter(rotateInputThisTick);
+            RotatePlayerCharacter(inputThisTick.look);
         }
 
         if (isChargingJump)
@@ -547,8 +561,13 @@ public class WheelerPlayerController : MonoBehaviour
 
     private void MovePlayerCharacter(Vector2 input)
     {
+        // zero out small numbers
+        float threshhold = 0.001f;
+        if (Mathf.Abs(input.x) < threshhold) { input.x = 0.0f; }
+        if (Mathf.Abs(input.y) < threshhold) { input.y = 0.0f; }
+
         var movement = Vector3.right;
-        movement.x *= input.x * moveForce;
+        movement.x *= input.x * moveForce * Time.deltaTime;
         rb.AddForce(movement);
     }
 
@@ -670,13 +689,6 @@ public class WheelerPlayerController : MonoBehaviour
         isRotationLocked = false;
     }
     
-    public void SetDialogueData(DialogueData data)
-    {
-    }
-
-    public void RemoveDialogueData(DialogueData data)
-    {
-    }
 
     public void AddInventoryItem(InventoryItem item)
     {
