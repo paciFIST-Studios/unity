@@ -242,9 +242,7 @@ public class WheelerPlayerController : MonoBehaviour
     {
         player =  ReInput.players.GetPlayer(playerID);
         player.AddInputEventDelegate(OnInputFixedUpdate, UpdateLoopType.FixedUpdate);
-        //player.AddInputEventDelegate(OnInputUpdate, UpdateLoopType.Update);
-
-        player.AddInputEventDelegate(OnScan, UpdateLoopType.Update, RewiredConsts.Action.Scan);
+        player.AddInputEventDelegate(OnInputUpdate, UpdateLoopType.Update);
     }
 
     private void Start()
@@ -296,9 +294,7 @@ public class WheelerPlayerController : MonoBehaviour
     private void OnDestroy()
     {
         player.RemoveInputEventDelegate(OnInputFixedUpdate);
-        //player.RemoveInputEventDelegate(OnInputUpdate);
-
-        player.RemoveInputEventDelegate(OnScan);
+        player.RemoveInputEventDelegate(OnInputUpdate);
     }
 
     // Input System Callbacks ----------------------------------------
@@ -329,6 +325,7 @@ public class WheelerPlayerController : MonoBehaviour
                 if (data.GetAxis() != 0)
                 {
                     inputThisTick.look.x = data.GetAxis();
+                    isRotating = true;
                     print("Look Horizontal");
                 }
                 break;
@@ -337,6 +334,7 @@ public class WheelerPlayerController : MonoBehaviour
                 if (data.GetAxis() != 0)
                 {
                     inputThisTick.look.y = data.GetAxis();
+                    isRotating = true;
                     print("Look Vertical");
                 }
                 break;
@@ -366,22 +364,41 @@ public class WheelerPlayerController : MonoBehaviour
     {
         switch(data.actionId)
         {
-            //case RewiredConsts.Action.Scanner1:
-            //    if(data.GetButtonDown()) { SetScanner(1); }                
-            //    break;
-            //case RewiredConsts.Action.Scanner2:
-            //    if (data.GetButtonDown()) { SetScanner(2); }
-            //    break;
-            //case RewiredConsts.Action.Scanner3:
-            //    if (data.GetButtonDown()) { SetScanner(3); }
-            //    break;
-            case RewiredConsts.Action.NextScanner:
-                if (data.GetButtonDown()) { SetNextScanner(); }
-                print("Next Scanner");
+            case RewiredConsts.Action.Scanner1:
+                if(data.GetButtonDown())
+                {
+                    SetScanner(1);
+                    print("SetScanner 1");
+                }
                 break;
-            //case RewiredConsts.Action.PlayerMenu:
-            //    if (data.GetButtonDown()) { TogglePlayerMenu(); }
-            //    break;
+            case RewiredConsts.Action.Scanner2:
+                if (data.GetButtonDown())
+                {
+                    SetScanner(2);
+                    print("SetScanner 2");
+                }
+                break;
+            case RewiredConsts.Action.Scanner3:
+                if (data.GetButtonDown())
+                {
+                    SetScanner(3);
+                    print("SetScanner 3");
+                }
+                break;
+            case RewiredConsts.Action.NextScanner:
+                if (data.GetButtonDown())
+                {
+                    SetNextScanner();
+                    print("Next Scanner");
+                }
+                break;
+            case RewiredConsts.Action.PlayerMenu:
+                if (data.GetButtonDown())
+                {
+                    TogglePlayerMenu();
+                    print("Player Menu");
+                }
+                break;
             //case RewiredConsts.Action.StartMenu:
             //    // todo
             //    break;
@@ -552,11 +569,10 @@ public class WheelerPlayerController : MonoBehaviour
         //    MovePlayerCharacter(inputThisTick.move);
         //}
 
-        RotatePlayerCharacter(inputThisTick.look);
-        //if (isRotating && !isRotationLocked)
-        //{
-        //    RotatePlayerCharacter(inputThisTick.look);
-        //}
+        if (isRotating && !isRotationLocked)
+        {
+            RotatePlayerCharacter(inputThisTick.look);
+        }
 
         //ChargeJump();
         //if (isChargingJump)
