@@ -1,4 +1,0 @@
-bank [atm, debt, savings, checking, money, loan, owe, finance]
-student [debt, pain, sadness, failure, study, grade, holiday]
-astronomy [telescope, optics, wavelength, spectroscopy, galaxy, universe]
-
