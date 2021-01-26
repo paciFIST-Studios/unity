@@ -310,27 +310,51 @@ public class WheelerPlayerController : MonoBehaviour
         switch(data.actionId)
         {
             case RewiredConsts.Action.Move_Horizontal:
-                inputThisTick.move.x = data.GetAxis();
+                if (data.GetAxis() != 0)
+                {
+                    inputThisTick.move.x = data.GetAxis();
+                    print("Move Horizontal");
+                }
                 break;
 
             case RewiredConsts.Action.Move_Vertical:
-                inputThisTick.move.y = data.GetAxis();
+                if (data.GetAxis() != 0)
+                {
+                    inputThisTick.move.y = data.GetAxis();
+                    print("Move Vertical");
+                }
                 break;
             
             case RewiredConsts.Action.Look_Horizontal:
-                inputThisTick.look.x = data.GetAxis();
+                if (data.GetAxis() != 0)
+                {
+                    inputThisTick.look.x = data.GetAxis();
+                    print("Look Horizontal");
+                }
                 break;
             
             case RewiredConsts.Action.Look_Vertical:
-                inputThisTick.look.y = data.GetAxis();
+                if (data.GetAxis() != 0)
+                {
+                    inputThisTick.look.y = data.GetAxis();
+                    print("Look Vertical");
+                }
                 break;
             
             case RewiredConsts.Action.Scan:
-                if (data.GetButtonDown()) { inputThisTick.scan = true; }
+                if (data.GetButtonDown())
+                {
+                    inputThisTick.scan = true;
+                    print("Scan");
+                }
                 break;
             
             case RewiredConsts.Action.Jump:
-                if (data.GetButtonSinglePressHold()) { inputThisTick.jump = true; }
+                if (data.GetButtonSinglePressHold())
+                {
+                    inputThisTick.jump = true;
+                    print("Jump");
+                }
                 break;
         }
 
@@ -353,6 +377,7 @@ public class WheelerPlayerController : MonoBehaviour
             //    break;
             case RewiredConsts.Action.NextScanner:
                 if (data.GetButtonDown()) { SetNextScanner(); }
+                print("Next Scanner");
                 break;
             //case RewiredConsts.Action.PlayerMenu:
             //    if (data.GetButtonDown()) { TogglePlayerMenu(); }
@@ -522,21 +547,22 @@ public class WheelerPlayerController : MonoBehaviour
     private void UpdatePlayerMovementState()
     {
         MovePlayerCharacter(inputThisTick.move);
-
         //if (isMoving)
         //{
         //    MovePlayerCharacter(inputThisTick.move);
         //}
 
-        if (isRotating && !isRotationLocked)
-        {
-            RotatePlayerCharacter(inputThisTick.look);
-        }
+        RotatePlayerCharacter(inputThisTick.look);
+        //if (isRotating && !isRotationLocked)
+        //{
+        //    RotatePlayerCharacter(inputThisTick.look);
+        //}
 
-        if (isChargingJump)
-        {
-            ChargeJump();
-        }
+        //ChargeJump();
+        //if (isChargingJump)
+        //{
+        //    ChargeJump();
+        //}
 
         if (isJumping)
         {
