@@ -1,7 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.InputSystem;
 
 [System.Serializable]
 public struct DialogueData
@@ -44,7 +43,7 @@ public class DialogueTriggerVolumeController : MonoBehaviour
         var player = collider.gameObject.GetComponent<WheelerPlayerController>();
         if(player)
         {
-            player.SetDialogueData(data);
+            //player.SetDialogueData(data);
         }
     }
 
@@ -53,7 +52,7 @@ public class DialogueTriggerVolumeController : MonoBehaviour
         var player = collider.gameObject.GetComponent<WheelerPlayerController>();
         if(player)
         {
-            player.RemoveDialogueData(data);
+            //player.RemoveDialogueData(data);
         }
     }
 }

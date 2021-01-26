@@ -1,12 +1,21 @@
 ﻿using System.Collections.Generic;
 
 using UnityEngine;
-using UnityEngine.InputSystem;
+
+using Rewired;
 
 using Sirenix.OdinInspector;
 
+
 public class WheelerPlayerController : MonoBehaviour
 {
+    // Rewired Input ------------------------------------------------
+    [System.NonSerialized]
+    public int playerID = 0;
+    // Rewired Player is the input-container
+    private Rewired.Player player;
+
+
     // Editor facing vars --------------------------------------------
     [ColoredFoldoutGroup("Movement", 1, 0, 0)][HideLabel][SerializeField][Required]
     private PIDController pid;
@@ -65,6 +74,7 @@ public class WheelerPlayerController : MonoBehaviour
     }
     private ScannerType currentScanner;
 
+
     public enum ElementType
     {
           Berry     = 0
@@ -77,9 +87,9 @@ public class WheelerPlayerController : MonoBehaviour
     // Menu System ---------------------------------------------------
 
     [FoldoutGroup("MenuGUI")][SerializeField][Required]
-    private WheelerPlayerCharacterMenu menu;
+    private WheelerPlayerCharacterMenu playerMenu;
 
-    private bool menuIsActive = false;
+    private bool playerMenuIsActive = false;
 
 
     // Inventory System ----------------------------------------------
@@ -94,20 +104,7 @@ public class WheelerPlayerController : MonoBehaviour
 
     float pieResearch = 0.0f;
     float cannisterResearch = 0.0f;
-
-    // Input vars ----------------------------------------------------
-
-    public enum InputSource
-    {
-          Unknown
-        , MouseAndKeyboard
-        , XboxController
-    }
-    private InputSource inputSource;
-    private string InputSourceString = "Mouse+Keyboard";
-    private string MKInput = "Mouse+Keyboard";
-    private string XBInput = "Xbox Controller";
-
+    
 
     // Movement vars -------------------------------------------------
 
@@ -122,9 +119,20 @@ public class WheelerPlayerController : MonoBehaviour
     private bool isScannerActivationLocked = false;
     private bool isRotationLocked = false;
 
-    private Vector2 movementInputThisTick;
-    private Vector2 rotateInputThisTick;
+    public struct FrameInput
+    {
+        public Vector2 move;
+        public Vector2 look;
+        public ScannerType currentScanner;
+        public bool jump;
+        public bool scan;
+        public bool togglePlayerMenu;
+        public bool toggleStartMenu;
+        public bool beingDialogue;
+    }
 
+    private FrameInput inputThisTick;
+    
     private float zAxisRotation = 0f;
 
 
@@ -203,12 +211,12 @@ public class WheelerPlayerController : MonoBehaviour
         }
 
         // input system
-        {
-            GUI.Box(new Rect(10, 280, 200, 100), "Input system");
-            GUI.Label(new Rect(30, 300, 180, 30), string.Format("Source: {0}", InputSourceString));
-            GUI.Label(new Rect(30, 320, 180, 30), string.Format("Look: {0}", rotateInputThisTick.ToString()));
-            GUI.Label(new Rect(30, 340, 180, 30), string.Format("Move: {0}", movementInputThisTick.ToString()));
-        }
+        //{
+        //    GUI.Box(new Rect(10, 280, 200, 100), "Input system");
+        //    GUI.Label(new Rect(30, 300, 180, 30), string.Format("Source: {0}", InputSourceString));
+        //    GUI.Label(new Rect(30, 320, 180, 30), string.Format("Look: {0}", rotateInputThisTick.ToString()));
+        //    GUI.Label(new Rect(30, 340, 180, 30), string.Format("Move: {0}", movementInputThisTick.ToString()));
+        //}
 
         // inventory
         {
@@ -228,8 +236,14 @@ public class WheelerPlayerController : MonoBehaviour
         }
     }
 
-
     // Unity Engine fns ----------------------------------------------
+
+    public void Awake()
+    {
+        player =  ReInput.players.GetPlayer(playerID);
+        player.AddInputEventDelegate(OnInputFixedUpdate, UpdateLoopType.FixedUpdate);
+        player.AddInputEventDelegate(OnInputUpdate, UpdateLoopType.Update);
+    }
 
     private void Start()
     {
@@ -263,109 +277,230 @@ public class WheelerPlayerController : MonoBehaviour
         jumpBlast.Stop();
 
         currentScanner = ScannerType.ForwardScan;
-
-
-
-
     }
 
-    private void FixedUpdate()
-    {
-        HandlePlayerLevitationUpdate();
-        HandlePlayerPhysicsStateUpdate();
-    }
+    //private void FixedUpdate()
+    //{
+    //    HandlePlayerLevitationUpdate();
+    //    HandlePlayerPhysicsStateUpdate();
+    //}
 
-    private void Update()
+    //private void Update()
+    //{
+    //    HandlePlayerSocialStateUpdate();
+    //}
+
+
+    private void OnDestroy()
     {
-        HandlePlayerSocialStateUpdate();
+        player.RemoveInputEventDelegate(OnInputFixedUpdate);
+        player.RemoveInputEventDelegate(OnInputUpdate);
     }
 
     // Input System Callbacks ----------------------------------------
 
-    public void OnLook(InputAction.CallbackContext ctx)
+    private void OnInputFixedUpdate(InputActionEventData data)
     {
-        if(ctx.canceled)
+        inputThisTick = new FrameInput();
+
+        switch(data.actionId)
         {
-            isRotating = false;
-            return;
+            case RewiredConsts.Action.Move_Horizontal:
+                if (data.GetAxis() != 0)
+                {
+                    inputThisTick.move.x = data.GetAxis();
+                    print("Move Horizontal");
+                }
+                break;
+
+            case RewiredConsts.Action.Move_Vertical:
+                if (data.GetAxis() != 0)
+                {
+                    inputThisTick.move.y = data.GetAxis();
+                    print("Move Vertical");
+                }
+                break;
+            
+            case RewiredConsts.Action.Look_Horizontal:
+                if (data.GetAxis() != 0)
+                {
+                    inputThisTick.look.x = data.GetAxis();
+                    isRotating = true;
+                    print("Look Horizontal");
+                }
+                break;
+            
+            case RewiredConsts.Action.Look_Vertical:
+                if (data.GetAxis() != 0)
+                {
+                    inputThisTick.look.y = data.GetAxis();
+                    isRotating = true;
+                    print("Look Vertical");
+                }
+                break;
+            
+            case RewiredConsts.Action.Scan:
+                if (data.GetButtonDown())
+                {
+                    inputThisTick.scan = true;
+                    print("Scan");
+                }
+                break;
+            
+            case RewiredConsts.Action.Jump:
+                if (data.GetButtonSinglePressHold())
+                {
+                    inputThisTick.jump = true;
+                    print("Jump");
+                }
+                break;
         }
 
-        isRotating = true;
-        rotateInputThisTick = ctx.ReadValue<Vector2>();
-
-        UpdateInputSource(ctx);
+        HandlePlayerLevitationUpdate();
+        HandlePlayerPhysicsStateUpdate();
     }
 
-    public void OnMove(InputAction.CallbackContext ctx)
+    private void OnInputUpdate(InputActionEventData data)
     {
-        if(ctx.canceled)
+        switch(data.actionId)
         {
-            isMoving = false;
-            return;
+            case RewiredConsts.Action.Scanner1:
+                if(data.GetButtonDown())
+                {
+                    SetScanner(1);
+                    print("SetScanner 1");
+                }
+                break;
+            case RewiredConsts.Action.Scanner2:
+                if (data.GetButtonDown())
+                {
+                    SetScanner(2);
+                    print("SetScanner 2");
+                }
+                break;
+            case RewiredConsts.Action.Scanner3:
+                if (data.GetButtonDown())
+                {
+                    SetScanner(3);
+                    print("SetScanner 3");
+                }
+                break;
+            case RewiredConsts.Action.NextScanner:
+                if (data.GetButtonDown())
+                {
+                    SetNextScanner();
+                    print("Next Scanner");
+                }
+                break;
+            case RewiredConsts.Action.PlayerMenu:
+                if (data.GetButtonDown())
+                {
+                    TogglePlayerMenu();
+                    print("Player Menu");
+                }
+                break;
+            //case RewiredConsts.Action.StartMenu:
+            //    // todo
+            //    break;
+            //case RewiredConsts.Action.Talk:
+            //    if (data.GetButtonDown()) { InitiateDialogue(); }
+            //    break;
         }
 
-        isMoving = true;
-        movementInputThisTick = ctx.ReadValue<Vector2>();
-
-        UpdateInputSource(ctx);
+        HandlePlayerSocialStateUpdate();
     }
 
-    public void OnJump(InputAction.CallbackContext ctx)
+    //private void ProcessFixedUpdateInput(Vector2 move, Vector2 look, bool scan, bool jump)
+    //{
+    //
+    //    //if (move != Vector2.zero)
+    //    //{
+    //    //    isMoving = true;
+    //    //    movementInputThisTick = move;
+    //    //}
+    //    ////else
+    //    ////{
+    //    ////    isMoving = false;
+    //    ////    movementInputThisTick = Vector2.zero;
+    //    ////}
+    //    //
+    //    //if (look != Vector2.zero)
+    //    //{
+    //    //    isRotating = true;
+    //    //    rotateInputThisTick = look;
+    //    //}
+    //
+    //    //if(!jump)
+    //    //{
+    //    //    if(isChargingJump)
+    //    //    {
+    //    //        isJumping = true;
+    //    //    }
+    //    //
+    //    //    isChargingJump = false;
+    //    //    jumpCharge.Clear();
+    //    //    jumpCharge.Stop();
+    //    //}
+    //    //else
+    //    //{
+    //    //    isChargingJump = true;
+    //    //    jumpCharge.Play();
+    //    //}
+    //
+    //    //if (!scan)
+    //    //{
+    //    //    isFiring = false;
+    //    //    LockParticleSystemRotation();
+    //    //    // UnlockPlayerRotation();
+    //    //}
+    //    //else
+    //    //{
+    //    //    if (lastShotFiredAt + emitCooldown < Time.time)
+    //    //    {
+    //    //        isFiring = true;
+    //    //        UnlockParticleSystemRotation();
+    //    //        //LockPlayerRotation();
+    //    //    }
+    //    //}
+    //}
+
+    public void OnScan(InputActionEventData data)
     {
-        if(ctx.canceled)
+        if(data.GetButton())
         {
-            if(isChargingJump)
+            if(lastShotFiredAt + emitCooldown < Time.time)
             {
-                isJumping = true;
+                UnlockParticleSystemRotation();
+                //LockPlayerRotation();
+                performScan();
             }
-
-            isChargingJump = false;
-
-            // this kills all particles at once, and it doesn't look
-            // great, but it's just kinda what we've got to work with
-            jumpCharge.Clear();
-            jumpCharge.Stop();
-            return;
         }
-
-        isChargingJump = true;
-        jumpCharge.Play();
-    }
-
-    public void OnScan(InputAction.CallbackContext ctx)
-    {
-        if(ctx.canceled)
+        else
         {
-            isFiring = false;
             LockParticleSystemRotation();
             //UnlockPlayerRotation();
-            return;
         }
-
-        if(lastShotFiredAt + emitCooldown < Time.time)
+    }
+    
+    private void SetScanner(int id)
+    {
+        if(id == 1)
         {
-            isFiring = true;
-            UnlockParticleSystemRotation();
-            //LockPlayerRotation();
+            SetActiveScanner(ScannerType.ForwardScan);
+        }
+        else if (id == 2)
+        {
+            SetActiveScanner(ScannerType.RadialScan);   
+
+        }
+        else if (id == 3)
+        {
+           SetActiveScanner(ScannerType.SphericalScan);
+
         }
     }
-
-    public void OnSetScanner1(InputAction.CallbackContext ctx)
-    {
-        SetActiveScanner(ScannerType.ForwardScan);
-    }
-
-    public void OnSetScanner2(InputAction.CallbackContext ctx)
-    {
-        SetActiveScanner(ScannerType.RadialScan);
-    }
-
-    public void OnSetScanner3(InputAction.CallbackContext ctx)
-    {
-        SetActiveScanner(ScannerType.SphericalScan);
-    }
-
-    public void OnToggleScanner(InputAction.CallbackContext ctx)
+    
+    public void SetNextScanner()
     {
         if(currentScanner == ScannerType.ForwardScan)
         {
@@ -379,18 +514,14 @@ public class WheelerPlayerController : MonoBehaviour
         {
             SetActiveScanner(ScannerType.ForwardScan);
         }
-    }
+    }   
     
-    public void OnInitiateDialogue(InputAction.CallbackContext ctx)
+    private void TogglePlayerMenu()
     {
-    }
-
-    public void OnToggleMenu(InputAction.CallbackContext ctx)
-    {
-        menuIsActive = !menuIsActive;
-        print(string.Format($"menuIsActive: {0}", menuIsActive));
-
-        menu.SetMenuVisibility(menuIsActive);
+        playerMenuIsActive = !playerMenuIsActive;
+        print(string.Format($"menuIsActive: {0}", playerMenuIsActive));
+    
+        playerMenu.SetMenuVisibility(playerMenuIsActive);
     }
 
     // Player Character Management fns -------------------------------
@@ -412,7 +543,7 @@ public class WheelerPlayerController : MonoBehaviour
         var hoverCorrection = Vector3.up;
         hoverCorrection *= pid.Update(error);
         hoverCorrection *= hoverForce;
-        //correction *= Time.deltaTime;        
+        //hoverCorrection *= Time.deltaTime;        
 
         rb.AddForce(hoverCorrection);
     }
@@ -432,20 +563,22 @@ public class WheelerPlayerController : MonoBehaviour
 
     private void UpdatePlayerMovementState()
     {
-        if (isMoving)
-        {
-            MovePlayerCharacter(movementInputThisTick);
-        }
+        MovePlayerCharacter(inputThisTick.move);
+        //if (isMoving)
+        //{
+        //    MovePlayerCharacter(inputThisTick.move);
+        //}
 
         if (isRotating && !isRotationLocked)
         {
-            RotatePlayerCharacter(rotateInputThisTick);
+            RotatePlayerCharacter(inputThisTick.look);
         }
 
-        if (isChargingJump)
-        {
-            ChargeJump();
-        }
+        //ChargeJump();
+        //if (isChargingJump)
+        //{
+        //    ChargeJump();
+        //}
 
         if (isJumping)
         {
@@ -455,10 +588,10 @@ public class WheelerPlayerController : MonoBehaviour
 
     private void UpdatePlayerInteractionState()
     {
-        if (isFiring)
-        {
-            performScan();
-        }
+        //if (isFiring)
+        //{
+        //    performScan();
+        //}
 
         if (!particleSystemRotationIsLocked)
         {
@@ -470,23 +603,28 @@ public class WheelerPlayerController : MonoBehaviour
 
     private void MovePlayerCharacter(Vector2 input)
     {
+        // zero out small numbers
+        float threshhold = 0.001f;
+        if (Mathf.Abs(input.x) < threshhold) { input.x = 0.0f; }
+        if (Mathf.Abs(input.y) < threshhold) { input.y = 0.0f; }
+
         var movement = Vector3.right;
-        movement.x *= input.x * moveForce;
+        movement.x *= input.x * moveForce * Time.deltaTime;
         rb.AddForce(movement);
     }
 
     private void RotatePlayerCharacter(Vector2 input)
     {
-        if (inputSource == InputSource.Unknown)
-        {
-            return;
-        }
-        else if (inputSource == InputSource.MouseAndKeyboard)
-        {
-            // recenter to middle of screen
-            input.x -= screenHalfWidth;
-            input.y -= screenHalfHeight;
-        }
+        //if (inputSource == InputSource.Unknown)
+        //{
+        //    return;
+        //}
+        //else if (inputSource == InputSource.MouseAndKeyboard)
+        //{
+        //    // recenter to middle of screen
+        //    input.x -= screenHalfWidth;
+        //    input.y -= screenHalfHeight;
+        //}
         
         float angle = Mathf.Atan2(input.y, input.x) * Mathf.Rad2Deg;
 
@@ -530,6 +668,8 @@ public class WheelerPlayerController : MonoBehaviour
         {
             sphericalScan.Play();
         }
+
+        lastShotFiredAt = Time.time;
     }
 
     private void SetActiveScanner(ScannerType scanner)
@@ -590,38 +730,14 @@ public class WheelerPlayerController : MonoBehaviour
     {
         isRotationLocked = false;
     }
-
-    private void UpdateInputSource(InputAction.CallbackContext ctx)
-    {
-        inputSource = DetermineInputStyle(ctx);
-        if (inputSource == InputSource.MouseAndKeyboard)
-        {
-            InputSourceString = MKInput;
-        }
-        else if (inputSource == InputSource.XboxController)
-        {
-            InputSourceString = XBInput;
-        }
-        else
-        {
-            InputSourceString = "";
-        }
-    }
-
-    public void SetDialogueData(DialogueData data)
-    {
-    }
-
-    public void RemoveDialogueData(DialogueData data)
-    {
-    }
+    
 
     public void AddInventoryItem(InventoryItem item)
     {
         if(!ItemExistsInInventory(item))
         {
             inventory.Add(item);
-            menu.AddInventoryItem(item);
+            playerMenu.AddInventoryItem(item);
         }
 
         AddResearch(item);
@@ -650,29 +766,6 @@ public class WheelerPlayerController : MonoBehaviour
     }
 
     // Utility fns ---------------------------------------------------
-
-    private InputSource DetermineInputStyle(InputAction.CallbackContext ctx)
-    {
-        // ellie:todo: someday, change this, it's fragile
-        var str = ctx.action.GetBindingDisplayString();
-
-        if(str.Contains("LS") || str.Contains("RS"))
-        {
-            return InputSource.XboxController;
-        }
-        else if (str.Contains("Position"))
-        {
-            return InputSource.MouseAndKeyboard;
-        }
-        else if (str.Contains("W | Up | S | Down | A | Left | D | Right"))
-        {
-            return InputSource.MouseAndKeyboard;
-        }
-        else
-        {
-            return InputSource.Unknown;
-        }
-    }
 
     private void SetParticleSystemElementType(ParticleSystem ps, ElementType type)
     {       
