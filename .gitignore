@@ -72,10 +72,8 @@ crashlytics-build.properties
 /*/Assets/3_TH_CU2+Download+Files.zip
 /*/Assets/WM2000 Package.unitypackage
 
-# unit 2
-2_terminal_hacker/build.zip
-2_terminal_hacker/ProjectSettings/EditorBuildSettings.asset
-2_terminal_hacker/ProjectSettings/GraphicsSettings.asset
+1_first_steps/*
+2_terminal_hacker/*
 
 *.gif
 *.mp4
@@ -116,7 +114,7 @@ _networking/Networking2020Windows/obj/*
 _boat/boat/*
 
 # fall-in project
-fall_in/fall_in/Assets/Shop/*
+fall_in/*
 fall_in/fall_in/Assets/Plugins/*
 fall_in/fall_in/Library/*
 fall_in/fall_in/Temp/*
