@@ -569,6 +569,7 @@ public class WheelerPlayerController : MonoBehaviour
         //    MovePlayerCharacter(inputThisTick.move);
         //}
 
+        DetermineRotationState(inputThisTick.look);
         if (isRotating && !isRotationLocked)
         {
             RotatePlayerCharacter(inputThisTick.look);
@@ -611,6 +612,19 @@ public class WheelerPlayerController : MonoBehaviour
         var movement = Vector3.right;
         movement.x *= input.x * moveForce * Time.deltaTime;
         rb.AddForce(movement);
+    }
+
+    private void DetermineRotationState(Vector2 input)
+    {
+        if (input == Vector2.zero)
+        {
+            isRotating = false;
+            isRotationLocked = false;
+        }
+        else if (Mathf.Abs(input.SqrMagnitude()) > 0f)
+        {
+            isRotating = true;
+        }
     }
 
     private void RotatePlayerCharacter(Vector2 input)
