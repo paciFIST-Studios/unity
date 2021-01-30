@@ -449,7 +449,7 @@ public class WheelerPlayerController : MonoBehaviour
         }
         else
         {
-            if (frame.jump) { physicalState.IsDoingJump = false; }
+            if (frame.jump) { physicalState.IsChargingJump = true; }
         }
 
         // scanning
