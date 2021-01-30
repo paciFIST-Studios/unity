@@ -14,12 +14,11 @@ public class WheelerPlayerController : MonoBehaviour
     public int playerID = 0;
     // Rewired Player is the input-container
     private Rewired.Player player;
-
+        
 
     // Editor facing vars --------------------------------------------
     [ColoredFoldoutGroup("Movement", 1, 0, 0)][HideLabel][SerializeField][Required]
     private PIDController pid;
-
 
 
     [ColoredFoldoutGroup("Movement/Stats", 1, 0, 0)][HideLabel][SerializeField][Required]
@@ -50,6 +49,7 @@ public class WheelerPlayerController : MonoBehaviour
     private ParticleSystem jumpChargePrefab;                   
     [ColoredFoldoutGroup("Scanner/Particle System Prefabs", 0, 1, 1)][SerializeField][Required]
     private ParticleSystem jumpBlastPrefab;                    
+
 
     [ColoredFoldoutGroup("Scanner/Particle System Prefabs", 0, 1, 1)][SerializeField][Required]
     private GameObject particleSystemCarrierPrefab;
@@ -104,35 +104,33 @@ public class WheelerPlayerController : MonoBehaviour
 
     float pieResearch = 0.0f;
     float cannisterResearch = 0.0f;
-    
+
 
     // Movement vars -------------------------------------------------
 
+    public struct PhysicalState
+    {
+        public bool IsMoving;
+        public bool IsRotating;
+        public bool IsRotationLocked;
+        public bool IsScanning;
+        public bool IsChargingJump;
+        public bool IsDoingJump;
+    }
+    private PhysicalState physicalState;
+
     private Rigidbody rb;
-    
-    private bool isMoving   = false;
-    private bool isRotating = false;
-    private bool isFiring   = false;
-    private bool isJumping  = false;
-    private bool isChargingJump  = false;
-
-    private bool isScannerActivationLocked = false;
-    private bool isRotationLocked = false;
-
+   
+    // todo: add a bitfield here, instead of all these bools
     public struct FrameInput
     {
         public Vector2 move;
         public Vector2 look;
-        public ScannerType currentScanner;
         public bool jump;
         public bool scan;
-        public bool togglePlayerMenu;
-        public bool toggleStartMenu;
-        public bool beingDialogue;
     }
-
     private FrameInput inputThisTick;
-    
+
     private float zAxisRotation = 0f;
 
 
@@ -144,9 +142,10 @@ public class WheelerPlayerController : MonoBehaviour
 
     // Debug fns -----------------------------------------------------
 
+    bool drawOnGUI = false;
     private void OnGUI()
     {
-        return;
+        if (!drawOnGUI) return;
 
         // save load
         {
@@ -197,7 +196,7 @@ public class WheelerPlayerController : MonoBehaviour
             GUI.Box(new Rect(10, 80, 200, 100), "Stats");
             GUI.Label(new Rect(30, 100, 180, 30), string.Format("XYZ: {0}", transform.position));
             GUI.Label(new Rect(30, 120, 180, 30), string.Format("Rotation: {0}", transform.localEulerAngles.z.ToString("#.00")));
-            GUI.Label(new Rect(30, 140, 180, 30), "");
+            GUI.Label(new Rect(30, 140, 180, 30), string.Format("Angular Velocity.Z: {0}", rb.angularVelocity.z.ToString("#.00")));
             GUI.Label(new Rect(30, 160, 180, 30), "");
         }
 
@@ -241,8 +240,8 @@ public class WheelerPlayerController : MonoBehaviour
     public void Awake()
     {
         player =  ReInput.players.GetPlayer(playerID);
-        player.AddInputEventDelegate(OnInputFixedUpdate, UpdateLoopType.FixedUpdate);
-        player.AddInputEventDelegate(OnInputUpdate, UpdateLoopType.Update);
+        player.AddInputEventDelegate(OnInput_FixedUpdate, UpdateLoopType.FixedUpdate);
+        player.AddInputEventDelegate(OnInput_Update, UpdateLoopType.Update);
     }
 
     private void Start()
@@ -279,37 +278,46 @@ public class WheelerPlayerController : MonoBehaviour
         currentScanner = ScannerType.ForwardScan;
     }
 
-    //private void FixedUpdate()
-    //{
-    //    HandlePlayerLevitationUpdate();
-    //    HandlePlayerPhysicsStateUpdate();
-    //}
-
-    //private void Update()
-    //{
-    //    HandlePlayerSocialStateUpdate();
-    //}
-
-
     private void OnDestroy()
     {
-        player.RemoveInputEventDelegate(OnInputFixedUpdate);
-        player.RemoveInputEventDelegate(OnInputUpdate);
+        player.RemoveInputEventDelegate(OnInput_FixedUpdate);
+        player.RemoveInputEventDelegate(OnInput_Update);
+    }
+
+    private void FixedUpdate()
+    {
+        DetermineCurrentPlayerState(inputThisTick);
+
+        LevitatePlayerCharacter();
+
+        MovePlayerCharacter(inputThisTick.move);
+        RotatePlayerCharacter(inputThisTick.look);
+        RotateParticleSystems();
+
+        ChargeJump();
+        ReleaseJump();
+
+        PerformScan();
+    }
+
+    private void LateUpdate()
+    {
+        // maybe todo: put input recording here?
+        inputThisTick = new FrameInput();
     }
 
     // Input System Callbacks ----------------------------------------
 
-    private void OnInputFixedUpdate(InputActionEventData data)
+    private void OnInput_FixedUpdate(InputActionEventData data)
     {
-        inputThisTick = new FrameInput();
+        bool calculateWithMousePosition = false;
 
-        switch(data.actionId)
+        switch (data.actionId)
         {
             case RewiredConsts.Action.Move_Horizontal:
                 if (data.GetAxis() != 0)
                 {
                     inputThisTick.move.x = data.GetAxis();
-                    print("Move Horizontal");
                 }
                 break;
 
@@ -317,33 +325,41 @@ public class WheelerPlayerController : MonoBehaviour
                 if (data.GetAxis() != 0)
                 {
                     inputThisTick.move.y = data.GetAxis();
-                    print("Move Vertical");
                 }
                 break;
             
             case RewiredConsts.Action.Look_Horizontal:
-                if (data.GetAxis() != 0)
+                if (data.GetAxisRaw() != 0)
                 {
-                    inputThisTick.look.x = data.GetAxis();
-                    isRotating = true;
-                    print("Look Horizontal");
+                    if(data.IsCurrentInputSource(ControllerType.Mouse))
+                    {
+                        calculateWithMousePosition = true;
+                    }
+                    else
+                    {
+                        inputThisTick.look.x = data.GetAxisRaw();
+                    }
                 }
                 break;
             
             case RewiredConsts.Action.Look_Vertical:
-                if (data.GetAxis() != 0)
+                if (data.GetAxisRaw() != 0)
                 {
-                    inputThisTick.look.y = data.GetAxis();
-                    isRotating = true;
-                    print("Look Vertical");
+                    if (data.IsCurrentInputSource(ControllerType.Mouse))
+                    {
+                        calculateWithMousePosition = true;
+                    }
+                    else
+                    {
+                        inputThisTick.look.y = data.GetAxisRaw();
+                    }
                 }
                 break;
             
             case RewiredConsts.Action.Scan:
-                if (data.GetButtonDown())
+                if (data.GetButton())
                 {
                     inputThisTick.scan = true;
-                    print("Scan");
                 }
                 break;
             
@@ -351,16 +367,20 @@ public class WheelerPlayerController : MonoBehaviour
                 if (data.GetButtonSinglePressHold())
                 {
                     inputThisTick.jump = true;
-                    print("Jump");
                 }
                 break;
         }
 
-        HandlePlayerLevitationUpdate();
-        HandlePlayerPhysicsStateUpdate();
+        if(calculateWithMousePosition)
+        {
+            inputThisTick.look = player.controllers.Mouse.screenPosition;
+            inputThisTick.look.x -= screenHalfWidth;
+            inputThisTick.look.y -= screenHalfHeight;
+            inputThisTick.look = inputThisTick.look.normalized;
+        }
     }
 
-    private void OnInputUpdate(InputActionEventData data)
+    private void OnInput_Update(InputActionEventData data)
     {
         switch(data.actionId)
         {
@@ -407,126 +427,36 @@ public class WheelerPlayerController : MonoBehaviour
             //    break;
         }
 
-        HandlePlayerSocialStateUpdate();
+        //PlayerSocialUpdate();
     }
+    
 
-    //private void ProcessFixedUpdateInput(Vector2 move, Vector2 look, bool scan, bool jump)
-    //{
-    //
-    //    //if (move != Vector2.zero)
-    //    //{
-    //    //    isMoving = true;
-    //    //    movementInputThisTick = move;
-    //    //}
-    //    ////else
-    //    ////{
-    //    ////    isMoving = false;
-    //    ////    movementInputThisTick = Vector2.zero;
-    //    ////}
-    //    //
-    //    //if (look != Vector2.zero)
-    //    //{
-    //    //    isRotating = true;
-    //    //    rotateInputThisTick = look;
-    //    //}
-    //
-    //    //if(!jump)
-    //    //{
-    //    //    if(isChargingJump)
-    //    //    {
-    //    //        isJumping = true;
-    //    //    }
-    //    //
-    //    //    isChargingJump = false;
-    //    //    jumpCharge.Clear();
-    //    //    jumpCharge.Stop();
-    //    //}
-    //    //else
-    //    //{
-    //    //    isChargingJump = true;
-    //    //    jumpCharge.Play();
-    //    //}
-    //
-    //    //if (!scan)
-    //    //{
-    //    //    isFiring = false;
-    //    //    LockParticleSystemRotation();
-    //    //    // UnlockPlayerRotation();
-    //    //}
-    //    //else
-    //    //{
-    //    //    if (lastShotFiredAt + emitCooldown < Time.time)
-    //    //    {
-    //    //        isFiring = true;
-    //    //        UnlockParticleSystemRotation();
-    //    //        //LockPlayerRotation();
-    //    //    }
-    //    //}
-    //}
-
-    public void OnScan(InputActionEventData data)
+    // Player Character Management fns -------------------------------
+    
+    private void DetermineCurrentPlayerState(FrameInput frame)
     {
-        if(data.GetButton())
+        // movement
+        physicalState.IsMoving = (frame.move.sqrMagnitude > 0f) ? true : false;
+
+        // rotation
+        physicalState.IsRotating = (frame.look.sqrMagnitude > 0f) ? true : false;
+
+        // jumping
+        if (physicalState.IsChargingJump)
         {
-            if(lastShotFiredAt + emitCooldown < Time.time)
-            {
-                UnlockParticleSystemRotation();
-                //LockPlayerRotation();
-                performScan();
-            }
+            // on release
+            if (!frame.jump) { physicalState.IsDoingJump = true; }
         }
         else
         {
-            LockParticleSystemRotation();
-            //UnlockPlayerRotation();
+            if (frame.jump) { physicalState.IsDoingJump = false; }
         }
-    }
-    
-    private void SetScanner(int id)
-    {
-        if(id == 1)
-        {
-            SetActiveScanner(ScannerType.ForwardScan);
-        }
-        else if (id == 2)
-        {
-            SetActiveScanner(ScannerType.RadialScan);   
 
-        }
-        else if (id == 3)
-        {
-           SetActiveScanner(ScannerType.SphericalScan);
-
-        }
-    }
-    
-    public void SetNextScanner()
-    {
-        if(currentScanner == ScannerType.ForwardScan)
-        {
-            SetActiveScanner(ScannerType.RadialScan);
-        }
-        else if (currentScanner == ScannerType.RadialScan)
-        {
-            SetActiveScanner(ScannerType.SphericalScan);
-        }
-        else if (currentScanner == ScannerType.SphericalScan)
-        {
-            SetActiveScanner(ScannerType.ForwardScan);
-        }
-    }   
-    
-    private void TogglePlayerMenu()
-    {
-        playerMenuIsActive = !playerMenuIsActive;
-        print(string.Format($"menuIsActive: {0}", playerMenuIsActive));
-    
-        playerMenu.SetMenuVisibility(playerMenuIsActive);
+        // scanning
+        physicalState.IsScanning = (frame.scan) ? true : false;
     }
 
-    // Player Character Management fns -------------------------------
-
-    private void HandlePlayerLevitationUpdate()
+    private void LevitatePlayerCharacter()
     {
         RaycastHit hitInfo;
         Physics.Raycast(new Ray(transform.position, Vector3.down), out hitInfo, hoverHeight);
@@ -543,57 +473,41 @@ public class WheelerPlayerController : MonoBehaviour
         var hoverCorrection = Vector3.up;
         hoverCorrection *= pid.Update(error);
         hoverCorrection *= hoverForce;
-        //hoverCorrection *= Time.deltaTime;        
+        hoverCorrection *= Time.deltaTime;        
 
         rb.AddForce(hoverCorrection);
     }
 
-    private void HandlePlayerPhysicsStateUpdate()
+    private void MovePlayerCharacter(Vector2 vec)
     {
-        // lateral, rotation, jump
-        UpdatePlayerMovementState();
-        // scan, carry
-        UpdatePlayerInteractionState();
+        // zero out small numbers
+        float threshhold = 0.001f;
+        if (Mathf.Abs(vec.x) < threshhold) { vec.x = 0.0f; }
+        if (Mathf.Abs(vec.y) < threshhold) { vec.y = 0.0f; }
+
+        var movement = Vector3.right;
+        movement.x *= vec.x * moveForce * Time.deltaTime;
+        rb.AddForce(movement);
     }
 
-    private void HandlePlayerSocialStateUpdate()
+    private void RotatePlayerCharacter(Vector2 vec)
     {
-        // talk, hologram,
+        // don't automatically reset the rotation when there is no input
+        if (vec.sqrMagnitude == 0f) return;
+        
+        zAxisRotation = Mathf.Atan2(vec.y, vec.x) * Mathf.Rad2Deg;
+
+        var rotation = rb.rotation.eulerAngles;
+        rotation.z = zAxisRotation;
+        rb.rotation = Quaternion.Euler(rotation);
+        rb.angularVelocity = Vector3.zero;
+
+        print("Rotation: " + zAxisRotation);
+        //jumpBlast.transform.rotation = rb.rotation;
     }
 
-    private void UpdatePlayerMovementState()
+    private void RotateParticleSystems()
     {
-        MovePlayerCharacter(inputThisTick.move);
-        //if (isMoving)
-        //{
-        //    MovePlayerCharacter(inputThisTick.move);
-        //}
-
-        DetermineRotationState(inputThisTick.look);
-        if (isRotating && !isRotationLocked)
-        {
-            RotatePlayerCharacter(inputThisTick.look);
-        }
-
-        //ChargeJump();
-        //if (isChargingJump)
-        //{
-        //    ChargeJump();
-        //}
-
-        if (isJumping)
-        {
-            JumpPlayerCharacter();
-        }
-    }
-
-    private void UpdatePlayerInteractionState()
-    {
-        //if (isFiring)
-        //{
-        //    performScan();
-        //}
-
         if (!particleSystemRotationIsLocked)
         {
             var euler = transform.localEulerAngles;
@@ -602,73 +516,31 @@ public class WheelerPlayerController : MonoBehaviour
         }
     }
 
-    private void MovePlayerCharacter(Vector2 input)
-    {
-        // zero out small numbers
-        float threshhold = 0.001f;
-        if (Mathf.Abs(input.x) < threshhold) { input.x = 0.0f; }
-        if (Mathf.Abs(input.y) < threshhold) { input.y = 0.0f; }
-
-        var movement = Vector3.right;
-        movement.x *= input.x * moveForce * Time.deltaTime;
-        rb.AddForce(movement);
-    }
-
-    private void DetermineRotationState(Vector2 input)
-    {
-        if (input == Vector2.zero)
-        {
-            isRotating = false;
-            isRotationLocked = false;
-        }
-        else if (Mathf.Abs(input.SqrMagnitude()) > 0f)
-        {
-            isRotating = true;
-        }
-    }
-
-    private void RotatePlayerCharacter(Vector2 input)
-    {
-        //if (inputSource == InputSource.Unknown)
-        //{
-        //    return;
-        //}
-        //else if (inputSource == InputSource.MouseAndKeyboard)
-        //{
-        //    // recenter to middle of screen
-        //    input.x -= screenHalfWidth;
-        //    input.y -= screenHalfHeight;
-        //}
-        
-        float angle = Mathf.Atan2(input.y, input.x) * Mathf.Rad2Deg;
-
-        var rotation = rb.rotation.eulerAngles;
-        rotation.z = angle;
-        rb.rotation = Quaternion.Euler(rotation);
-        zAxisRotation = angle; // cache value
-
-        jumpBlast.transform.rotation = rb.rotation;
-    }
-
     private void ChargeJump()
     {
+        if (!physicalState.IsChargingJump) return;
+
         jumpChargePercent += jumpChargeRate * Time.deltaTime;
         jumpChargePercent = Mathf.Clamp01(jumpChargePercent);
     }
 
-    private void JumpPlayerCharacter()
+    private void ReleaseJump()
     {
+        if (!physicalState.IsDoingJump) return;
+
         var jumpVec = transform.right * -jumpForce * jumpChargePercent;
         rb.AddForce(jumpVec, ForceMode.Impulse);
         jumpBlast.Play();
 
         jumpChargePercent = 0f;
-        isJumping = false;
+
+        physicalState.IsDoingJump = false;
+        physicalState.IsChargingJump = false;
     }
 
-    private void performScan()
+    private void PerformScan()
     {
-        if(isScannerActivationLocked) { return; }
+        if (!physicalState.IsScanning) return;
 
         if(currentScanner == ScannerType.ForwardScan)
         {
@@ -684,7 +556,9 @@ public class WheelerPlayerController : MonoBehaviour
         }
 
         lastShotFiredAt = Time.time;
+        physicalState.IsScanning = false;
     }
+
 
     private void SetActiveScanner(ScannerType scanner)
     {
@@ -707,16 +581,6 @@ public class WheelerPlayerController : MonoBehaviour
         currentScanner = scanner;
     }
 
-    private void LockScannerActivation()
-    {
-        isScannerActivationLocked = true;
-    }
-
-    private void UnlockScannerActivation()
-    {
-        isScannerActivationLocked = false;
-    }
-
     private void SetParticleSystemRotation(Quaternion rotation)
     {
         forwardScan.transform.localRotation   = rotation;
@@ -725,26 +589,48 @@ public class WheelerPlayerController : MonoBehaviour
         jumpBlast.transform.localRotation     = rotation;
     }
 
-    private void LockParticleSystemRotation()
+    private void SetScanner(int id)
     {
-        particleSystemRotationIsLocked = true;
+        if (id == 1)
+        {
+            SetActiveScanner(ScannerType.ForwardScan);
+        }
+        else if (id == 2)
+        {
+            SetActiveScanner(ScannerType.RadialScan);
+
+        }
+        else if (id == 3)
+        {
+            SetActiveScanner(ScannerType.SphericalScan);
+
+        }
     }
 
-    private void UnlockParticleSystemRotation()
+    public void SetNextScanner()
     {
-        particleSystemRotationIsLocked = false;
+        if (currentScanner == ScannerType.ForwardScan)
+        {
+            SetActiveScanner(ScannerType.RadialScan);
+        }
+        else if (currentScanner == ScannerType.RadialScan)
+        {
+            SetActiveScanner(ScannerType.SphericalScan);
+        }
+        else if (currentScanner == ScannerType.SphericalScan)
+        {
+            SetActiveScanner(ScannerType.ForwardScan);
+        }
     }
 
-    private void LockPlayerRotation()
+    private void TogglePlayerMenu()
     {
-        isRotationLocked = true;
+        playerMenuIsActive = !playerMenuIsActive;
+        print(string.Format($"menuIsActive: {0}", playerMenuIsActive));
+
+        playerMenu.SetMenuVisibility(playerMenuIsActive);
     }
 
-    private void UnlockPlayerRotation()
-    {
-        isRotationLocked = false;
-    }
-    
 
     public void AddInventoryItem(InventoryItem item)
     {
@@ -800,6 +686,7 @@ public class WheelerPlayerController : MonoBehaviour
 
         return false;
     }
+
 
     // Save State ----------------------------------------------------
 
