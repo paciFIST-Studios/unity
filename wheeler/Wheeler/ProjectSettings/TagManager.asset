@@ -7,6 +7,8 @@ TagManager:
   - Reflection
   - Modification
   - ResearchContentObject
+  - Collectible
+  - DialogueTrigger
   layers:
   - Default
   - TransparentFX
