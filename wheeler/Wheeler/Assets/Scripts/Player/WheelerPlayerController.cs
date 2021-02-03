@@ -31,10 +31,11 @@ public class WheelerPlayerController : MonoBehaviour
     private FloatReference jumpForce;
     [ColoredFoldoutGroup("Movement/Stats", 1, 0, 0)][HideLabel][SerializeField][Required]
     private FloatReference jumpChargeRate;
+    [ColoredFoldoutGroup("Movement/Stats", 1, 0, 0)][HideLabel][SerializeField][Required]
+    private FloatReference minimumJumpChargePercent;
+
     [ColoredFoldoutGroup("Movement/Stats", 1, 0, 0)][Range(0, 1)][SerializeField][Required]
     private float jumpChargePercent;
-
-    private float minimumJumpChargePercent = 0.3f;
 
     
     [ColoredFoldoutGroup("Scanner", 0, 1, 1)][HideLabel][SerializeField][Required]
@@ -455,8 +456,13 @@ public class WheelerPlayerController : MonoBehaviour
 
     private void LevitatePlayerCharacter()
     {
+        // NOTE: the layer mask thing isn't working
+        // create layer mask that does collisions against everything except collectible layer
+        int layerMask = 1 << 11;
+        layerMask = ~layerMask;
+
         RaycastHit hitInfo;
-        Physics.Raycast(new Ray(transform.position, Vector3.down), out hitInfo, hoverHeight);
+        Physics.Raycast(transform.position, Vector3.down, out hitInfo, hoverHeight, layerMask, QueryTriggerInteraction.Ignore);
         float error = (hitInfo.point.y + hoverHeight) - transform.position.y;
 
         // Clamp negative error values to zero.  A negative error would snap Wheeler downwards,
