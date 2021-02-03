@@ -34,6 +34,8 @@ public class WheelerPlayerController : MonoBehaviour
     [ColoredFoldoutGroup("Movement/Stats", 1, 0, 0)][Range(0, 1)][SerializeField][Required]
     private float jumpChargePercent;
 
+    private float minimumJumpChargePercent = 0.3f;
+
     
     [ColoredFoldoutGroup("Scanner", 0, 1, 1)][HideLabel][SerializeField][Required]
     private FloatReference emitCooldown;
@@ -388,35 +390,30 @@ public class WheelerPlayerController : MonoBehaviour
                 if(data.GetButtonDown())
                 {
                     SetScanner(1);
-                    print("SetScanner 1");
                 }
                 break;
             case RewiredConsts.Action.Scanner2:
                 if (data.GetButtonDown())
                 {
                     SetScanner(2);
-                    print("SetScanner 2");
                 }
                 break;
             case RewiredConsts.Action.Scanner3:
                 if (data.GetButtonDown())
                 {
                     SetScanner(3);
-                    print("SetScanner 3");
                 }
                 break;
             case RewiredConsts.Action.NextScanner:
                 if (data.GetButtonDown())
                 {
                     SetNextScanner();
-                    print("Next Scanner");
                 }
                 break;
             case RewiredConsts.Action.PlayerMenu:
                 if (data.GetButtonDown())
                 {
                     TogglePlayerMenu();
-                    print("Player Menu");
                 }
                 break;
             //case RewiredConsts.Action.StartMenu:
@@ -501,9 +498,6 @@ public class WheelerPlayerController : MonoBehaviour
         rotation.z = zAxisRotation;
         rb.rotation = Quaternion.Euler(rotation);
         rb.angularVelocity = Vector3.zero;
-
-        print("Rotation: " + zAxisRotation);
-        //jumpBlast.transform.rotation = rb.rotation;
     }
 
     private void RotateParticleSystems()
@@ -520,6 +514,8 @@ public class WheelerPlayerController : MonoBehaviour
     {
         if (!physicalState.IsChargingJump) return;
 
+        if (!jumpCharge.isPlaying) { jumpCharge.Play(); }
+        
         jumpChargePercent += jumpChargeRate * Time.deltaTime;
         jumpChargePercent = Mathf.Clamp01(jumpChargePercent);
     }
@@ -532,7 +528,8 @@ public class WheelerPlayerController : MonoBehaviour
         rb.AddForce(jumpVec, ForceMode.Impulse);
         jumpBlast.Play();
 
-        jumpChargePercent = 0f;
+        jumpCharge.Stop(true, ParticleSystemStopBehavior.StopEmitting);
+        jumpChargePercent = minimumJumpChargePercent;
 
         physicalState.IsDoingJump = false;
         physicalState.IsChargingJump = false;
@@ -686,7 +683,6 @@ public class WheelerPlayerController : MonoBehaviour
 
         return false;
     }
-
 
     // Save State ----------------------------------------------------
 
