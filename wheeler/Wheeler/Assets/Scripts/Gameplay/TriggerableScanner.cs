@@ -5,7 +5,7 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "New Triggerable Scanner", menuName = "paciFIST/TriggerableScanner")]
 public class TriggerableScanner : TriggerableSkillPayloadBase
 {
-    public string name;
+    //public string name;
     public float cooldown;
 
     public ParticleSystem particleSystem;
