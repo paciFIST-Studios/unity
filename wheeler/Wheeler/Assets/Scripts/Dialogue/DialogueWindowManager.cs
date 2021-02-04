@@ -15,6 +15,8 @@ public class DialogueWindowManager : MonoBehaviour
     [SerializeField] private RectTransform rightSpeakerNamePlate;
     [SerializeField] private RectTransform rightSpeakerName;
 
+    private DialogueConversation currentConversation;
+
     private void ClearWindow()
     {
         leftSpeakerImage.GetComponent<Image>().sprite = null;
@@ -91,17 +93,26 @@ public class DialogueWindowManager : MonoBehaviour
         }
     }
 
-    public void RunConversation(DialogueConversation conversation)
+    public void StartConversation(DialogueConversation conversation)
     {
         if(conversation.isFinished && !conversation.isRepeatable){ return; }
+        currentConversation = conversation;
 
-        for(int i = 0; i < conversation.statements.Count; i++)
+        ClearWindow();
+        ShowNextStatement();
+    }
+
+    public void ShowNextStatement()
+    {
+        if(currentConversation.statements.Count > 0)
         {
-            SetupStatement(conversation.statements[i]);
-            // advance when player advances convo
+            SetupStatement(currentConversation.statements.Dequeue());        
         }
-        conversation.isFinished = true;
+    }
 
+    public void EndConversation()
+    {
+        currentConversation.isFinished = true;
         HideWindow();
     }
 

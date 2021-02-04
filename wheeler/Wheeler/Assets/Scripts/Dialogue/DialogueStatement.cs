@@ -1,12 +1,16 @@
 ﻿using UnityEngine;
 
+using Sirenix.OdinInspector;
+
+[CreateAssetMenu(fileName = "New Dialogue Statement", menuName = "paciFIST/DialogueStatement")]
+[InlineEditor]
 public class DialogueStatement : ScriptableObject
 {
     public bool isLeftSpeaker;
 
-    public StringReference text;
+    [HideLabel] public StringReference text;
 
-    public SpriteReference image;
+    [HideLabel] public SpriteReference image;
 
     public DialogueDisplayTiming timings;
 
