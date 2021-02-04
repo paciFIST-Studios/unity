@@ -1,0 +1,28 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 746f1e9a3eaf5214eb6a34e6095350ee, type: 3}
+  m_Name: TestDialogueStatement
+  m_EditorClassIdentifier: 
+  isLeftSpeaker: 0
+  text:
+    UseOverride: 1
+    OverrideValue: 
+    ReferencedValue: As we said before...
+    Reference: {fileID: 11400000, guid: 6200b62cf236b4a4083744b95a0f43a5, type: 2}
+  image:
+    UseOverride: 1
+    OverrideValue: {fileID: 0}
+    ReferencedValue: {fileID: 0}
+    Reference: {fileID: 0}
+  timings: {fileID: 0}
+  shake: {fileID: 0}
+  sound: {fileID: 0}
