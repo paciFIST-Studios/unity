@@ -236,3 +236,17 @@ math_visualization/maf/[Bb]uild/
 math_visualization/maf/[Bb]uilds/
 math_visualization/maf/[Ll]ogs/
 math_visualization/maf/[Uu]ser[Ss]ettings/
+
+
+i_expire/*
+toolmaker/*
+top_down_rpg/*
+
+
+dots/dots/[Ll]ibrary/
+dots/dots/[Tt]emp/
+dots/dots/[Oo]bj/
+dots/dots/[Bb]uild/
+dots/dots/[Bb]uilds/
+dots/dots/[Ll]ogs/
+dots/dots/[Uu]ser[Ss]ettings/
