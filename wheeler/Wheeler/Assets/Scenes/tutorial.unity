@@ -24952,6 +24952,29 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3558624764394402100, guid: 96e1932a242e9ed469fbd6827df3374a,
         type: 3}
+      propertyPath: panels.Array.size
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 3558624764394402100, guid: 96e1932a242e9ed469fbd6827df3374a,
+        type: 3}
+      propertyPath: panels.Array.data[0]
+      value: 
+      objectReference: {fileID: 11400000, guid: 90759bce3c2b44f47a797b11b65061b6,
+        type: 2}
+    - target: {fileID: 3558624764394402100, guid: 96e1932a242e9ed469fbd6827df3374a,
+        type: 3}
+      propertyPath: panels.Array.data[1]
+      value: 
+      objectReference: {fileID: 11400000, guid: a065e25b636da634eb871924fa8c4d46,
+        type: 2}
+    - target: {fileID: 3558624764394402100, guid: 96e1932a242e9ed469fbd6827df3374a,
+        type: 3}
+      propertyPath: panels.Array.data[2]
+      value: 
+      objectReference: {fileID: 11400000, guid: 8f812efb7ac9aa54aa50b78a6e5f1c57,
+        type: 2}
+    - target: {fileID: 3558624764394402100, guid: 96e1932a242e9ed469fbd6827df3374a,
+        type: 3}
       propertyPath: researchListController
       value: 
       objectReference: {fileID: 1591471106}
