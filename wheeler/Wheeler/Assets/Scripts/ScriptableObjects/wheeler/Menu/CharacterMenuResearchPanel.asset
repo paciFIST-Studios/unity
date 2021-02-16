@@ -13,4 +13,4 @@ MonoBehaviour:
   m_Name: CharacterMenuResearchPanel
   m_EditorClassIdentifier: 
   header: {fileID: 0}
-  content: {fileID: 0}
+  body: {fileID: 0}

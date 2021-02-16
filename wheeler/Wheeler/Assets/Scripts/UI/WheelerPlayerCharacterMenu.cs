@@ -10,8 +10,13 @@ public class WheelerPlayerCharacterMenu : MonoBehaviour
     private List<WheelerPlayerCharacterMenuPanel> panels;
     private int activePanelIdx;
 
+    [SerializeField] private RectTransform headerLeft;
+    [SerializeField] private RectTransform headerCenter;
+    [SerializeField] private RectTransform headerRight;
+
     [FoldoutGroup("References")][SerializeField][Required]
     private RectTransform BasePanel;
+
 
     [FoldoutGroup("References")][SerializeField][Required]
     private RectTransform Selector;
