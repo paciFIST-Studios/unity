@@ -423,6 +423,18 @@ public class WheelerPlayerController : MonoBehaviour
             //case RewiredConsts.Action.Talk:
             //    if (data.GetButtonDown()) { InitiateDialogue(); }
             //    break;
+            case RewiredConsts.Action.NextMenuPanel:
+                if(data.GetButtonDown())
+                {
+                    playerMenu.RotateActivePanel(true);
+                }
+                break;
+            case RewiredConsts.Action.LastMenuPanel:
+                if(data.GetButtonDown())
+                {
+                    playerMenu.RotateActivePanel(false);
+                }
+                break;
         }
 
         //PlayerSocialUpdate();
