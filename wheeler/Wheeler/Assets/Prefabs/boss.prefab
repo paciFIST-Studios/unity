@@ -889,7 +889,7 @@ GameObject:
   - component: {fileID: 8001054530318184946}
   - component: {fileID: 8830793293109339295}
   m_Layer: 0
-  m_Name: Cube (6)
+  m_Name: back b
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -982,7 +982,7 @@ GameObject:
   - component: {fileID: 8691540307959325894}
   - component: {fileID: 2252596863257452912}
   m_Layer: 0
-  m_Name: Cube (1)
+  m_Name: top
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1263,7 +1263,7 @@ GameObject:
   - component: {fileID: 8794547212794047551}
   - component: {fileID: 784368234128423059}
   m_Layer: 0
-  m_Name: Cube (2)
+  m_Name: left side
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1356,7 +1356,7 @@ GameObject:
   - component: {fileID: 4195927107078282403}
   - component: {fileID: 4590791698345241576}
   m_Layer: 0
-  m_Name: Cube (7)
+  m_Name: back door
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1449,7 +1449,7 @@ GameObject:
   - component: {fileID: 6387031865067400574}
   - component: {fileID: 8049458852728231483}
   m_Layer: 0
-  m_Name: Cube (4)
+  m_Name: back a
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1542,7 +1542,7 @@ GameObject:
   - component: {fileID: 46695515423200195}
   - component: {fileID: 8096783578402515874}
   m_Layer: 0
-  m_Name: Cube (5)
+  m_Name: back c
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1729,7 +1729,7 @@ GameObject:
   - component: {fileID: 644880449692576191}
   - component: {fileID: 1680731135159598204}
   m_Layer: 0
-  m_Name: Cube
+  m_Name: bottom
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1822,7 +1822,7 @@ GameObject:
   - component: {fileID: 4716046293903441290}
   - component: {fileID: 8758690691504189551}
   m_Layer: 0
-  m_Name: Cube (8)
+  m_Name: right side
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1915,7 +1915,7 @@ GameObject:
   - component: {fileID: 44599704494555285}
   - component: {fileID: 878266517936220468}
   m_Layer: 0
-  m_Name: Cube (3)
+  m_Name: front
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
