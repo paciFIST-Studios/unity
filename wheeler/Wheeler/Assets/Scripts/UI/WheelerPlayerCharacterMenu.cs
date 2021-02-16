@@ -35,35 +35,61 @@ public class WheelerPlayerCharacterMenu : MonoBehaviour
     [FoldoutGroup("References")][SerializeField][Required]
     private ResearchListController researchListController;
 
-    private int currentSelectorIdx;
-    private Vector3[] selectorPositions;
+    public struct SelectorData
+    {
+        public Vector3 current;
+        public Vector3 mission;
+        public Vector3 research;
+        public Vector3 social;
+    }
+    private SelectorData selector;
+
+    //private int selectorIdx;
+    //private Vector3[] selectorPositions;
 
 
     private void Start()
     {
         SelectorStartPosition = Selector;
 
-        selectorPositions = new Vector3[3];
-        selectorPositions[0] = MissionHeader.position;
-        selectorPositions[1] = ResearchHeader.position;
-        selectorPositions[2] = SocialHeader.position;
+        selector = new SelectorData()
+        {
+             current = ResearchHeader.position
+            , mission = MissionHeader.position
+            , research = ResearchHeader.position
+            , social = SocialHeader.position
+        };
 
         SetMenuVisibility(false);
     }
 
     public void ToggleSelectorPosition(bool goForwards)
     {
-        if(currentSelectorIdx == selectorPositions.Length)
+        // Note: can't use old style switch(case) for Vec3 values
+
+        // these are the forwards and backwards order for the three positions we support here
+        // forward:  mission -> research -> social -> loop to mission
+        // backward: mission <- research <- social <- loop from mission
+
+        if(selector.current == selector.mission)
         {
-            if(goForwards) currentSelectorIdx = 0;
+            selector.current = (goForwards) ? selector.research : selector.social;
         }
-        else if (currentSelectorIdx == 0)
+        else if (selector.current == selector.research)
         {
-            if (!goForwards) currentSelectorIdx = selectorPositions.Length - 1;
+            selector.current = (goForwards) ? selector.social : selector.mission;
+        }
+        else if (selector.current == selector.social)
+        {
+            selector.current = (goForwards) ? selector.mission : selector.research;
+        }
+        else
+        {
+            // error, possibly we have added positions, 
+            // but the current position does not match a position we handle
         }
 
-        var pos = selectorPositions[currentSelectorIdx];
-        SetSelectorPosition(pos);
+        SetSelectorPosition(selector.current);
     }
     
     //public void UpdateResearchInventory(InventoryItem[] inventory)
