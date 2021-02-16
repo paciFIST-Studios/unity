@@ -5,46 +5,109 @@ using UnityEngine;
 using Sirenix.OdinInspector;
 
 public class WheelerPlayerCharacterMenu : MonoBehaviour
-{   
-    [SerializeField][Required]
-    private List<WheelerPlayerCharacterMenuPanel> panels;
-    private int activePanelIdx;
+{
+    [FoldoutGroup("Header Scale")][SerializeField] private Vector3 SideHeaderScale;
+    [FoldoutGroup("Header Scale")][SerializeField] private Vector3 CenterHeaderScale;
 
-    [SerializeField] private RectTransform headerLeft;
-    [SerializeField] private RectTransform headerCenter;
-    [SerializeField] private RectTransform headerRight;
+    [SerializeField][Required] private List<WheelerPlayerCharacterMenuPanel> panels;
+    private int leftIdx;
+    private int centerIdx;
+    private int rightIdx;
 
-    [FoldoutGroup("References")][SerializeField][Required]
-    private RectTransform BasePanel;
+    [SerializeField][Required] private RectTransform BasePanel;
+
+    [FoldoutGroup("PositionReferences")][SerializeField][Required] private RectTransform headerLeft;
+    [FoldoutGroup("PositionReferences")][SerializeField][Required] private RectTransform headerCenter;
+    [FoldoutGroup("PositionReferences")][SerializeField][Required] private RectTransform headerRight;
+    [FoldoutGroup("PositionReferences")][SerializeField][Required] private RectTransform bodyLeft;
+    [FoldoutGroup("PositionReferences")][SerializeField][Required] private RectTransform bodyCenter;
+    [FoldoutGroup("PositionReferences")][SerializeField][Required] private RectTransform bodyRight;
+
+    [SerializeField][Required] private ResearchListController researchListController;
 
 
-    [FoldoutGroup("References")][SerializeField][Required]
-    private RectTransform Selector;
 
-    [FoldoutGroup("References")][SerializeField][Required]
-    private ResearchListController researchListController;
 
 
     private void Start()
     {
-        ActivatePanel(0);
+        leftIdx   = 0;
+        centerIdx = 1;
+        rightIdx  = 2;
+        SetLeftPanel(leftIdx);
+        SetCenterPanel(centerIdx);
+        SetRightPanel(rightIdx);
+
         SetMenuVisibility(false);
     }
 
-    // here, the !goForwards, means backwards
-    public void ToggleActivePanel(bool goForwards)
-    {        
-        if(goForwards)
+    private int IndexRingNextPosition(int current, int max, int shift)
+    {
+        var result = current + shift;
+
+        if (result > max)
         {
-            activePanelIdx = (activePanelIdx == panels.Count - 1) ? 0 : activePanelIdx + 1;
+            return 0;
         }
-        else
+        else if (result < 0)
         {
-            activePanelIdx = (activePanelIdx == 0) ? panels.Count - 1 : activePanelIdx - 1;
+            return max;
         }
 
-        print($"Idx:{activePanelIdx}, len:{panels.Count}");
-        ActivatePanel(activePanelIdx);
+        return result;
+    }
+
+    private void SetLeftPanel(int idx)
+    {
+        panels[idx].header.position = headerLeft.position;
+        panels[idx].header.localScale = SideHeaderScale;
+        //panels[idx].header.GetComponent<TextMesh>().fontStyle = FontStyle.Normal;
+        panels[idx].body.position = bodyLeft.position;
+    }
+
+    private void SetCenterPanel(int idx)
+    {
+        panels[idx].header.position = headerCenter.position;
+        panels[idx].header.localScale = CenterHeaderScale;
+        //panels[idx].header.GetComponent<TextMesh>().fontStyle = FontStyle.Bold;
+        panels[idx].body.position = bodyCenter.position;
+    }
+
+    private void SetRightPanel(int idx)
+    {
+        panels[idx].header.position = headerRight.position;
+        panels[idx].header.localScale = SideHeaderScale;
+        //panels[idx].header.GetComponent<TextMesh>().fontStyle = FontStyle.Normal;
+        panels[idx].body.position = bodyRight.position;
+    }
+
+    private void HidePanel(int idx)
+    {
+        panels[idx].header.gameObject.SetActive(false);
+        panels[idx].body.gameObject.SetActive(false);
+    }
+
+    // here, the !goForwards, means backwards
+    public void RotateActivePanel(bool goForwards)
+    {
+        // all of these indices increment or decrement together,
+        // but they will reach the end and need to loop over individually
+        int dir = (goForwards) ? +1 : -1;
+        leftIdx   = IndexRingNextPosition(leftIdx,   panels.Count - 1, dir);
+        centerIdx = IndexRingNextPosition(centerIdx, panels.Count - 1, dir);
+        rightIdx  = IndexRingNextPosition(rightIdx,  panels.Count - 1, dir);
+
+        SetLeftPanel(leftIdx);
+        SetCenterPanel(centerIdx);
+        SetRightPanel(rightIdx);
+
+        for(int i = 0; i < panels.Count; i++)
+        {
+            if(i != leftIdx && i != centerIdx && i != rightIdx)
+            {
+                HidePanel(i);
+            }
+        }
     }
     
     //public void UpdateResearchInventory(InventoryItem[] inventory)
@@ -60,22 +123,6 @@ public class WheelerPlayerCharacterMenu : MonoBehaviour
         }
     }
     
-    public void ActivatePanel(int idx)
-    {
-        // here, we touch every panel, but we also ensure that all the off things are really off
-        for(int i = 0; i < panels.Count; i++)
-        {
-            bool set = (i == idx) ? true : false;
-            //panels[i].header.gameObject.SetActive(set);
-            panels[i].body.gameObject.SetActive(set);
-
-            // also, position the selection marker over the correct header
-            if(set)
-            {
-                Selector.position = panels[i].header.position;
-            }
-        }
-    }
 
     public void SetMenuVisibility(bool isVisible)
     {
