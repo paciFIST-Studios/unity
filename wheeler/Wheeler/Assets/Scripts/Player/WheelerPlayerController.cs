@@ -426,13 +426,13 @@ public class WheelerPlayerController : MonoBehaviour
             case RewiredConsts.Action.NextMenuPanel:
                 if(data.GetButtonDown())
                 {
-                    playerMenu.ToggleSelectorPosition(true);
+                    playerMenu.ToggleActivePanel(true);
                 }
                 break;
             case RewiredConsts.Action.LastMenuPanel:
                 if(data.GetButtonDown())
                 {
-                    playerMenu.ToggleSelectorPosition(false);
+                    playerMenu.ToggleActivePanel(false);
                 }
                 break;
         }
