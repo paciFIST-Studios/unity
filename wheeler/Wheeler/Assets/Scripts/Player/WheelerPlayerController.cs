@@ -87,12 +87,23 @@ public class WheelerPlayerController : MonoBehaviour
     }
 
 
+    // Interaction State Manager -------------------------------------
+
+    public enum InteractionState
+    {
+        GameFreeRoam,
+        Dialogue,
+        CharacterMenu,
+        SettingsMenu,
+    }
+
+    public InteractionState playerState;
+
+
     // Menu System ---------------------------------------------------
 
     [FoldoutGroup("MenuGUI")][SerializeField][Required]
     private WheelerPlayerCharacterMenu playerMenu;
-
-    private bool playerMenuIsActive = false;
 
 
     // Inventory System ----------------------------------------------
@@ -137,7 +148,7 @@ public class WheelerPlayerController : MonoBehaviour
     private float zAxisRotation = 0f;
 
 
-    // Misc vars -------------------------------------------------
+    // Misc vars -----------------------------------------------------
 
     private float screenHalfWidth  = Screen.width  * 0.5f;
     private float screenHalfHeight = Screen.height * 0.5f;
@@ -318,6 +329,7 @@ public class WheelerPlayerController : MonoBehaviour
         switch (data.actionId)
         {
             case RewiredConsts.Action.Move_Horizontal:
+                if (playerState != InteractionState.GameFreeRoam) { break; }
                 if (data.GetAxis() != 0)
                 {
                     inputThisTick.move.x = data.GetAxis();
@@ -325,6 +337,7 @@ public class WheelerPlayerController : MonoBehaviour
                 break;
 
             case RewiredConsts.Action.Move_Vertical:
+                if (playerState != InteractionState.GameFreeRoam) { break; }
                 if (data.GetAxis() != 0)
                 {
                     inputThisTick.move.y = data.GetAxis();
@@ -332,6 +345,7 @@ public class WheelerPlayerController : MonoBehaviour
                 break;
             
             case RewiredConsts.Action.Look_Horizontal:
+                if (playerState != InteractionState.GameFreeRoam) { break; }
                 if (data.GetAxisRaw() != 0)
                 {
                     if(data.IsCurrentInputSource(ControllerType.Mouse))
@@ -346,6 +360,7 @@ public class WheelerPlayerController : MonoBehaviour
                 break;
             
             case RewiredConsts.Action.Look_Vertical:
+                if (playerState != InteractionState.GameFreeRoam) { break; }
                 if (data.GetAxisRaw() != 0)
                 {
                     if (data.IsCurrentInputSource(ControllerType.Mouse))
@@ -360,6 +375,7 @@ public class WheelerPlayerController : MonoBehaviour
                 break;
             
             case RewiredConsts.Action.Scan:
+                if (playerState != InteractionState.GameFreeRoam) { break; }
                 if (data.GetButton())
                 {
                     inputThisTick.scan = true;
@@ -367,6 +383,7 @@ public class WheelerPlayerController : MonoBehaviour
                 break;
             
             case RewiredConsts.Action.Jump:
+                if (playerState != InteractionState.GameFreeRoam) { break; }
                 if (data.GetButtonSinglePressHold())
                 {
                     inputThisTick.jump = true;
@@ -388,24 +405,28 @@ public class WheelerPlayerController : MonoBehaviour
         switch(data.actionId)
         {
             case RewiredConsts.Action.Scanner1:
+                if (playerState != InteractionState.GameFreeRoam) { break; }
                 if(data.GetButtonDown())
                 {
                     SetScanner(1);
                 }
                 break;
             case RewiredConsts.Action.Scanner2:
+                if (playerState != InteractionState.GameFreeRoam) { break; }
                 if (data.GetButtonDown())
                 {
                     SetScanner(2);
                 }
                 break;
             case RewiredConsts.Action.Scanner3:
+                if (playerState != InteractionState.GameFreeRoam) { break; }
                 if (data.GetButtonDown())
                 {
                     SetScanner(3);
                 }
                 break;
             case RewiredConsts.Action.NextScanner:
+                if (playerState != InteractionState.GameFreeRoam) { break; }
                 if (data.GetButtonDown())
                 {
                     SetNextScanner();
@@ -414,7 +435,7 @@ public class WheelerPlayerController : MonoBehaviour
             case RewiredConsts.Action.PlayerMenu:
                 if (data.GetButtonDown())
                 {
-                    TogglePlayerMenu();
+                    ToggleCharacterMenu();
                 }
                 break;
             //case RewiredConsts.Action.StartMenu:
@@ -424,12 +445,14 @@ public class WheelerPlayerController : MonoBehaviour
             //    if (data.GetButtonDown()) { InitiateDialogue(); }
             //    break;
             case RewiredConsts.Action.NextMenuPanel:
+                if (playerState != InteractionState.CharacterMenu) { break; }
                 if(data.GetButtonDown())
                 {
                     playerMenu.RotateActivePanel(true);
                 }
                 break;
             case RewiredConsts.Action.LastMenuPanel:
+                if (playerState != InteractionState.CharacterMenu) { break; }
                 if(data.GetButtonDown())
                 {
                     playerMenu.RotateActivePanel(false);
@@ -638,12 +661,33 @@ public class WheelerPlayerController : MonoBehaviour
         }
     }
 
-    private void TogglePlayerMenu()
+    private void ShowCharacterMenu()
     {
-        playerMenuIsActive = !playerMenuIsActive;
-        print(string.Format($"menuIsActive: {0}", playerMenuIsActive));
+        playerState = InteractionState.CharacterMenu;
+        playerMenu.SetMenuVisibility(true);
+    }
 
-        playerMenu.SetMenuVisibility(playerMenuIsActive);
+    private void HideCharacterMenu()
+    {
+        playerState = InteractionState.GameFreeRoam;
+        playerMenu.SetMenuVisibility(false);
+    }
+
+    private void ToggleCharacterMenu()
+    {
+        if(playerState == InteractionState.CharacterMenu)
+        {
+            HideCharacterMenu();
+        }
+        else if (playerState == InteractionState.GameFreeRoam)
+        {
+            ShowCharacterMenu();
+        }
+        else
+        {
+            // no other transitions permitted
+            return;
+        }
     }
 
 
