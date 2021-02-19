@@ -38,6 +38,14 @@ public class WheelerPlayerCharacterMenu : MonoBehaviour
         SetCenterPanel(centerIdx);
         SetRightPanel(rightIdx);
 
+        // someone might have turned a panel off in order to work on the
+        // menu system, so let's make sure they're all on
+        for (int i = 0; i < panels.Count; i++)
+        {
+            panels[i].header.gameObject.SetActive(true);
+            panels[i].body.gameObject.SetActive(true);
+        }
+
         SetMenuVisibility(false);
     }
 
